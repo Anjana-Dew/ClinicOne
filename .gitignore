@@ -1,0 +1,13 @@
+# Ignore build folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
