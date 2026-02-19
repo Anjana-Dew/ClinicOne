@@ -7,26 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Admin\" />
-    <Folder Include="Controllers\Doctor\" />
-    <Folder Include="Controllers\Pharmacist\" />
-    <Folder Include="Controllers\Patient\" />
-    <Folder Include="Models\ViewModels\" />
-    <Folder Include="Views\Admin\" />
-    <Folder Include="Views\Doctor\" />
-    <Folder Include="Views\Pharmacist\" />
-    <Folder Include="Views\Patient\" />
-    <Folder Include="wwwroot\css\admin\" />
-    <Folder Include="wwwroot\css\doctor\" />
-    <Folder Include="wwwroot\css\pharmacist\" />
-    <Folder Include="wwwroot\css\patient\" />
-    <Folder Include="wwwroot\js\admin\" />
-    <Folder Include="wwwroot\js\doctor\" />
-    <Folder Include="wwwroot\js\patient\" />
-    <Folder Include="wwwroot\js\pharmacist\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.3">

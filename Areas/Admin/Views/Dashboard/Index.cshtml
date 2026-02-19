@@ -1,0 +1,52 @@
+﻿@{
+    Layout = "_AdminLayout";
+}
+
+<link rel="stylesheet" href="~/css/admin/adminDashboardStyles.css" />
+<script src="~/js/admin/adminDashboard.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<h2 class="dahsboard-title">Dashboard</h2>
+
+<div class="dashboard-cards">
+
+    <div class="dashboard-card">
+        <!--<h3>Patients</h3>-->
+        <img src="~/adminImages/patient_icon.png" alt="Patients"/>
+        <p class="card-count">Total Patients: @ViewBag.PatientCount</p>
+    </div>
+
+    <div class="dashboard-card">
+        <!--<h3>Doctors</h3>-->
+        <img src="~/adminImages/doctor_icon.png" alt="Dctors" />
+        <p class="card-count">Total Doctors: @ViewBag.DoctorCount</p>
+    </div>
+
+</div>
+
+<section class="recent-activity-section">
+
+    <h2 class="section-title">Recent Activity</h2>
+
+    <div class="activity-card">
+        <div class="activity-item">
+            <p>New patient registered</p>
+            <span class="activity-time">2 minutes ago</span>
+        </div>
+
+        <div class="activity-divider"></div>
+
+        <div class="activity-item">
+            <p>Doctor profile updated</p>
+            <span class="activity-time">10 minutes ago</span>
+        </div>
+
+        <div class="activity-divider"></div>
+
+        <div class="activity-item">
+            <p>New test report uploaded</p>
+            <span class="activity-time">25 minutes ago</span>
+        </div>
+
+    </div>
+</section>

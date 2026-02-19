@@ -1,0 +1,109 @@
+﻿body {
+}
+/* Dashboard Section */
+.dahsboard-title {
+    font-size: 2rem;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 25px;
+    color: #1e337a;
+    font-weight:bold;
+}
+
+/* Cards Container */
+.dashboard-cards {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+/* individual card */
+.dashboard-card {
+    background-color: #d3dcf8;
+    flex: 1 1 300px;
+    max-width: 230px;
+    max-height: 200px;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover{
+    transform: translateY(-5);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+/* Card Title */
+/*.dashboard-card h3 {
+     font-size: 1.6rem;
+     margin-bottom: 15px;
+     font-family: 'Poppins', sans-serif;
+}*/
+
+/* Card Image */
+.dashboard-card img{
+    height: 100px;
+    width: auto;
+    margin-bottom: 15px;
+}
+.card-count {
+    font-size: 1.5rem;
+    color: #1e337a;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Recent Activity Section */
+
+.section-title {
+    font-size: 2rem;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+    color: #1e337a;
+    font-weight: bold;
+}
+/* Activity Card */
+.activity-card {
+    background-color: #d3dcf8;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+}
+.activity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5px;
+    font-family: 'Poppins', sans-serif;
+    color: #1e337a;
+    transition: background-color 0.2s ease;
+}
+.activity-item:hover {
+    background-color: #e9eefc;
+    border-radius: 8px;
+}
+.activity-time {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+.activity-divider{
+    height: 1px;
+    background-color: #e2e6f5;
+    margin: 0 0;
+}
+
+@media (max-width: 768px){
+    .activity-item{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .activity-item{
+        font-size: 0.8rem;
+    }
+}

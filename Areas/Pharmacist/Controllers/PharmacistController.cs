@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ClinicOne.Controllers.Pharmacist
+namespace ClinicOne.Areas.Pharmacist.Controllers
 {
     public class PharmacistController : Controller
     {
