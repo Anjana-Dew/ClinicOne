@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ClinicOne.Controllers.Admin
+namespace ClinicOne.Areas.Patient.Controllers
 {
-    public class AdminController : Controller
+    public class PatientController : Controller
     {
         public IActionResult Index()
         {

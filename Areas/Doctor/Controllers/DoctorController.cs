@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ClinicOne.Controllers.Doctor
+namespace ClinicOne.Areas.Doctor.Controllers
 {
     public class DoctorController : Controller
     {

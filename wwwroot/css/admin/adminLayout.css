@@ -1,0 +1,140 @@
+﻿body{
+    margin:0;
+}
+/* Header */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    background-color: #1e3fae;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: white;
+    height: 70px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+    z-index: 1100;
+}
+
+.header-logo .logo {
+    height: 70px;
+    width: auto;
+}
+
+.header-text {
+    flex: 1; 
+    text-align: center;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 2.3rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+.header-left{
+    display:flex;
+    align-items:center;
+    position:absolute;
+    left:20px;
+}
+.toggle-btn{
+    background: transparent;
+    border: none;
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+    margin-right:15px;
+}
+
+/* Container-Admin */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f6f8;
+}
+
+/* Sidebar */
+.admin-sidebar {
+    width: 240px;
+    /*min-width: 200px;*/
+    background-color: #1e3fae;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 1;
+    transform: translateX(0);
+    position: fixed;
+    top: 90px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+/* nav tabs */
+.admin-sidebar nav ul{
+    list-style: none;
+    padding:0;
+    margin:0;
+    flex:1;
+}
+.admin-sidebar nav ul li {
+    width: 100%;
+}
+.admin-sidebar nav ul li a{
+    display:block;
+    padding: 15px 20px;
+    color:white;
+    text-decoration:none;
+    font-size:1.3rem;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+
+}
+
+.admin-sidebar nav ul li a:hover,
+.admin-sidebar nav ul li.active a{
+    background-color: rgba(255,255,255,0.15);
+}
+@media(max-width: 768px) {
+    .admin-side {
+        width: 60px;
+    }
+
+    admin-sidebar nav ul li a {
+        padding: 12px 8px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+}
+
+.admin-main {
+    flex: 1;
+    padding: 20px;
+    /*overflow-x: hidden;*/
+    transition: margin-left 0.3s ease;
+    margin-left: 240px;
+    padding-top: 100px;
+}
+
+/* Collapsed State */
+.admin-sidebar.collapsed {
+    /*width: 70px;*/
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.admin-sidebar.collapsed ~ .admin-main {
+    margin-left: 0; 
+}
+
+.admin-sidebar.collapsed ul li a {
+    text-align: center;
+    padding: 15px 5px;
+}
