@@ -29,14 +29,18 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// Map area routes first
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Dashboard}/{action=Index}/{id?}",
-    defaults: new { area = "Admin" });
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
+);
 
-/*app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");*/
+// Optional: redirect root URL to Admin Dashboard directly for now
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/Admin/Dashboard");
+    return Task.CompletedTask;
+});
 
 
 app.Run();
