@@ -21,5 +21,9 @@ namespace ClinicOne.Models.Entities
 
         [ForeignKey("UserAccountID")]
         public UserAccount UserAccount { get; set; }
+
+        [Required]
+        public bool IsActive { get; set; }
+
     }
 }
