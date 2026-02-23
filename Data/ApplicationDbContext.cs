@@ -119,7 +119,7 @@ namespace ClinicOne.Data
 
             modelBuilder.Entity<Doctor>()
                 .HasOne(d => d.UserAccount)
-                .WithOne()
+                .WithOne(u => u.Doctor)
                 .HasForeignKey<Doctor>(d => d.UserAccountID)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -130,14 +130,14 @@ namespace ClinicOne.Data
 
             modelBuilder.Entity<Admin>()
                 .HasOne(a => a.UserAccount)
-                .WithOne()
+                .WithOne(u => u.Admin)
                 .HasForeignKey<Admin>(a => a.UserAccountID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // PHARMACIST
             modelBuilder.Entity<Pharmacist>()
                 .HasOne(p => p.UserAccount)
-                .WithOne()
+                .WithOne(u => u.Pharmacist)
                 .HasForeignKey<Pharmacist>(p => p.UserAccountID)
                 .OnDelete(DeleteBehavior.Restrict);
 
