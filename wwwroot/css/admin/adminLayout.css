@@ -6,6 +6,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between; 
+    flex-wrap:nowrap;
     background-color: #1e3fae;
     padding: 10px 20px;
     position: fixed;
@@ -18,14 +19,21 @@ header {
     z-index: 1100;
 }
 
+.header-logo{
+    flex-shrink: 0;
+}
+
 .header-logo .logo {
     height: 70px;
     width: auto;
 }
 
 .header-text {
-    flex: 1; 
+    flex: 1;
     text-align: center;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .header-text h1 {
@@ -101,18 +109,6 @@ header {
 .admin-sidebar nav ul li.active a{
     background-color: rgba(255,255,255,0.15);
 }
-@media(max-width: 768px) {
-    .admin-side {
-        width: 60px;
-    }
-
-    admin-sidebar nav ul li a {
-        padding: 12px 8px;
-        font-size: 0.9rem;
-        text-align: center;
-    }
-
-}
 
 .admin-main {
     flex: 1;
@@ -131,10 +127,57 @@ header {
 }
 
 .admin-sidebar.collapsed ~ .admin-main {
-    margin-left: 0; 
+     margin-left: 0;
 }
 
 .admin-sidebar.collapsed ul li a {
-    text-align: center;
-    padding: 15px 5px;
+     text-align: center;
+     padding: 15px 5px;
+}
+
+@media(max-width: 768px) {
+    .admin-sidebar {
+        width: 150px;
+    }
+
+    admin-sidebar nav ul li a {
+        padding: 10px 5px;
+        font-size: 0.6rem;
+        text-align: center;
+    }
+    .header-text h1{
+        font-size:1.5rem;
+    }
+    .header-logo .logo{
+        max-height: 50px;
+        width: auto;
+    }
+    .admin-main{
+        margin-left: 150px;
+        padding-top: 80px
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-sidebar {
+        width: 120px;
+    }
+
+    .admin-sidebar nav ul li a {
+        font-size: 0.9rem;
+        padding: 8px 3px;
+    }
+
+    .header-text h1 {
+        font-size: 1.2rem;
+    }
+
+    .header-logo .logo {
+        max-height: 40px;
+    }
+
+    .admin-main {
+        margin-left: 120px;
+        padding-top: 70px;
+    }
 }

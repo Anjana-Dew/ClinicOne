@@ -18,14 +18,14 @@ namespace ClinicOne.Models.Entities
         public string Address { get; set; }
 
         [MaxLength(20)]
-        public string BloodPressure { get; set; }
+        public string? BloodPressure { get; set; }
 
         [Required]
         [MaxLength(15)]
         public string PhoneNumber { get; set; }
         public decimal? Height { get; set; }
         public decimal? Weight { get; set; }
-        public string BloodType { get; set; }
+        public string? BloodType { get; set; }
 
         [Required]
         public string Gender { get; set; }
