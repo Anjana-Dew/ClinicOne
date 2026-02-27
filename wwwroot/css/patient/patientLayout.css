@@ -1,0 +1,149 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+/* NAVBAR (KEEP COLORS SAME) */
+.navbar {
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    padding: 18px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+/* LOGO */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.logo-box {
+    width: 30px;
+    height: 30px;
+    background: white;
+    border-radius: 8px;
+}
+
+/* NAV LINKS */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    font-weight: 500;
+}
+
+    .nav-links li {
+        cursor: pointer;
+        transition: 0.3s ease;
+        position: relative;
+    }
+
+        .nav-links li:hover {
+            opacity: 0.85;
+        }
+
+    .nav-links .active::after {
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: white;
+        border-radius: 5px;
+    }
+
+/* PROFILE */
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    font-size: 14px;
+}
+
+.user-name {
+    font-weight: 500;
+}
+
+/* BELL */
+.bell {
+    position: relative;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 50%;
+}
+
+/* MAIN CONTENT */
+.main-content {
+    min-height: 70vh;
+    padding-bottom: 20px;
+}
+
+/* FOOTER - UPDATED TO MATCH DASHBOARD */
+.footer {
+    margin-top: 60px;
+    background: #0f172a;
+    color: #cbd5e1;
+    padding: 45px 60px;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.footer h3 {
+    color: white;
+    margin-bottom: 10px;
+}
+
+.footer p {
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.footer-right {
+    text-align: right;
+}
+
+    .footer-right p:first-child {
+        font-weight: 500;
+        color: white;
+    }

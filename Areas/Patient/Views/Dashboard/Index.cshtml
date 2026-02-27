@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    var patientName = ViewBag.PatientName ?? "Hiruni";
+    Layout = "~/Views/Shared/_PatientLayout.cshtml";
+}
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="~/css/patient/patientDashboardStyles.css" />
+
+<main class="main-content container">
+
+    <div class="security-alert">
+        <div class="alert-content">
+            <span class="alert-icon">🔒</span>
+            <div>
+                <strong>Security Notice</strong>
+                <p>Please update your password.</p>
+            </div>
+        </div>
+        <button class="btn-secondary">Update Password</button>
+    </div>
+
+    <div class="welcome">
+        <h2>Welcome back, @patientName</h2>
+        <p>Your health summary has been updated.</p>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <!-- Health Summary -->
+        <div class="card">
+            <h4>Health Summary</h4>
+            <div class="health-stats">
+                <div class="health-stat">
+                    <p class="stat-label">BMI</p>
+                    <h3>22.4</h3>
+                    <span class="stat-status good">Normal</span>
+                </div>
+                <div class="health-stat">
+                    <p class="stat-label">Blood Pressure</p>
+                    <h3>120 / 80</h3>
+                    <span class="stat-status good">Stable</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medications -->
+        <div class="card">
+            <h4>Current Medications</h4>
+            <div class="medicine-list">
+                <div class="medicine-item">
+                    <strong>Paracetamol</strong>
+                    <span>500mg – Twice Daily</span>
+                </div>
+                <div class="medicine-item">
+                    <strong>Vitamin D</strong>
+                    <span>Once Daily</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Latest Report -->
+        <div class="card">
+            <h4>Latest Medical Report</h4>
+            <p>Blood Report - 15 Feb 2026</p>
+            <a asp-area="Patient"
+               asp-controller="Reports"
+               asp-action="Index"
+               class="btn-primary">
+                View Report
+            </a>
+        </div>
+
+        <!-- Appointment -->
+        <div class="card">
+            <h4>Next Appointment</h4>
+            <p>25 Feb 2026 - 9:00 AM</p>
+            <a asp-area="Patient"
+               asp-controller="Sessions"
+               asp-action="Index"
+               class="btn-primary">
+                View Details
+            </a>
+        </div>
+
+    </div>
+
+</main>
+
+@section Scripts {
+    <script src="~/js/patient/patientDashboard.js"></script>
+}
