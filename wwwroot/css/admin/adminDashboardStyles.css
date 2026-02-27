@@ -20,8 +20,8 @@
 .dashboard-card {
     background-color: #d3dcf8;
     flex: 1 1 300px;
-    max-width: 230px;
-    max-height: 200px;
+    max-width: 250px;
+    max-height: 230px;
     border-radius: 12px;
     padding: 25px;
     display: flex;

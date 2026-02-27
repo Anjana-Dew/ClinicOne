@@ -16,9 +16,11 @@ namespace ClinicOne.Areas.Admin.Controllers
         {
             var patientCount = _context.Patients.Count();
             var doctorCount = _context.Doctors.Count();
+            var pharmacistCount = _context.Pharmacists.Count();
 
             ViewBag.PatientCount = patientCount;
             ViewBag.DoctorCount = doctorCount;
+            ViewBag.PharmacistCount = pharmacistCount;
             return View();
         }
     }

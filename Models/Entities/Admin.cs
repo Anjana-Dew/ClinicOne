@@ -20,7 +20,7 @@ namespace ClinicOne.Models.Entities
         public string Email { get; set; }
 
         [Required]
-        public int? UserAccountID { get; set; }
+        public int UserAccountID { get; set; }
 
 
         [ForeignKey("UserAccountID")]
