@@ -2,7 +2,7 @@
 
 namespace ClinicOne.Areas.Patient.Controllers
 {
-    public class PatientController : Controller
+    public class PrescriptionsController : Controller
     {
         public IActionResult Index()
         {
