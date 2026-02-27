@@ -17,7 +17,7 @@ namespace ClinicOne.Models.Entities
         public string RegistrationNumber { get; set; }
 
         [Required]
-        public int? UserAccountID { get; set; }
+        public int UserAccountID { get; set; }
 
         [ForeignKey("UserAccountID")]
         public UserAccount UserAccount { get; set; }

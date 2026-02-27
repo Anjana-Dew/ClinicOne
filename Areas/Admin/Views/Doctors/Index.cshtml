@@ -1,8 +1,8 @@
 ﻿@{
     Layout = "_AdminLayout";
 }
-@model ClinicOne.Models.ViewModels.RegisterPharmacistViewModel
-<link rel="stylesheet" href="~/css/admin/PharmacistsStyles.css" />
+@model ClinicOne.Models.ViewModels.RegisterDoctorViewModel
+<link rel="stylesheet" href="~/css/admin/DoctorsStyles.css" />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 @if (TempData["SuccessMessage"] != null)
@@ -13,25 +13,24 @@
     </div>
 }
 
-<div class="pharmacist-management">
-    <h1 class="title">Pharmacist Management</h1>
+<div class="doctor-management">
+    <h1 class="title">Doctor Management</h1>
 
     <section class="search-section">
 
-        <h2 class="section-title">Search Pharmacists</h2>
+        <h2 class="section-title">Search Doctors</h2>
 
         <div class="search-container">
             <input type="text" id="searchRegNo" placeholder="Enter Registration Number" class="search-input" />
-            <button type="button" class="search-btn" onclick="searchPharmacist()">Search</button>
+            <button type="button" class="search-btn" onclick="searchDoctor()">Search</button>
         </div>
 
-        <div id="searchResult" class="search-result"></div>
-
+        <div id="searchResult"  class="search-result">
+        </div>
     </section>
-
     <section class="register-section">
 
-        <h2 class="section-title">Register Pharmacist</h2>
+        <h2 class="section-title">Register Doctor</h2>
         @Html.AntiForgeryToken()
         <div asp-validation-summary="All" class="validation-summary"></div>
         <form method="post" asp-action="Register">
@@ -48,13 +47,19 @@
                 <span asp-validation-for="RegistrationNumber" class="error-msg"></span>
             </div>
 
+            <div class="form-group">
+                <label>Specialization *</label>
+                <input type="text" asp-for="Specialization" class="form-input" />
+                <span asp-validation-for="Specialization" class="error-msg"></span>
+            </div>
+
             <div class="form-actions">
                 <button type="submit" class="register-btn">
                     Register
                 </button>
 
                 <a asp-area="Admin"
-                   asp-controller="Pharmacists"
+                   asp-controller="Doctors"
                    asp-action="Index"
                    class="cancel-btn">
                     Cancel
@@ -65,4 +70,26 @@
     </section>
 </div>
 
-<script src="~/js/admin/adminPharmacistScript.js"></script>
+<div id="updateModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Update Doctor</h3>
+
+        <input type="hidden" id="updateRegNo" />
+
+        <div>
+            <label>Full Name</label>
+            <input type="text" id="updateName"/>
+        </div>
+        <div>
+            <label>Specialization</label>
+            <input type="text" id="updateSpecialization"/>
+        </div>
+
+        <div style="margin-top:15px;">
+            <button onclick="updateDoctor()">Save</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/admin/adminDoctorScript.js"></script>

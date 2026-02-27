@@ -1,0 +1,406 @@
+﻿body {
+}
+.title {
+    font-size: 2rem;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 25px;
+    color: #1e337a;
+    font-weight: bold;
+}
+
+.doctor-management {
+    padding: 30px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.search-section {
+    background: #ffffff;
+    border: 2px solid #1e3fae;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    margin-bottom: 40px;
+    transition: transform 0.2s ease;
+}
+.section-title {
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1e3fae;
+}
+/* search bar container */
+.search-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Search bar */
+.search-input {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: #1e337a;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(30, 63, 174, 0.15);
+}
+
+/* Search Btn*/
+.search-btn {
+    padding: 12px 20px;
+    background-color: #1e3fae;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.search-btn:hover {
+    background-color: #162f82;
+}
+/* Result box */
+.search-result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fc;
+    min-height: 60px;
+}
+/* Register Section */
+.register-section {
+    background: #ffffff;
+    border: 2px solid #1e3fae;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.form-input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: 0.2s ease;
+}
+
+.form-input:focus {
+    border-color: #1e337a;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(30,63,174,0.15);
+}
+
+/* Button Section*/
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+/* Register btn */
+.register-btn {
+    background-color: #1e3fae;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    transition: 0.2s ease;
+}
+
+.register-btn:hover {
+    background-color: #162f82;
+}
+
+/* Cancel-btn */
+.cancel-btn {
+    background-color: #6c755d;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    font-weight: 500;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+}
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Entity Card */
+.entity-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+.entity-info{
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+.doctor-specialization{
+    font-size: 14px;
+    color: #666;
+}
+.doctor-status {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 500;
+}
+.doctor-status.active {
+    color: #28a745; 
+}
+
+doctor-status.inactive {
+    color: #dc3545; 
+}
+
+/* Actions section */
+.entity-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+   
+.entity-actions button,
+.entity-actions .update-btn,
+.entity-actions .action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.update-btn {
+    background: #1e3fae;
+    color: #fff;
+}
+
+.update-btn:hover {
+   background: #162f82;
+}
+
+/* Action button */
+.action-btn {
+    background: #28a745; 
+    color: #fff;
+}
+
+.action-btn:hover {
+    background: #1e7e34;
+}
+
+.deactivate-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.deactive-btn:hover {
+    background-color: #c82333;
+}
+
+/* Activate btn*/
+
+.activate-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.activate-btn:hover {
+    background-color: #218838;
+}
+
+/* Close result btn*/
+.close-result-btn {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.close-result-btn:hover {
+    color: #dc3545;
+}
+/* Success Message*/
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #0b3d20;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+   color: #062b15;
+}
+
+/* Validation error styles*/
+.field-validation-error {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: block;
+}
+
+/* for validation summary box */
+.validation-summary-errors {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6c6;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.validation-summary-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+/* Update modal*/
+.modal{
+    position: absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 350px;
+    max-width: 90%;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+    animation: fadeInScale 0.3s ease;
+}
+.modal-content h3 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1e3fae;
+    margin-bottom: 15px;
+}
+.modal-content label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.modal-content input[type="text"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    transition: border-color 0.3s ease;
+}
+
+.modal-content input[type="text"]:focus {
+    border-color: #1e3fae;
+    outline: none;
+}
+/* Buttons */
+.modal-content button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background 0.3s ease;
+    margin-right: 8px;
+}
+
+/* Save button */
+.modal-content button:first-child {
+    background: #28a745;
+    color: #fff;
+}
+.modal-content button:first-child:hover {
+    background: #1e7e34;
+}
+
+/* Cancel button */
+.modal-content button:last-child {
+    background: #dc3545;
+    color: #fff;
+}
+.modal-content button:last-child:hover {
+    background: #b02a37;
+}
+
+/* Animation */
+/*@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}*/
