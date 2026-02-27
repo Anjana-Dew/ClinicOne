@@ -15,4 +15,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Patient\Views\Prescriptions\" />
+    <Folder Include="Areas\Patient\Views\Profile\" />
+  </ItemGroup>
+
 </Project>
