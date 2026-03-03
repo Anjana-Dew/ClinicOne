@@ -19,7 +19,7 @@ namespace ClinicOne.Models.Entities
         public TimeSpan EndTime { get; set; }
 
         [Required]
-        public int MaxStlots { get; set; }
+        public int MaxSlots { get; set; }
 
         public ICollection<ClinicSchedule> ClinicSchedules { get; set; }
         public ICollection<DoctorSchedule> DoctorSchedules { get; set; }
