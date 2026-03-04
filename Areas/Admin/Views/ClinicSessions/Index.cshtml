@@ -1,0 +1,138 @@
+﻿@{
+    Layout = "_AdminLayout";
+}
+@model ClinicSessionViewModel
+<link rel="stylesheet" href="~/css/admin/clinicSessionsStyles.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="success-message" id="successAlert">
+        <span>@TempData["SuccessMessage"]</span>
+        <button type="button" class="close-btn" onclick="closeAlert()">×</button>
+    </div>
+}
+
+<div class="clinic-session-management">
+
+    <h1 class="title">Clinic Session Management</h1>
+
+    <!--Create session section-->
+    <div class="create-session-card">
+        <h2>Create New Session</h2>
+
+        <form asp-action="create" id="createSessionForm" method="post">
+            <div asp-validation-summary="All" class="validation-summary"></div>
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label>Session Name *</label>
+                <input asp-for="SessionName" type="text" id="SessionName" class="form-control" placeholder="Morning Clinic" required />
+                <span asp-validation-for="SessionName" class="error-msg"></span>
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label>Start Time *</label>
+                    <input asp-for="StartTime" type="time" id="StartTime" class="form-control" required />
+                    <span asp-validation-for="StartTime" class="error-msg"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>End Time *</label>
+                    <input asp-for="EndTime" type="time" id="EndTime" class="form-control" required />
+                    <span asp-validation-for="EndTime" class="error-msg"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Max Slots *</label>
+                    <input asp-for="MaxSlots" type="number" id="MaxSlots" class="form-control" min="1" required />
+                    <span asp-validation-for="MaxSlots" class="error-msg"></span>
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn-submit">Create Session</button>
+        </form>
+    </div>
+    <!--Session list cards-->
+    <div class="sessions-list">
+        <h2>Existing Sessions</h2>
+
+        <div class="session-cards">
+            @if (Model?.ExistingSessions != null && Model.ExistingSessions.Any())
+            {
+                foreach(var session in Model.ExistingSessions)
+                {
+                    <div class="session-card">
+                        <h3>@session.SessionName</h3>
+                        <p><strong>Start:</strong> @session.StartTime</p>
+                        <p><strong>End:</strong> @session.EndTime</p>
+                        <p><strong>Max Slots:</strong> @session.MaxSlots</p>
+
+                        <div class="card-actions">
+                            <button type="button" 
+                                class="btn-edit" 
+                                onclick="openEditModal(
+                                    @session.SessionID,
+                                    '@session.SessionName',
+                                    '@session.StartTime',
+                                    '@session.EndTime', 
+                                    @session.MaxSlots)">
+                                Edit
+                            </button>
+                            <form asp-action="Delete" method="post" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@session.SessionID" />
+                                <button type="submit" class="btn-delete">Detele</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="no-sessions">No sessions created yet.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<!--Edit popup-->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeEditModal()">&times;</span>
+
+        <h2>Edit Session</h2>
+
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" id="editSessionID" name="sessionID" />
+
+            <div class="form-group">
+                <label>Session Name *</label>
+                <input type="text" id="editSessionName" name="SessionName" class="form-control" required />
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start Time *</label>
+                    <input type="time" id="editStartTime" name="StartTime" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>End Time *</label>
+                    <input type="time" id="editEndTime" name="EndTime" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Max Slots *</label>
+                    <input type="number" id="editMaxSlots" name="MaxSlots" class="form-control" required />
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Update Session</button>
+        </form>
+    </div>
+</div>
+<script src="~/js/admin/adminClinicSessionsScript.js"></script>
