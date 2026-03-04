@@ -36,7 +36,7 @@ namespace ClinicOne.Data
         // Scheduling
         public DbSet<ClinicSession> ClinicSessions { get; set; }
         public DbSet<ClinicSchedule> ClinicSchedules { get; set; }
-        public DbSet<DoctorSchedule> DoctorDutySchedules { get; set; }
+        public DbSet<DoctorDutySchedule> DoctorDutySchedules { get; set; }
 
         // Notifications & Logs
         public DbSet<Notification> Notifications { get; set; }
@@ -63,7 +63,7 @@ namespace ClinicOne.Data
             modelBuilder.Entity<MedicineReminder>().ToTable("MedicineReminder");
             modelBuilder.Entity<ExternalPrescription>().ToTable("ExternalPrescription");
             modelBuilder.Entity<PrescribedTest>().ToTable("PrescribedTest");
-            modelBuilder.Entity<DoctorSchedule>().ToTable("DoctorSchedule");
+            modelBuilder.Entity<DoctorDutySchedule>().ToTable("DoctorSchedule");
             modelBuilder.Entity<AccessLog>().ToTable("AccessLog");
             modelBuilder.Entity<UserAccount>().ToTable("UserAccount");
             
@@ -305,15 +305,15 @@ namespace ClinicOne.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // DOCTOR SCHEDULE
-            modelBuilder.Entity<DoctorSchedule>()
+            modelBuilder.Entity<DoctorDutySchedule>()
                 .HasOne(d => d.Doctor)
-                .WithMany(d => d.DoctorSchedules)
+                .WithMany(d => d.DoctorDutySchedules)
                 .HasForeignKey(d => d.DoctorID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<DoctorSchedule>()
+            modelBuilder.Entity<DoctorDutySchedule>()
                 .HasOne(d => d.ClinicSession)
-                .WithMany(c => c.DoctorSchedules)
+                .WithMany(c => c.DoctorDutySchedules)
                 .HasForeignKey(d => d.SessionID)
                 .OnDelete(DeleteBehavior.Restrict);
 

@@ -22,6 +22,6 @@ namespace ClinicOne.Models.Entities
         public int MaxSlots { get; set; }
 
         public ICollection<ClinicSchedule> ClinicSchedules { get; set; }
-        public ICollection<DoctorSchedule> DoctorSchedules { get; set; }
+        public ICollection<DoctorDutySchedule> DoctorDutySchedules { get; set; }
     }
 }

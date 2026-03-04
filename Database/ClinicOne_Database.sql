@@ -189,7 +189,7 @@ CREATE TABLE PrescribedTest (
     FOREIGN KEY (TestTypeID) REFERENCES TestType(TestTypeID),
     FOREIGN KEY (PrescriptionID) REFERENCES Prescription(PrescriptionID)
 );
-CREATE TABLE DoctorSchedule (
+CREATE TABLE DoctorDutySchedule (
     DutyID INT IDENTITY(1,1) PRIMARY KEY,
     DoctorID INT NOT NULL,
     SessionID INT NOT NULL,
