@@ -28,7 +28,7 @@ namespace ClinicOne.Models.Entities
 
         [ForeignKey("UserAccountID")]
         public UserAccount UserAccount { get; set; }
-        public ICollection<DoctorSchedule> DoctorSchedules { get; set; }
+        public ICollection<DoctorDutySchedule> DoctorDutySchedules { get; set; }
         public ICollection<AccessLog>  AccessLogs { get; set; }
     }
 }
