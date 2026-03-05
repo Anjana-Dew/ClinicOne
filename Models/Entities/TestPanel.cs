@@ -2,10 +2,10 @@
 
 namespace ClinicOne.Models.Entities
 {
-    public class TestType
+    public class TestPanel
     {
         [Key]
-        public int TestTypeID { get; set; }
+        public int PanelID { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -14,12 +14,7 @@ namespace ClinicOne.Models.Entities
         [MaxLength(255)]
         public string Description { get; set; }
 
-        [MaxLength(20)]
-        public string Unit {  get; set; }
-
-        public TestRange TestRange { get; set; }
-        public ICollection<ReportTestResult> ReportTestResults { get; set; }
+        public ICollection<TestParameter> TestParameters { get; set; }
         public ICollection<PrescribedTest> PrescribedTests { get; set; }
-
     }
 }

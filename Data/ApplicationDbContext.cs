@@ -20,7 +20,9 @@ namespace ClinicOne.Data
         // Medical Reports
         public DbSet<MedicalReport> MedicalReports { get; set; }
         public DbSet<ReportTestResult> ReportTestResults { get; set; }
-        public DbSet<TestType> TestTypes { get; set; }
+        public DbSet<TestPanel> TestPanels { get; set; }
+        public DbSet<TestParameter> TestParameters { get; set; }
+
         public DbSet<TestRange> TestRanges { get; set; }
 
         // Prescriptions
@@ -52,7 +54,7 @@ namespace ClinicOne.Data
             modelBuilder.Entity<Pharmacist>().ToTable("Pharmacist");
             modelBuilder.Entity<Prescription>().ToTable("Prescription");
             modelBuilder.Entity<MedicalReport>().ToTable("MedicalReport");
-            modelBuilder.Entity<TestType>().ToTable("TestType");
+
             modelBuilder.Entity<TestRange>().ToTable("TestRange");
             modelBuilder.Entity<ReportTestResult>().ToTable("ReportTestResult");
             modelBuilder.Entity<PrescriptionMedicine>().ToTable("PrescriptionMedicine");
@@ -145,7 +147,7 @@ namespace ClinicOne.Data
                 .HasForeignKey<Pharmacist>(p => p.UserAccountID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // MEDICAL REPORT (NO CASCADE TO PATIENT)
+            // MEDICAL REPORT 
             modelBuilder.Entity<MedicalReport>()
                 .Property(m => m.UploadedDate)
                 .HasDefaultValueSql("GETDATE()");
@@ -158,9 +160,9 @@ namespace ClinicOne.Data
 
             // TEST RANGE
             modelBuilder.Entity<TestRange>()
-                .HasOne(r => r.TestType)
-                .WithOne(t => t.TestRange)
-                .HasForeignKey<TestRange>(r => r.TestTypeID)
+                .HasOne(r => r.TestParameter)
+                .WithMany(p => p.TestRanges)
+                .HasForeignKey(r => r.ParameterID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // REPORT TEST RESULT
@@ -179,9 +181,9 @@ namespace ClinicOne.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ReportTestResult>()
-                .HasOne(r => r.TestType)
-                .WithMany(t => t.ReportTestResults)
-                .HasForeignKey(r => r.TestTypeID)
+                .HasOne(r => r.TestParameter)
+                .WithMany(p => p.ReportTestResults)
+                .HasForeignKey(r => r.ParameterID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // PRESCRIPTION
@@ -223,9 +225,9 @@ namespace ClinicOne.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PrescribedTest>()
-                .HasOne(p => p.TestType)
+                .HasOne(p => p.TestPanel)
                 .WithMany(t => t.PrescribedTests)
-                .HasForeignKey(p => p.TestTypeID)
+                .HasForeignKey(p => p.PanelID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // CLINIC SCHEDULE
@@ -343,8 +345,5 @@ namespace ClinicOne.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
         }
-
-
-        // all the setters and getters to function our programs. for now just ignore this. and DON'T dare to touch this without my permisisions.... 
     }
 }
