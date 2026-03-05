@@ -63,7 +63,7 @@ namespace ClinicOne.Data
             modelBuilder.Entity<MedicineReminder>().ToTable("MedicineReminder");
             modelBuilder.Entity<ExternalPrescription>().ToTable("ExternalPrescription");
             modelBuilder.Entity<PrescribedTest>().ToTable("PrescribedTest");
-            modelBuilder.Entity<DoctorDutySchedule>().ToTable("DoctorSchedule");
+            modelBuilder.Entity<DoctorDutySchedule>().ToTable("DoctorDutySchedule");
             modelBuilder.Entity<AccessLog>().ToTable("AccessLog");
             modelBuilder.Entity<UserAccount>().ToTable("UserAccount");
             
@@ -88,6 +88,10 @@ namespace ClinicOne.Data
             modelBuilder.Entity<UserAccount>()
                 .Property(u => u.FailedAttempts)
                 .HasDefaultValue(0);
+
+            modelBuilder.Entity<UserAccount>()
+                .Property(u => u.FirstLogin)
+                .HasDefaultValue(true);
 
             // PATIENT
             modelBuilder.Entity<Patient>()

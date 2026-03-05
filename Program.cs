@@ -35,31 +35,30 @@ app.MapStaticAssets();
 // Map area routes first
 
 //Admin Dashboard route
-//app.MapControllerRoute(
-
-//    name: "areas",
-//    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
-//);
-
-// Optional: redirect root URL to Admin Dashboard directly for now
-//app.MapGet("/", context =>
-//{
-//    context.Response.Redirect("/Admin/Dashboard");
-//    return Task.CompletedTask;
-//});
-
-
-//Login page route
 app.MapControllerRoute(
-    name: "login",
-    pattern: "{controller=Account}/{action=Login}/{id?}"
+
+name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
 );
 
 app.MapGet("/", context =>
 {
-    context.Response.Redirect("/Account/Login");
+    context.Response.Redirect("/Admin/Dashboard");
     return Task.CompletedTask;
 });
+
+
+//Login page route
+//app.MapControllerRoute(
+//    name: "login",
+//    pattern: "{controller=Account}/{action=Login}/{id?}"
+//);
+
+//app.MapGet("/", context =>
+//{
+//    context.Response.Redirect("/Account/Login");
+//    return Task.CompletedTask;
+//});
 
 //Patient portal route
 //app.MapControllerRoute(

@@ -1,0 +1,63 @@
+﻿@{
+    Layout = "_AdminLayout";
+}
+@model DoctorDutyScheduleViewModel
+
+<link rel="stylesheet" href="~/css/admin/doctorDutyScheduleStyles.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="doctor-duty-schedule-management">
+
+    <h1 class="title">Duty Schedule Management</h1>
+
+    <div id="validationMessage" class="validation-message" style="display:none;"></div>
+
+    <div class="week-navigation">
+        <button id="prevWeekBtn" class="nav-btn">← Previous</button>
+        <h2 id="weekRangeText" class="week-range"></h2>
+        <button id="nextWeekBtn" class="nav-btn">Next →</button>
+    </div>
+
+    <div class="weekly-calendar" id="weeklyCalendar">
+
+    </div>
+    <div class="modal" id="doctorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Doctors</h3>
+                <span class="close-modal" onclick="closeDoctorModal()">&times;</span>
+            </div>
+
+
+            <div class="doctor-list">
+                @foreach(var doctor in Model.Doctors)
+                {
+                    <div class="doctor-option">
+                        <input type="checkbox"
+                            value="@doctor.DoctorID"
+                            data-name="@doctor.FullName" />
+                         <label>@doctor.FullName</label>
+                    </div>
+                }
+            </div>
+
+            <button onclick="saveDoctorToSession()" class="btn-save-doctors">
+                Save
+            </button>
+        </div>
+        
+    </div>  
+
+</div>
+<script>
+    const sessionsFromDb = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Sessions));
+    const existingSchedules = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+    Model.ExistingSchedules.Select(x => new {
+        x.DoctorID,
+        x.SessionID,
+        ClinicDate = x.ClinicDate.ToString("yyyy-MM-dd"),
+        x.DoctorName
+    })
+));
+</script>
+<script src="~/js/admin/doctorDutyScheduleScript.js"></script>
