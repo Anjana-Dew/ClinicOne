@@ -9,28 +9,21 @@ namespace ClinicOne.Models.Entities
         public int PrescribedTestID { get; set; }
 
         [Required]
-        public int TestTypeID { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string TestCategory { get; set; }
-
-        [Required]
-        public DateTime OrderDate { get; set; }
+        public int PanelID { get; set; }
 
         [Required]
         public int PrescriptionID { get; set; }
 
-        [MaxLength(300)]
+        public string TestCategory { get; set; }
+
+        public DateTime OrderDate { get; set; }
+
         public string Notes { get; set; }
 
-        [Required]
-        [MaxLength(20)]
         public string Status { get; set; }
 
-
-        [ForeignKey("TestTypeID")]
-        public TestType TestType { get; set; }
+        [ForeignKey("PanelID")]
+        public TestPanel TestPanel { get; set; }
 
         [ForeignKey("PrescriptionID")]
         public Prescription Prescription { get; set; }

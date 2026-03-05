@@ -12,7 +12,7 @@ namespace ClinicOne.Models.Entities
         public int ReportID { get; set; }
 
         [Required]
-        public int TestTypeID { get; set; }
+        public int ParameterID { get; set; }
 
         [Required]
         public decimal TestValue { get; set; }
@@ -24,7 +24,7 @@ namespace ClinicOne.Models.Entities
         [ForeignKey("ReportID")]
         public MedicalReport MedicalReport { get; set; }
         [ForeignKey("TestTypeID")]
-        public TestType TestType { get; set; }
+        public TestParameter TestParameter { get; set; }
 
     }
 }
