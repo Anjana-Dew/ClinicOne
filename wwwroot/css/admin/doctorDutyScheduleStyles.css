@@ -245,3 +245,20 @@
 .btn-save-doctors:hover {
     background: #1e337a;
 }
+/* validation msg*/
+.validation-message {
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.validation-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.validation-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}

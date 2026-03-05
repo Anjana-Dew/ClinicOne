@@ -8,7 +8,8 @@ CREATE TABLE UserAccount (
         CHECK ([Role] IN ('Patient','Doctor','Admin','Pharmacist')),
 	IsLocked BIT  NOT NULL DEFAULT 0,
 	FailedAttempts INT NOT NULL DEFAULT 0,
-	LastLogin DATETIME NULL
+	LastLogin DATETIME NULL,
+    FirstLogin BIT NOT NULL DEFAULT 1
 );
 
 CREATE TABLE Patient (

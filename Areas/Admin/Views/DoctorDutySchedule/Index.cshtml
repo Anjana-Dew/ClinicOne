@@ -10,6 +10,8 @@
 
     <h1 class="title">Duty Schedule Management</h1>
 
+    <div id="validationMessage" class="validation-message" style="display:none;"></div>
+
     <div class="week-navigation">
         <button id="prevWeekBtn" class="nav-btn">← Previous</button>
         <h2 id="weekRangeText" class="week-range"></h2>
@@ -49,5 +51,13 @@
 </div>
 <script>
     const sessionsFromDb = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Sessions));
+    const existingSchedules = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+    Model.ExistingSchedules.Select(x => new {
+        x.DoctorID,
+        x.SessionID,
+        ClinicDate = x.ClinicDate.ToString("yyyy-MM-dd"),
+        x.DoctorName
+    })
+));
 </script>
 <script src="~/js/admin/doctorDutyScheduleScript.js"></script>

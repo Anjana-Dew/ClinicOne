@@ -27,6 +27,9 @@ namespace ClinicOne.Models.Entities
         public int FailedAttempts { get; set; }
         public DateTime? LastLogin {  get; set; }
 
+        [Required]
+        public bool FirstLogin { get; set; }
+
         public Patient patient { get; set; }
         public Doctor Doctor { get; set; }
         public Admin Admin { get; set; }
