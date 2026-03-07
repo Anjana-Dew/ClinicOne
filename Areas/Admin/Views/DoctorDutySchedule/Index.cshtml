@@ -1,4 +1,5 @@
-﻿@{
+﻿@using ClinicOne.Models.ViewModels.Admin
+@{
     Layout = "_AdminLayout";
 }
 @model DoctorDutyScheduleViewModel
@@ -30,13 +31,22 @@
 
 
             <div class="doctor-list">
-                @foreach(var doctor in Model.Doctors)
+                @if (Model.Doctors != null && Model.Doctors.Any())
                 {
-                    <div class="doctor-option">
-                        <input type="checkbox"
-                            value="@doctor.DoctorID"
-                            data-name="@doctor.FullName" />
-                         <label>@doctor.FullName</label>
+                    foreach (var doctor in Model.Doctors)
+                    {
+                        <div class="doctor-option">
+                            <input type="checkbox"
+                                   value="@doctor.DoctorID"
+                                   data-name="@doctor.FullName" />
+                            <label>@doctor.FullName</label>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-doctors-message">
+                        <p>No doctors available.</p>
                     </div>
                 }
             </div>

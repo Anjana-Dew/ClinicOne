@@ -1,5 +1,5 @@
 ﻿using ClinicOne.Data;
-using ClinicOne.Models.ViewModels;
+using ClinicOne.Models.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicOne.Areas.Admin.Controllers

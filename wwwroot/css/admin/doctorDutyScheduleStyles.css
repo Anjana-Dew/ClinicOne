@@ -3,7 +3,7 @@
 }
 
 .title {
-    font-size: clamp(1rem, 3vw, 2rem);
+    font-size: clamp(1.5rem, 3vw, 2rem);
     margin-bottom: 25px;
     color: #1e337a;
     font-weight: bold;
@@ -261,4 +261,10 @@
 .validation-error {
     background-color: #f8d7da;
     color: #721c24;
+}
+.no-doctors-message {
+    text-align: center;
+    font-size: 1rem;
+    color: #1e337a;
+    padding: 20px;
 }

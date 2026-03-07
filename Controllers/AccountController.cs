@@ -8,5 +8,14 @@ namespace ClinicOne.Controllers
         {
             return View();
         }
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Account", new {area = ""});
+        }
+        public IActionResult Test()
+        {
+            return Content("Account Controller Works");
+        }
     }
 }

@@ -3,6 +3,7 @@ let selectedSessionId = null;
 let selectedDate = null;
 let selectedContainer = null;
 
+// get monday of each week
 function getMonday(date) {
     const d = new Date(date);
     const day = d.getDay();
@@ -10,6 +11,7 @@ function getMonday(date) {
     d.setDate(diff);
     return d;
 }
+// get time in minutes
 function parseTimeToMinutes(timeString) {
     const parts = timeString.split(':');
     return parseInt(parts[0] * 60 ) + parseInt(parts[1]);
@@ -34,19 +36,19 @@ function renderWeek() {
 
     const isPastWeek = currentWeekOffset < 0;
 
+    // calendar
     for (let i = 0; i < 7; i++) {
-        // get date
+        // create date for each card
         const dayDate = new Date(baseMonday);
         dayDate.setDate(baseMonday.getDate() + i);
         dayDate.setHours(0, 0, 0, 0);
 
-        //get current time
-
-
+        // get Year, Month, Date
         const year = dayDate.getFullYear();
         const month = String(dayDate.getMonth() + 1).padStart(2, '0');
         const day = String(dayDate.getDate()).padStart(2, '0');
 
+        // set date format
         const formattedDate = `${year}-${month}-${day}`;
 
         const isPastDay = dayDate < today;
@@ -70,6 +72,7 @@ function renderWeek() {
             </div>
         `;
 
+        // sessions
         sessionsFromDb.forEach(session => {
 
             const now = new Date();
@@ -84,12 +87,15 @@ function renderWeek() {
 
             const sessionReadOnly = isPastWeek || isPastDay || isSessionFinished;
 
+            // session box for each session
             const sessionBox = document.createElement("div");
             sessionBox.className = "session-box";
 
+            // doc container
             const doctorContainer = document.createElement("div");
             doctorContainer.className = "doctor-container";
 
+            // already assigned docs
             existingSchedules.forEach(item => {
 
                 if (item.SessionID === session.SessionID &&
@@ -147,22 +153,31 @@ function openDoctorModal() {
     
     resetDoctorModal();
 
+    const doctorList = document.querySelector(".doctor-list");
+    const hasDoctors = doctorList.querySelectorAll(".doctor-option").length > 0;
+
+    if (!hasDoctors) {
+        doctorList.innerHTML = `<div class="no-doctors-message"><p>No doctors available.</p></div>`;
+    }
+
     // get already added docs
     const existingCards = selectedContainer.querySelectorAll(".doctor-card");
 
-    const existingDoctorNames = [];
+    const existingDoctorIds = [];
     existingCards.forEach(card => {
-        existingDoctorNames.push(card.getAttribute("data-name"));
+        existingDoctorIds.push(parseInt(card.getAttribute("data-doctorid")));
     });
 
     //disable them
     const checkboxes = document.querySelectorAll("#doctorModal input[type='checkbox']");
     checkboxes.forEach(cb => {
-        const name = cb.getAttribute("data-name");
 
-        if (existingDoctorNames.includes(name)) {
+        const doctorId = cb.value;
+
+        if (existingDoctorIds.includes(doctorId)) {
             cb.disabled = true;
         }
+
     });
     document.getElementById("doctorModal").style.display = "flex";
 }

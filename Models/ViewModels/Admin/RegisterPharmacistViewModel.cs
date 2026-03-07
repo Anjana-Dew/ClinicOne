@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ClinicOne.Models.ViewModels
+namespace ClinicOne.Models.ViewModels.Admin
 {
     public class RegisterPharmacistViewModel
     {

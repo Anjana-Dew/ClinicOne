@@ -5,7 +5,7 @@
     padding: 30px;
 }
 .title {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
     margin-bottom: 25px;
     color: #1e337a;
     font-weight: bold;
