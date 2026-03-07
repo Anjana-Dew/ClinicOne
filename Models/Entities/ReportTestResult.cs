@@ -23,7 +23,7 @@ namespace ClinicOne.Models.Entities
 
         [ForeignKey("ReportID")]
         public MedicalReport MedicalReport { get; set; }
-        [ForeignKey("TestTypeID")]
+        [ForeignKey("ParameterID")]
         public TestParameter TestParameter { get; set; }
 
     }
