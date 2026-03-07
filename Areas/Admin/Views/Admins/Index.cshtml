@@ -1,0 +1,71 @@
+﻿@using ClinicOne.Models.ViewModels.Admin
+@{
+    Layout = "_AdminLayout";
+}
+@model RegisterAdminViewModel
+
+<link rel="stylesheet" href="~/css/admin/adminStyles.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="success-message" id="successAlert">
+        <span>@TempData["SuccessMessage"]</span>
+        <button type="button" class="close-btn" onclick="closeAlert()">×</button>
+    </div>
+}
+<div class="admin-management">
+    <h1 class="title">Admin Management</h1>
+
+    <section class="search-section">
+
+        <h2 class="section-title">Search Admin</h2>
+
+        <div class="search-container">
+
+            <input type="text" id="searchEmail" placeholder="Eanter Admin Email" class="search-input" />
+            <button type="button" class="search-btn" onclick="searchAdmin()">
+                Search
+            </button>
+
+        </div>
+        <div id="searchResult" class="search-result"></div>
+    </section>
+    <section class="register-section">
+
+        <h2 class="section-title">Register Admin</h2>
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="validation-summary"></div>
+        <form method="post" asp-action="Register">
+
+            <div class="form-group">
+                <label>Name *</label>
+                <input asp-for="Name" class="form-input" />
+                <span asp-validation-for="Name"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Email *</label>
+                <input asp-for="Email" class="form-input" />
+                <span asp-validation-for="Email"></span>
+            </div>
+
+            <div class="form-actions">
+
+                <button type="submit" class="register-btn">
+                    Register
+                </button>
+
+                <a asp-action="Index"
+                   asp-controller="AdminManagement"
+                   asp-area="Admin"
+                   class="cancel-btn">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+    </section>
+</div>
+<script src="~/js/admin/adminManagementScript.js"></script>

@@ -1,12 +1,12 @@
 ﻿body {
+    font-family: 'Poppins', sans-serif;
 }
 /* Dashboard Section */
-.dahsboard-title {
-    font-size: 2rem;
-    font-family: 'Poppins', sans-serif;
+.dashboard-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
     margin-bottom: 25px;
     color: #1e337a;
-    font-weight:bold;
+    font-weight: bold;
 }
 
 /* Cards Container */
@@ -50,14 +50,14 @@
     margin-bottom: 15px;
 }
 .card-count {
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 3vw, 1.5rem);
     color: #1e337a;
     font-family: 'Poppins', sans-serif;
 }
 
 /* Recent Activity Section */
 .section-title {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
     margin-top: 40px;
     margin-bottom: 20px;
     font-family: 'Poppins', sans-serif;
@@ -78,7 +78,6 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px 5px;
-    font-family: 'Poppins', sans-serif;
     color: #1e337a;
     transition: background-color 0.2s ease;
 }
@@ -94,6 +93,9 @@
     height: 1px;
     background-color: #e2e6f5;
     margin: 0 0;
+}
+.empty-activity {
+    color: #5d5d5d;
 }
 
 @media (max-width: 768px){

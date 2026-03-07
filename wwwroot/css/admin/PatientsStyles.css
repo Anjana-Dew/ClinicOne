@@ -2,15 +2,13 @@
     font-family: 'Poppins', sans-serif;
 }
 .title {
-    font-size: 2rem;
-    font-family: 'Poppins', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
     margin-bottom: 25px;
     color: #1e337a;
     font-weight: bold;
 }
 .patient-management {
     padding: 30px;
-    font-family: 'Poppins', sans-serif;
 } 
 
 /* Search Patients Section */

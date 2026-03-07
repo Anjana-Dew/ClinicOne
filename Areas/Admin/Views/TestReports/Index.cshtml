@@ -1,0 +1,33 @@
+﻿@{
+    Layout = "_AdminLayout";
+}
+
+<link rel="stylesheet" href="~/css/admin/testReportsStyles.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="test-report-management">
+
+    <h1 class="title">Test Report Management</h1>
+
+    <div class="search-patient-section">
+
+        <h2 class="search-patient-title">Search Patients</h2>
+        <p class="search-patient-description">
+            Search the patient using their NIC to upload test reports.
+        </p>
+
+        <div class="search-box">
+            <input type="text" id="nicInput" placeholder="Enter Patient NIC..." class="search-input" />
+            <button class="search-btn" onclick="searchPatient()">Search</button>
+        </div>
+
+        <div class="search-result" id="searchResult">
+            <p class="result-placeholder"></p>
+        </div>
+
+    </div>
+
+   
+
+</div>
+<script src="~/js/admin/testReportScript.js"></script>

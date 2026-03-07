@@ -1,0 +1,92 @@
+﻿@using ClinicOne.Models.ViewModels.Admin
+@model List<ClinicOne.Models.ViewModels.Admin.AccessLogViewModel>
+@{
+	var filters = (ViewBag.Filters as AccessLogFilterViewModel);
+}
+
+<link rel="stylesheet" href="~/css/admin/accessLogStyles.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="access-management">
+	<div class="header-bar">
+		<a href="/Admin/AccessLog/Index" class="back-btn">
+			<img src="~/adminImages/ic_back.png" alt="Back" />
+		</a>
+		<img src="~/images/ClinicOneLogoMain.png" alt="Logo" class="logo" />
+	</div>
+
+	<h1 class="title">Access Log Results</h1>
+
+	@if (filters != null)
+	{
+
+		<div class="filters-applied">
+			<h3>Filters Applied</h3>
+			<ul>
+				@if (filters.Month.HasValue)
+				{
+					<li>Month: @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(filters.Month.Value)</li>
+				}
+				@if (filters.Year.HasValue)
+				{
+					<li>Year: @filters.Year</li>
+				}
+
+				@if (filters.DoctorID.HasValue)
+				{
+					<li>Doctor : @ViewBag.DoctorName (@ViewBag.DoctorReg)</li>
+				}
+
+				@if (!string.IsNullOrEmpty(filters.AccessAction))
+				{
+					<li>Action: @filters.AccessAction</li>
+				}
+
+				@if (!string.IsNullOrEmpty(filters.PatientNIC))
+				{
+					<li>Patient NIC: @filters.PatientNIC</li>
+				}
+
+				@if (!filters.Month.HasValue && !filters.Year.HasValue && !filters.DoctorID.HasValue && string.IsNullOrEmpty(filters.AccessAction) && string.IsNullOrEmpty(filters.PatientNIC))
+				{
+					<li>No filters applied (Showing all logs)</li>
+				}
+			</ul>
+		</div>
+	}
+	@if(Model.Count == 0)
+	{
+		<div class="no-logs">
+			No Access logs found for the selected filters.
+		</div>
+	}
+	else
+	{
+
+		<table class="log-table">
+			<thead>
+				<tr>
+					<th>Date & Time</th>
+					<th>Doctor</th>
+					<th>Reg No</th>
+					<th>Patient</th>
+					<th>Patient NIC</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var log in Model)
+				{
+					<tr>
+						<td>@log.AccessDateTime.ToString("yyyy-MM-dd HH:mm")</td>
+						<td>@log.DoctorName</td>
+						<td>@log.RegistrationNumber</td>
+						<td>@log.PatientName</td>
+						<td>@log.PatientNIC</td>
+						<td>@log.AccessAction</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+</div>

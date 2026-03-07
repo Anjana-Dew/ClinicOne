@@ -1,0 +1,73 @@
+﻿@using ClinicOne.Models.ViewModels.Admin
+@{
+    Layout = "_AdminLayout";
+}
+@model RegisterDoctorViewModel
+<link rel="stylesheet" href="~/css/admin/accessLogStyles.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="access-management">
+    <h1 class="title">Access Log Audit </h1>
+    <p class="subtitle">
+        Select filters below and click <strong>Search Logs</strong> to view access logs.
+        Leave filters empty to see all records.
+    </p>
+    <div class="filter-section">
+        <form method="get" action="/Admin/AccessLog/Results">
+            <div class="filters">
+                <div class="filter-item">
+                    <label>Month</label>
+                    <select name="Month">
+                        <option value="">All</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label>Year</label>
+                    <input type="number" name="Year" Value="@DateTime.Now.Year"placeholder="2026" min="2000" max="2100" />
+                </div>
+
+                <div class="filter-item">
+                    <label>Doctor</label>
+                    <select name="DoctorID">
+                        <option value="">All Doctors</option>
+
+                        @foreach (var d in ViewBag.Doctors)
+                        {
+                            <option value="@d.DoctorID">@d.FullName (@d.RegistrationNumber)</option>
+                        }
+
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Action</label>
+                    <select name="AccessAction">
+                        <option value="">All</option>
+                        <option value="View">View</option>
+                        <option value="Update">Update</option>
+                        <option value="Prescribe">Prescribe</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Patient NIC</label>
+                    <input type="text" name="PatientNIC" placeholder="Enter NIC" />
+                </div>
+            </div>
+            <button type="submit" class="search-btn">Search Logs</button>
+        </form>
+    </div>
+    
+</div>
+

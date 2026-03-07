@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+	var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+	var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -21,35 +25,50 @@
 		</header>
 		<div class="admin-container">
 			<aside class="admin-sidebar" id="sidebar">
-				<nav>
+				<nav class="sidebar-menu">
 					<ul>
-						<li class="active">
+
+						<li class="@(currentController == "Dashboard" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
 						</li>
-						<li>
+
+						<li class="@(currentController == "Patients" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="Patients" asp-action="Index">Patients</a>
 						</li>
-						<li>
+
+						<li class="@(currentController == "Pharmacists" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="Pharmacists" asp-action="Index">Pharmacists</a>
 						</li>
-						<li>
+
+						<li class="@(currentController == "Doctors" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="Doctors" asp-action="Index">Doctors</a>
 						</li>
-						<li>
+
+						<li class="@(currentController == "Admins" ? "active" : "")">
+							<a asp-area="Admin" asp-controller="Admins" asp-action="Index">Admins</a>
+						</li>
+
+						<li class="@(currentController == "ClinicSessions" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="ClinicSessions" asp-action="Index">Clinic Sessions</a>
 						</li>
-						<li>
+
+						<li class="@(currentController == "DoctorDutySchedule" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="DoctorDutySchedule" asp-action="Index">Duty Schedule</a>
 						</li>
-						<li>
+
+						<li class="@(currentController == "TestReports" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="TestReports" asp-action="Index">Test Reports</a>
 						</li>
-						<li>
+
+						<li class="@(currentController == "AccessLog" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="AccessLog" asp-action="Index">Access Log</a>
 						</li>
 
 					</ul>
 				</nav>
+				<div class="sidebar-logout">
+				<a href="/Account/Logout" class="logout-btn">Logout</a>
+				</div>
 			</aside>
 			<main class="admin-main">
 				@RenderBody()

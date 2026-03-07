@@ -6,7 +6,7 @@
 <script src="~/js/admin/adminDashboard.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-<h2 class="dahsboard-title">Dashboard</h2>
+<h2 class="dashboard-title">Dashboard</h2>
 
 <div class="dashboard-cards">
 
@@ -25,6 +25,11 @@
         <img src="~/adminImages/pharmacist_icon.png" alt="Pharmacists" />
         <p class="card-count">Total Pharmacists: @ViewBag.PharmacistCount</p>
     </div>
+    <div class="dashboard-card">
+        <img src="~/adminImages/admin_icon.png" alt="Pharmacists" />
+        <p class="card-count">Total Admins: @ViewBag.AdminCount</p>
+    </div>
+
 
 </div>
 
@@ -33,24 +38,36 @@
     <h2 class="section-title">Recent Activity</h2>
 
     <div class="activity-card">
-        <div class="activity-item">
-            <p>New patient registered</p>
-            <span class="activity-time">2 minutes ago</span>
-        </div>
+        
+        @if(ViewBag.RecentLogs != null && ViewBag.RecentLogs.Count > 0)
+        {
+            var logs = ViewBag.RecentLogs;
 
-        <div class="activity-divider"></div>
+            for(int i = 0; i < logs.Count; i++)
+            {
+                <div class="activity-item">
+                    <p>
+                        <strong>@logs[i].DoctorName</strong>
+                        @logs[i].Action
+                        patient <strong>@logs[i].PatientNIC</strong> profile
+                    </p>
 
-        <div class="activity-item">
-            <p>Doctor profile updated</p>
-            <span class="activity-time">10 minutes ago</span>
-        </div>
+                    <span class="activity-time">
+                        @(DateTime.Now.Subtract(logs[i].AccessDateTime).TotalMinutes < 60
+                                        ? $"{(int)DateTime.Now.Subtract(logs[i].AccessDateTime).TotalMinutes} minutes ago"
+                                        : logs[i].AccessDateTime.ToString("g"))
+                    </span>
+                </div>
 
-        <div class="activity-divider"></div>
-
-        <div class="activity-item">
-            <p>New test report uploaded</p>
-            <span class="activity-time">25 minutes ago</span>
-        </div>
-
+                @if( i < logs.Count - 1)
+                {
+                    <div class="activity-divider"></div>
+                }
+            }
+        }
+        else
+        {
+            <p class="empty-activity">No recent activity</p>
+        }
     </div>
 </section>

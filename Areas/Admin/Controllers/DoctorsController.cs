@@ -1,6 +1,6 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.Entities;
-using ClinicOne.Models.ViewModels;
+using ClinicOne.Models.ViewModels.Admin;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Security.Cryptography;
