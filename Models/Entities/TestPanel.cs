@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClinicOne.Models.Entities
 {
+    [Table("TestPanel")]
     public class TestPanel
     {
         [Key]

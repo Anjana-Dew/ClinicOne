@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClinicOne.Models.Entities
 {
-    
 
+    [Table("TestParameter")]
     public class TestParameter
     {
         [Key]
