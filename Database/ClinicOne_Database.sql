@@ -224,7 +224,7 @@ INSERT INTO UserAccount (Username, PasswordHash, Role, FirstLogin)
 VALUES ('mainadmin@clinic.com',
         '6G94qKPK8LYNjnTllCqm2G3BUM08AzOK7yW30tfjrMc=',
         'Admin',
-        0);
+        1);
 
 INSERT INTO Admin (UserAccountID, Name, Email)
 VALUES (1,'Main Admin','mainadmin@clinic.com');
