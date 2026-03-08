@@ -9,6 +9,7 @@ CREATE TABLE UserAccount (
 	IsLocked BIT  NOT NULL DEFAULT 0,
 	FailedAttempts INT NOT NULL DEFAULT 0,
 	LastLogin DATETIME NULL,
+    LockUntil DATETIME NULL,
     FirstLogin BIT NOT NULL DEFAULT 1
 );
 
@@ -217,6 +218,15 @@ CREATE TABLE AccessLog (
     FOREIGN KEY (PatientNIC) REFERENCES Patient(PatientNIC)
 );
 
+--Admin--
+INSERT INTO UserAccount (Username, PasswordHash, Role, FirstLogin)
+VALUES ('mainadmin@clinic.com',
+        '6G94qKPK8LYNjnTllCqm2G3BUM08AzOK7yW30tfjrMc=',
+        'Admin',
+        0);
+
+INSERT INTO Admin (UserAccountID, Name, Email)
+VALUES (1,'Main Admin','mainadmin@clinic.com');
 -- Test full types
 INSERT INTO TestPanel (TestName, Description)
 VALUES

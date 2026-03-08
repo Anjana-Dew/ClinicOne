@@ -1,6 +1,7 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Admin;
+using ClinicOne.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
@@ -42,7 +43,7 @@ namespace ClinicOne.Areas.Admin.Controllers
             // generate password
             string last4 = model.RegistrationNumber.Substring(model.RegistrationNumber.Length - 4);
             string generatedPassword = $"Clinic@{last4}";
-            string hashedPassword = HashPassword(generatedPassword);
+            string hashedPassword = PasswordService.HashPassword(generatedPassword);
 
             var user = new UserAccount
             {
@@ -121,15 +122,6 @@ namespace ClinicOne.Areas.Admin.Controllers
             _context.SaveChanges();
 
             return Json(new { success = true });
-        }
-
-        private string HashPassword(string password) 
-        {
-            using (SHA256 sha = SHA256.Create())
-            {
-                byte[] bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(bytes);
-            }
         }
     }
 }

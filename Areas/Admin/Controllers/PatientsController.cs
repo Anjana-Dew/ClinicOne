@@ -1,6 +1,7 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Admin;
+using ClinicOne.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -54,7 +55,7 @@ namespace ClinicOne.Areas.Admin.Controllers
 
             string generatedPassword = $"Clinic@{last4}";
 
-            string hashedPassword = HashPassword(generatedPassword);
+            string hashedPassword = PasswordService.HashPassword(generatedPassword);
 
             //create UserAccount
             var user = new UserAccount
@@ -92,16 +93,6 @@ namespace ClinicOne.Areas.Admin.Controllers
                 $"Patient register successfully. Default Password: {generatedPassword} ";
 
             return RedirectToAction("Index");
-        }
-
-        //Hashing Method
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(bytes);
-            }
         }
 
         // NIC Validation Method
