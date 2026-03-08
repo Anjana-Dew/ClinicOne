@@ -115,6 +115,9 @@ namespace ClinicOne.Controllers
             if (user == null)
                 return RedirectToAction("Login");
 
+            if (!user.FirstLogin)
+                return RedirectToAction("Login");
+
             user.PasswordHash = PasswordService.HashPassword(model.NewPassword);
             user.FirstLogin = false;
 
