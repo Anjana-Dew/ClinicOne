@@ -30,6 +30,8 @@ namespace ClinicOne.Models.Entities
         [Required]
         public bool FirstLogin { get; set; }
 
+        public DateTime? LockUntil { get; set; }
+
         public Patient patient { get; set; }
         public Doctor Doctor { get; set; }
         public Admin Admin { get; set; }

@@ -1,5 +1,7 @@
 ﻿using ClinicOne.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Http;
 
 namespace ClinicOne.Areas.Admin.Controllers
 {
@@ -11,6 +13,17 @@ namespace ClinicOne.Areas.Admin.Controllers
         public DashboardController(ApplicationDbContext context)
         {
             _context = context; 
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var role = context.HttpContext.Session.GetString("Role");
+
+            if(role != "Admin")
+            {
+                context.Result = new RedirectToActionResult("Login", "Account", null);
+            }
+            base.OnActionExecuting(context);
         }
         public IActionResult Index()
         {

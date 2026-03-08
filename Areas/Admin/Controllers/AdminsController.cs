@@ -1,6 +1,7 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Admin;
+using ClinicOne.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
@@ -25,7 +26,7 @@ namespace ClinicOne.Areas.Admin.Controllers
             //return true;
 
             // when loggin is doen uncomment these
-            var username = User.Identity?.Name;
+            var username = HttpContext.Session.GetString("Username");
             return username != null &&
                 username.Equals(MAIN_ADMIN_EMAIL, StringComparison.OrdinalIgnoreCase);
         }
@@ -58,7 +59,7 @@ namespace ClinicOne.Areas.Admin.Controllers
             }
 
             string defaultPassword = GenerateDefaultPassword(model.Email);
-            string hash = HashPassword(defaultPassword);
+            string hash = PasswordService.HashPassword(defaultPassword);
 
             var user = new UserAccount
             {
@@ -103,7 +104,6 @@ namespace ClinicOne.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
         public IActionResult DeactivateAdmin(string email)
         {
             if (!IsMainAdmin())
@@ -147,14 +147,5 @@ namespace ClinicOne.Areas.Admin.Controllers
             var prefix = email.Substring(0, 4).ToUpper();
             return $"Clinic@{prefix}";
         }
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha = SHA256.Create())
-            {
-                byte[] bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(bytes);
-            }
-        }
-
     }
 }

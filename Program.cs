@@ -37,7 +37,7 @@ app.MapStaticAssets();
 //Admin Dashboard route
 app.MapControllerRoute(
 
-name: "areas",
+    name: "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
 );
 
@@ -46,11 +46,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}"
 );
-app.MapGet("/", context =>
-{
-    context.Response.Redirect("/Admin/Dashboard");
-    return Task.CompletedTask;
-});
+//app.MapGet("/", context =>
+//{
+//    context.Response.Redirect("/Admin/Dashboard");
+//    return Task.CompletedTask;
+//});
 //Login page route
 //app.MapControllerRoute(
 //    name: "login",
