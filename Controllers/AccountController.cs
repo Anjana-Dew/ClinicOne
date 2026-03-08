@@ -75,11 +75,19 @@ namespace ClinicOne.Controllers
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Role", user.Role);
 
-            if(user.Role == "Admin")
-            {
-                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            switch (user.Role) {
+                case "Admin":
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                case "Patient":
+                    return RedirectToAction("Index", "Dashboard", new { area = "Patient" });
+                case "Pharmacist":
+                    return RedirectToAction("Index", "Dashboard", new { area = "Pharmacist" });
+                case "Doctor":
+                    return RedirectToAction("Index", "Dashboard", new { area = "Doctor" });
+                default:
+                    return Content("Role not implemented yet");
             }
-            return Content("Role not implemented yet");
+
         }
         public IActionResult Logout()
         {
