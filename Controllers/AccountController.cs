@@ -76,6 +76,11 @@ namespace ClinicOne.Controllers
             HttpContext.Session.SetString("Role", user.Role);
             HttpContext.Session.SetInt32("UserID", user.UserAccountID);
 
+            if (user.FirstLogin)
+            {
+                return RedirectToAction("ChangePassword");
+            }
+
             switch (user.Role) {
                 case "Admin":
                     return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
@@ -89,6 +94,39 @@ namespace ClinicOne.Controllers
                     return Content("Role not implemented yet");
             }
 
+        }
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var userId = HttpContext.Session.GetInt32("UserID");
+
+            if (userId == null)
+                return RedirectToAction("Login");
+
+            var user = _context.UserAccounts.Find(userId);
+
+            if (user == null)
+                return RedirectToAction("Login");
+
+            user.PasswordHash = PasswordService.HashPassword(model.NewPassword);
+            user.FirstLogin = false;
+
+            _context.SaveChanges();
+
+            TempData["Success"] = "Password changed successfully.";
+
+            HttpContext.Session.Clear();
+
+            TempData["Success"] = "Password changed successfully. Please login again.";
+
+            return RedirectToAction("Login");
         }
         public IActionResult Logout()
         {
