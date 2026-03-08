@@ -122,6 +122,7 @@ CREATE TABLE PrescriptionMedicine (
     Dosage NVARCHAR(100),
     Duration NVARCHAR(50),
     PatientConfirmed BIT NOT NULL DEFAULT 0,
+    TimesPerDay INT NOT NULL
 
     FOREIGN KEY (PrescriptionID) REFERENCES Prescription(PrescriptionID)
 );
