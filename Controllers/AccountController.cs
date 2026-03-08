@@ -74,6 +74,7 @@ namespace ClinicOne.Controllers
 
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Role", user.Role);
+            HttpContext.Session.SetInt32("UserID", user.UserAccountID);
 
             switch (user.Role) {
                 case "Admin":
