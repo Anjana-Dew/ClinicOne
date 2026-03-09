@@ -20,8 +20,8 @@
 .dashboard-card {
     background-color: #d3dcf8;
     flex: 1 1 300px;
-    max-width: 250px;
-    max-height: 230px;
+    max-width: 230px;
+    max-height: 200px;
     border-radius: 12px;
     padding: 25px;
     display: flex;
@@ -45,19 +45,19 @@
 
 /* Card Image */
 .dashboard-card img{
-    height: 100px;
+    height: 95px;
     width: auto;
     margin-bottom: 15px;
 }
 .card-count {
-    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-size: clamp(0.9rem, 3vw, 1.2rem);
     color: #1e337a;
     font-family: 'Poppins', sans-serif;
 }
 
 /* Recent Activity Section */
 .section-title {
-    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-size: clamp(1.2rem, 3vw, 1.9rem);
     margin-top: 40px;
     margin-bottom: 20px;
     font-family: 'Poppins', sans-serif;

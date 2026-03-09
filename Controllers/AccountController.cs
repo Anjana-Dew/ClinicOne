@@ -131,6 +131,7 @@ namespace ClinicOne.Controllers
 
             return RedirectToAction("Login");
         }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
