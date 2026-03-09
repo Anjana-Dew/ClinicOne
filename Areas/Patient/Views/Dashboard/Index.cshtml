@@ -1,95 +1,269 @@
 ﻿@{
     ViewData["Title"] = "Dashboard";
-    var patientName = ViewBag.PatientName ?? "Hiruni";
+    var patientName = "Hiruni";
     Layout = "~/Views/Shared/_PatientLayout.cshtml";
 }
 
-<!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- External CSS -->
 <link rel="stylesheet" href="~/css/patient/patientDashboardStyles.css" />
+
+<!-- PASSWORD CHANGE MODAL -->
+@* LOGIN NOT IMPLEMENTED YET *@
+@* When login is implemented, enable this *@
+@*
+@if (ViewBag.FirstLogin == true)
+{
+    <div id="passwordModal" class="password-modal">
+        <div class="password-box">
+            <h3>🔐 Security Update Required</h3>
+            <p>Please update your password before accessing the system.</p>
+
+            <input type="password" placeholder="New Password" class="input-field"/>
+            <input type="password" placeholder="Confirm Password" class="input-field"/>
+
+            <button class="btn-primary full-btn" onclick="closePasswordModal()">
+                Update Password
+            </button>
+        </div>
+    </div>
+}
+*@
+
 
 <main class="main-content container">
 
-    <div class="security-alert">
-        <div class="alert-content">
-            <span class="alert-icon">🔒</span>
-            <div>
-                <strong>Security Notice</strong>
-                <p>Please update your password.</p>
-            </div>
-        </div>
-        <button class="btn-secondary">Update Password</button>
+    <!-- FLOATING HEALTH ICONS -->
+    <div class="floating-icons">
+        <img src="~/patientImages/pill.png">
+        <img src="~/patientImages/heart.png">
+        <img src="~/patientImages/plus.png">
     </div>
 
-    <div class="welcome">
-        <h2>Welcome back, @patientName</h2>
-        <p>Your health summary has been updated.</p>
-    </div>
 
-    <div class="dashboard-grid">
+    <main class="main-content container">
 
-        <!-- Health Summary -->
-        <div class="card">
-            <h4>Health Summary</h4>
-            <div class="health-stats">
-                <div class="health-stat">
-                    <p class="stat-label">BMI</p>
-                    <h3>22.4</h3>
-                    <span class="stat-status good">Normal</span>
+        <div class="top-section">
+
+            <!-- PATIENT INFO CARD -->
+            <div class="patient-card slide-up">
+
+                <div class="card-layers">
+                    <div class="layer layer1"></div>
+
                 </div>
-                <div class="health-stat">
-                    <p class="stat-label">Blood Pressure</p>
-                    <h3>120 / 80</h3>
-                    <span class="stat-status good">Stable</span>
+
+                <div class="patient-header">
+                    Patient Info
                 </div>
+
+                <div class="patient-body">
+
+                    <div class="patient-left">
+
+                        <img src="~/patientImages/profileD.png" class="patient-avatar" />
+
+                        <div class="patient-contact">
+
+                            <p>📞 0771234567</p>
+                            <p>📧 patient@mail.com</p>
+                            <p>📍 12/A Colombo</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="patient-right">
+
+                        <h2>Hiruni</h2>
+                        <p class="patient-role">Patient</p>
+
+                        <p class="patient-desc">
+                            Registered patient of ClinicOne. Monitoring health records,
+                            prescriptions and medical reports through the portal.
+                        </p>
+
+                        <a asp-area="Patient"
+                           asp-controller="Profile"
+                           asp-action="Index"
+                           class="btn-primary">
+                            Edit Profile
+                        </a>
+
+                    </div>
+
+                </div>
+
             </div>
-        </div>
 
-        <!-- Medications -->
-        <div class="card">
-            <h4>Current Medications</h4>
-            <div class="medicine-list">
-                <div class="medicine-item">
-                    <strong>Paracetamol</strong>
-                    <span>500mg – Twice Daily</span>
+            <!-- HEALTH PROGRESS + SUMMARY CARD -->
+            <div class="health-progress slide-up">
+
+                <h4>Overall Health Status</h4>
+
+                <div class="health-meter">
+
+                    <div class="meter-bar">
+
+                        <div class="meter-fill good"></div>
+
+                    </div>
+
+                    <div class="meter-labels">
+
+                        <span>Risk</span>
+                        <span>Average</span>
+                        <span class="active">Good</span>
+                        <span>Very Good</span>
+
+                    </div>
+
                 </div>
-                <div class="medicine-item">
-                    <strong>Vitamin D</strong>
-                    <span>Once Daily</span>
+
+                <div class="health-summary">
+
+                    <h4>Health Summary</h4>
+
+                    <div class="health-stats">
+
+                        <div class="health-stat bmi">
+                            <img src="~/patientImages/bmi.png" alt="BMI" />
+                            <h3 class="counter">22.4</h3>
+                            <span>BMI</span>
+                        </div>
+
+                        <div class="health-stat weight">
+                            <img src="~/patientImages/weight.png" alt="Weight" />
+                            <h3>60kg</h3>
+                            <span>Weight</span>
+                        </div>
+
+                        <div class="health-stat height">
+                            <img src="~/patientImages/height.png" alt="Height" />
+                            <h3>165cm</h3>
+                            <span>Height</span>
+                        </div>
+
+                        <div class="health-stat pressure">
+                            <img src="~/patientImages/blood-pressure.png" alt="Blood Pressure" />
+                            <h3>120/80</h3>
+                            <span>Blood Pressure</span>
+                        </div>
+
+                    </div>
+
                 </div>
+
             </div>
+
         </div>
 
-        <!-- Latest Report -->
-        <div class="card">
-            <h4>Latest Medical Report</h4>
-            <p>Blood Report - 15 Feb 2026</p>
-            <a asp-area="Patient"
-               asp-controller="Reports"
-               asp-action="Index"
-               class="btn-primary">
-                View Report
-            </a>
-        </div>
+    </main>
 
-        <!-- Appointment -->
-        <div class="card">
-            <h4>Next Appointment</h4>
-            <p>25 Feb 2026 - 9:00 AM</p>
-            <a asp-area="Patient"
-               asp-controller="Sessions"
-               asp-action="Index"
-               class="btn-primary">
-                View Details
-            </a>
+    <!-- DASHBOARD GRID -->
+    <div class="dashboard-container">
+
+        <div class="dashboard-grid">
+
+            <!-- LEFT COLUMN -->
+            <div class="dashboard-column">
+
+                <!-- APPOINTMENTS -->
+                <div class="card slide-up delay-1">
+                    <h4>Upcoming Appointment</h4>
+
+                    <p class="session-date">25 Feb 2026</p>
+                    <p>9:00 AM</p>
+
+                    <p class="doctor">Dr. Silva – Cardiology</p>
+
+                    <a class="btn-primary">View Appointments</a>
+                </div>
+
+
+                <!-- DOCTOR NOTES -->
+                <div class="card slide-up delay-2">
+
+                    <h4>Doctor Notes</h4>
+
+                    <p>
+                        Patient showing good recovery. Continue medication
+                        and maintain healthy diet.
+                    </p>
+
+                    <p>
+                        Blood pressure slightly elevated last visit.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RIGHT COLUMN -->
+            <div class="dashboard-column">
+
+                <!-- TEST REPORT -->
+                <div class="card slide-up delay-3">
+
+                    <h4>Latest Test Report</h4>
+
+                    <p><strong>Report:</strong> Blood Test</p>
+
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="status-badge good">Stable</span>
+                    </p>
+
+                    <p><strong>Date:</strong> 15 Feb 2026</p>
+
+                    <a class="btn-primary">View Full Report</a>
+
+                </div>
+
+
+
+                <!-- MEDICATIONS -->
+                <div class="card slide-up delay-4">
+
+                    <h4>Current Medications</h4>
+
+                    <div class="medicine-scroll">
+
+                        <div class="medicine-item">
+                            <span>Paracetamol</span>
+                            <small>500mg – Twice Daily</small>
+                        </div>
+
+                        <div class="medicine-item">
+                            <span>Vitamin D</span>
+                            <small>Once Daily</small>
+                        </div>
+
+                        <div class="medicine-item">
+                            <span>Calcium</span>
+                            <small>Night – After Meal</small>
+                        </div>
+
+                        <div class="medicine-item">
+                            <span>Omega 3</span>
+                            <small>Morning</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
     </div>
+    
 
 </main>
+
 
 @section Scripts {
     <script src="~/js/patient/patientDashboard.js"></script>
 }
+

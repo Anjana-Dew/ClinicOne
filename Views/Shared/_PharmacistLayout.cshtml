@@ -4,5 +4,85 @@
 
 @{
 
-    // For pharmacist Nav bar, Footer
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Pharmacist Portal - ClinicOne</title>
+
+        <link rel="stylesheet" href="~/css/pharmacist/pharmacistLayout.css" />
+
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+
+        <header>
+
+            <div class="header-left">
+
+                <button id="sidebarToggle" class="toggle-btn">☰</button>
+
+                <div class="header-logo">
+                    <img src="~/images/logo_White.png" class="logo" />
+                </div>
+
+            </div>
+
+            <div class="header-text">
+                <h1>Pharmacist Portal - ClinicOne</h1>
+            </div>
+
+        </header>
+
+
+        <div class="pharmacist-container">
+
+            <aside class="pharmacist-sidebar" id="sidebar">
+
+                <nav>
+                    <ul>
+
+                        <li class="active">
+                            <a asp-area="Pharmacist"
+                               asp-controller="Dashboard"
+                               asp-action="Index">
+                                Dashboard
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-area="Pharmacist"
+                               asp-controller="Prescription"
+                               asp-action="Search">
+                                Search Patient
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Account"
+                               asp-action="Logout">
+                                Logout
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+
+            </aside>
+
+
+            <main class="pharmacist-main">
+
+                @RenderBody()
+
+            </main>
+
+        </div>
+
+        <script src="~/js/pharmacist/pharmacistLayout.js"></script>
+
+    </body>
+    </html>
 }

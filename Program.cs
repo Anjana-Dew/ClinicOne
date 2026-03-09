@@ -50,22 +50,29 @@ app.MapStaticAssets();
 
 
 //Login page route
-app.MapControllerRoute(
-    name: "login",
-    pattern: "{controller=Account}/{action=Login}/{id?}"
-);
+//app.MapControllerRoute(
+//    name: "login",
+//    pattern: "{controller=Account}/{action=Login}/{id?}"
+//);
 
-app.MapGet("/", context =>
-{
-    context.Response.Redirect("/Account/Login");
-    return Task.CompletedTask;
-});
+//app.MapGet("/", context =>
+//{
+//    context.Response.Redirect("/Account/Login");
+//    return Task.CompletedTask;
+//});
 
-//Patient portal route
+////Patient portal route
 //app.MapControllerRoute(
 //    name: "default",
 //    pattern: "{controller=Dashboard}/{action=Index}/{id?}",
 //    defaults: new { area = "Patient" }
+//);
+
+//Pharmacist portal route
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Dashboard}/{action=Index}/{id?}",
+//    defaults: new { area = "Pharmacist" }
 //);
 
 

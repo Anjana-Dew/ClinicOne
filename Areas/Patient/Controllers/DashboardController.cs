@@ -5,8 +5,10 @@ namespace ClinicOne.Areas.Patient.Controllers
     [Area("Patient")]
     public class DashboardController : Controller
     {
+        private static bool isFirstLogin = true;
         public IActionResult Index()
         {
+            ViewBag.FirstLogin = isFirstLogin;
             return View();
         }
 
@@ -29,6 +31,12 @@ namespace ClinicOne.Areas.Patient.Controllers
             return View("~/Areas/Patient/Views/Prescriptions/Index.cshtml");
         }
 
+        [HttpGet]
+        public IActionResult DisableFirstLogin()
+        {
+            isFirstLogin = false;
+            return Ok();
+        }
 
     }
 }

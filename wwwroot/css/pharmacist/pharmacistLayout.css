@@ -1,0 +1,116 @@
+﻿body {
+    margin: 0;
+}
+
+/* HEADER */
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #1e3fae;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    color: white;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.4);
+    z-index: 1100;
+}
+
+.header-logo .logo {
+    height: 70px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 20px;
+}
+
+.toggle-btn {
+    background: transparent;
+    border: none;
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.header-text {
+    flex: 1;
+    text-align: center;
+}
+
+    .header-text h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        font-family: 'Poppins',sans-serif;
+    }
+
+
+/* CONTAINER */
+
+.pharmacist-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f6f8;
+}
+
+
+/* SIDEBAR */
+
+.pharmacist-sidebar {
+    width: 240px;
+    background-color: #1e3fae;
+    position: fixed;
+    top: 90px;
+    bottom: 0;
+    left: 0;
+    color: white;
+}
+
+    .pharmacist-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .pharmacist-sidebar ul li a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-family: 'Poppins',sans-serif;
+            transition: 0.3s;
+        }
+
+            .pharmacist-sidebar ul li a:hover,
+            .pharmacist-sidebar ul li.active a {
+                background-color: rgba(255,255,255,0.15);
+            }
+
+
+/* MAIN */
+
+.pharmacist-main {
+    flex: 1;
+    margin-left: 240px;
+    padding: 20px;
+    padding-top: 100px;
+}
+
+
+/* COLLAPSE */
+
+.pharmacist-sidebar.collapsed {
+    transform: translateX(-100%);
+}
+
+    .pharmacist-sidebar.collapsed ~ .pharmacist-main {
+        margin-left: 0;
+    }

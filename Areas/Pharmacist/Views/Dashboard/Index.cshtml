@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "_PharmacistLayout";
+}
+
+<link rel="stylesheet" href="~/css/pharmacist/pharmacistDashboardStyles.css" />
+
+<h2 class="section-title">Search Patient</h2>
+
+<div class="search-container">
+
+    <form asp-area="Pharmacist"
+          asp-controller="Prescription"
+          asp-action="Search"
+          method="get">
+
+        <input type="text"
+               name="nic"
+               placeholder="Enter Patient NIC"
+               required />
+
+        <button type="submit">Search</button>
+
+    </form>
+
+</div>
+
+<h2 class="dashboard-title">Dashboard</h2>
+
+<div class="dashboard-cards">
+
+    <div class="dashboard-card">
+
+        <img src="~/pharmacistImages/MedicineToday.png" />
+
+        <p class="card-count">
+            Prescriptions Today: @ViewBag.TodayPrescriptions
+        </p>
+
+    </div>
+
+    <div class="dashboard-card">
+
+        <img src="~/pharmacistImages/MedicineGiven.png" />
+
+        <p class="card-count">
+            Medicines Given: @ViewBag.GivenMedicines
+        </p>
+
+    </div>
+
+    <div class="dashboard-card">
+
+        <img src="~/pharmacistImages/MedicinePending.png" />
+
+        <p class="card-count">
+            Pending Medicines: @ViewBag.PendingMedicines
+        </p>
+
+    </div>
+
+</div>

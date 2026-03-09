@@ -1,5 +1,6 @@
 ﻿@{
     var patientName = ViewBag.PatientName ?? "Patient";
+    var hasNotifications = ViewBag.HasNotifications ?? true;
 }
 
 <!DOCTYPE html>
@@ -12,82 +13,49 @@
     <link rel="stylesheet" href="~/css/patient/patientLayout.css" asp-append-version="true" />
 </head>
 <body>
-
-    <!-- NAVBAR -->
     <header class="navbar">
-        <div class="logo">
-            <img src="~/patientImages/logo.png" alt="ClinicOne Logo" class="logo-img" />
-            <span>ClinicOne</span>
+
+        <div class="nav-left">
+            <div class="logo">
+                <img src="~/images/logo_White.png" alt="Logo">
+                <span>ClinicOne</span>
+            </div>
         </div>
-            
 
-        <ul class="nav-links">
-            <li>
-                <a asp-area="Patient"
-                   asp-controller="Dashboard"
-                   asp-action="Index">Dashboard</a>
-            </li>
+       
+        <nav class="nav-center">
+            <a asp-area="Patient" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+            <a asp-area="Patient" asp-controller="Dashboard" asp-action="Reports">Reports</a>
+            <a asp-area="Patient" asp-controller="Dashboard" asp-action="Sessions">Sessions</a>
+            <a asp-area="Patient" asp-controller="Dashboard" asp-action="Prescriptions">Prescriptions</a>
+        </nav>
 
-            <li>
-                <a asp-area="Patient"
-                   asp-controller="Dashboard"
-                   asp-action="Reports">Reports</a>
-            </li>
+       
+        <div class="nav-right">
 
-            <li>
-                <a asp-area="Patient"
-                   asp-controller="Dashboard"
-                   asp-action="Sessions">Sessions</a>
-            </li>
+            <span id="currentDateTime" class="datetime"></span>
 
-            <li>
-                <a asp-area="Patient"
-                   asp-controller="Dashboard"
-                   asp-action="Prescriptions">Prescriptions</a>
-            </li>
-        </ul>
-
-        <div class="profile">
-            <div class="bell">
-                🔔
-                <span class="badge">3</span>
+            <div class="notification">
+                <span class="bell">🔔</span>
+                <span class="badge"></span>
             </div>
 
-            <span id="currentDateTime"></span>
+            <button class="logout-btn">
+                Logout
+            </button>
 
-            <span class="user-name">@patientName</span>
         </div>
-    </header>
 
-    <!-- PAGE CONTENT -->
+    </header>
     <main class="main-content">
         @RenderBody()
     </main>
 
-    <!-- FOOTER -->
     <footer class="footer">
-        <div class="footer-container">
-
-            <div class="footer-brand">
-                <h3>ClinicOne</h3>
-                <p>Smart Healthcare Management System</p>
-            </div>
-
-            <div class="footer-contact">
-                <p>📞 +94 77 123 4567</p>
-                <p>📧 support@clinicone.lk</p>
-            </div>
-
-            <div class="footer-right">
-                <p>© <span id="year"></span> ClinicOne</p>
-                <p>All Rights Reserved</p>
-            </div>
-
-        </div>
+        <p>© 2026 ClinicOne. All Rights Reserved.</p>
     </footer>
 
     <script src="~/js/patient/patientLayout.js"></script>
-
     @RenderSection("Scripts", required: false)
 
 </body>
