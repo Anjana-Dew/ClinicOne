@@ -51,7 +51,8 @@ namespace ClinicOne.Areas.Admin.Controllers
                 PasswordHash = hashedPassword,
                 Role = "Pharmacist",
                 IsLocked = false,
-                FailedAttempts = 0
+                FailedAttempts = 0,
+                FirstLogin = true
             };
             _context.UserAccounts.Add(user);
             _context.SaveChanges();
