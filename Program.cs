@@ -63,11 +63,18 @@ app.MapControllerRoute(
 //    return Task.CompletedTask;
 //});
 
-//Patient portal route
+////Patient portal route
 //app.MapControllerRoute(
 //    name: "default",
 //    pattern: "{controller=Dashboard}/{action=Index}/{id?}",
 //    defaults: new { area = "Patient" }
+//);
+
+//Pharmacist portal route
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Dashboard}/{action=Index}/{id?}",
+//    defaults: new { area = "Pharmacist" }
 //);
 
 

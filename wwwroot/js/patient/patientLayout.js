@@ -1,5 +1,6 @@
 ﻿function updateTime() {
     const now = new Date();
+
     const options = {
         year: 'numeric',
         month: 'short',
@@ -14,6 +15,3 @@
 
 setInterval(updateTime, 1000);
 updateTime();
-
-document.getElementById("year").textContent =
-    new Date().getFullYear();

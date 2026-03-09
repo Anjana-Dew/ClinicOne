@@ -1,0 +1,90 @@
+﻿/* DASHBOARD TITLE */
+
+.dashboard-title {
+    font-size: 2rem;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 25px;
+    color: #1e337a;
+    font-weight: bold;
+}
+
+/* DASHBOARD CARDS */
+
+.dashboard-cards {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.dashboard-card {
+    background-color: #d3dcf8;
+    max-width: 250px;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .dashboard-card img {
+        height: 90px;
+        margin-bottom: 10px;
+    }
+
+.card-count {
+    font-size: 1.4rem;
+    font-family: 'Poppins', sans-serif;
+    color: #1e337a;
+}
+
+/* SEARCH BAR */
+
+.section-title {
+    font-size: 2rem;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+    color: #1e337a;
+    font-weight: bold;
+}
+
+.search-container {
+    background-color: #d3dcf8;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 500px;
+}
+
+    .search-container form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-container input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+
+    .search-container button {
+        background: #1e3fae;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        .search-container button:hover {
+            background: #162f84;
+        }
