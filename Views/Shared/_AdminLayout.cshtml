@@ -43,11 +43,12 @@
 						<li class="@(currentController == "Doctors" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="Doctors" asp-action="Index">Doctors</a>
 						</li>
-
+					@if (Context.Session.GetString("Username") == "mainadmin@clinic.com")
+					{
 						<li class="@(currentController == "Admins" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="Admins" asp-action="Index">Admins</a>
 						</li>
-
+					}
 						<li class="@(currentController == "ClinicSessions" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="ClinicSessions" asp-action="Index">Clinic Sessions</a>
 						</li>
@@ -55,7 +56,7 @@
 						<li class="@(currentController == "DoctorDutySchedule" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="DoctorDutySchedule" asp-action="Index">Duty Schedule</a>
 						</li>
-
+					
 						<li class="@(currentController == "TestReports" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="TestReports" asp-action="Index">Test Reports</a>
 						</li>
@@ -63,23 +64,25 @@
 						<li class="@(currentController == "AccessLog" ? "active" : "")">
 							<a asp-area="Admin" asp-controller="AccessLog" asp-action="Index">Access Log</a>
 						</li>
+					@if (Context.Session.GetString("Username") == "mainadmin@clinic.com")
+					{
+						<li>
+							<a asp-area="Admin" asp-controller="PasswordManagement" asp-action="Index">
+								Password Management
+							</a>
+						</li>
+					}
 
 					</ul>
 				</nav>
 				<div class="sidebar-logout">
-				<a href="/Account/Logout" class="logout-btn">Logout</a>
+					<a href="/Account/Logout" class="logout-btn">Logout</a>
 				</div>
 			</aside>
 			<main class="admin-main">
 				@RenderBody()
 			</main>
 		</div>
-	<script>
-		document.getElementById("sidebarToggle")
-			.addEventListener("click", function () {
-				document.getElementById("sidebar")
-					.classList.toggle("collapsed");
-			});
-	</script>
+	<script src="~/js/admin/adminLayoutScript.js"></script>
 	</body>
 </html>
