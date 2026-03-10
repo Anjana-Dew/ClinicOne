@@ -279,3 +279,18 @@ input:focus, select:focus {
 .header-bar .logo {
     height: 55px; 
 }
+@media (max-width: 600px) {
+    .search-box {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-btn {
+        width: 100%; 
+    }
+
+    .search-patient-section {
+        margin-right: 15px;
+        margin-left: 15px;
+    }
+}

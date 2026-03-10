@@ -124,7 +124,6 @@
     border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
-    font-family: 'Poppins', sans-serif;
     transition: 0.2s ease;
 }
 
@@ -134,6 +133,9 @@
 
 /* Cancel-btn */
 .cancel-btn {
+    display: inline-block;
+    text-align: center;
+    box-sizing: border-box;
     background-color: #6c755d;
     color: white;
     border: none;
@@ -143,7 +145,6 @@
     transition: 0.2s ease-in-out;
     font-weight: 500;
     font-size: 0.95rem;
-    font-family: 'Poppins', sans-serif;
     text-decoration: none;
 }
 
@@ -151,7 +152,10 @@
 .cancel-btn:hover {
     background-color: #5a6268;
 }
-
+.error-msg {
+    color: #dc3545;
+    font-weight: 600;
+}
 .entity-card {
     display: flex;
     justify-content: space-between;
@@ -269,4 +273,32 @@
 
 .header-bar .logo {
     height: 55px; 
+}
+@media (max-width: 600px) {
+   
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .register-btn,
+    .cancel-btn {
+        width: 100%; 
+        text-align: center; 
+    }
+
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-btn {
+        width: 100%; 
+    }
+
+    .search-section,
+    .register-section {
+        margin-right: 15px;
+        margin-left: 15px;
+    }
 }

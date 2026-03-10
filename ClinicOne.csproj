@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Admin\Views\Pharmacists\Dashboard\**" />
+    <Content Remove="Areas\Admin\Views\Pharmacists\Dashboard\**" />
+    <EmbeddedResource Remove="Areas\Admin\Views\Pharmacists\Dashboard\**" />
+    <None Remove="Areas\Admin\Views\Pharmacists\Dashboard\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.3">
@@ -16,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Views\Pharmacists\Dashboard\" />
     <Folder Include="Areas\Patient\Views\Prescriptions\" />
     <Folder Include="Areas\Patient\Views\Profile\" />
     <Folder Include="wwwroot\uploads\reports\" />
