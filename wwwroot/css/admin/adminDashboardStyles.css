@@ -19,11 +19,12 @@
 /* individual card */
 .dashboard-card {
     background-color: #d3dcf8;
-    flex: 1 1 300px;
+    /*flex: 1 1 300px;*/
+    flex: 1 1 clamp(180px, 25vw, 230px);
     max-width: 230px;
     max-height: 200px;
     border-radius: 12px;
-    padding: 25px;
+    padding: clamp(15px, 3vw, 25px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -45,7 +46,7 @@
 
 /* Card Image */
 .dashboard-card img{
-    height: 95px;
+    height: clamp(60px, 10vw, 95px);
     width: auto;
     margin-bottom: 15px;
 }
