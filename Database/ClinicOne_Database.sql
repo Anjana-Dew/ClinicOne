@@ -157,7 +157,7 @@ CREATE TABLE [Notification] (
 CREATE TABLE PatientProgress (
     ProgressID INT IDENTITY(1,1) PRIMARY KEY,
     PatientNIC VARCHAR(20) NOT NULL,
-    ReportID INT NOT NULL,
+    ProgressDate INT NOT NULL,
     ProgressStatus VARCHAR(20) NOT NULL
         CHECK (ProgressStatus IN ('Improving','Stable','Worsening')),
     IsConfirmed BIT NOT NULL DEFAULT 0,

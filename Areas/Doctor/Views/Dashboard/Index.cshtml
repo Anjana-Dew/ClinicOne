@@ -1,3 +1,61 @@
-﻿@{
+﻿@model ClinicOne.Models.ViewModels.Doctor.DoctorDashboardViewModel
+@{
 	Layout = "_DoctorLayout";
 }
+<link rel="stylesheet" href="~/css/doctor/doctorDashboard.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="doctor-dashboard">
+
+	<div class="search-section">
+
+		<h2>Seach Patients</h2>
+
+		<form asp-controller="Dashboard" method="post" asp-action="SearchPatient">
+
+			<div class="search-box">
+
+				<input type="text" name="nic" placeholder="Enter Patient NIC" required />
+
+				<button type="submit">Search</button>
+			</div>
+
+		</form>
+
+		@if(TempData["Error"] != null)
+		{
+			
+			<div class="error-msg">
+				@TempData["Error"]
+			</div>
+		}
+
+	</div>
+
+	<div class="doctor-card">
+
+		<div class="profile-icon">
+
+			<img src="~/doctorImages/ic_docs.png" alt="Doctor Icon" />
+
+		</div>
+
+		<div class="doctor-info">
+
+			<h3>@Model.DoctorName</h3>
+
+			<p class="specialization">@Model.Specialization</p>
+
+			<p class="profile-note">
+				Profile information is managed by the administrator.
+				Please contact admin for chanegs.
+			</p>
+		</div>
+
+		<div class="doctor-date">
+
+			@Model.CurrentDate.ToString("dddd , dd MMM yyyy") 
+
+		</div>
+	</div>
+</div>

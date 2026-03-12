@@ -2,6 +2,7 @@
 using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Admin;
 using ClinicOne.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Security.Cryptography;
@@ -10,6 +11,8 @@ using System.Text;
 namespace ClinicOne.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class DoctorsController : Controller
     {
         private readonly ApplicationDbContext _context;
