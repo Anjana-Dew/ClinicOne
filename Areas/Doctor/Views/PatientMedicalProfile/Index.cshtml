@@ -1,0 +1,260 @@
+﻿@model ClinicOne.Models.ViewModels.Doctor.PatientMedicalProfileViewModel
+@{
+	Layout = "_DoctorPatientLayout";
+}
+
+<link rel="stylesheet" href="~/css/doctor/patientProfile.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+@if(TempData["Success"] != null)
+{
+	<div class="temp-message" id="tempMessage">
+		@TempData["Success"]
+	</div>
+}
+
+<input type="hidden" id="patientNIC" value="@Model.PatientNIC">
+<div class="profile-container">
+
+	<div class="vitals-section">
+		
+		<div class="vital-card">
+
+			<h3>Height</h3>
+			<p id="heightValue">
+				@(Model.Height != null ? Model.Height + " cm" : "No value") 
+			</p>
+
+			<button onclick="openPopup('heightPopup')" class="update-btn">Update</button>
+
+		</div>
+
+		<div class="vital-card">
+
+			<h3>Weight</h3>
+			<p id="weightValue">
+				@(Model.Weight != null ? Model.Weight + " kg" : "No value") 
+			</p>
+
+			<button onclick="openPopup('weightPopup')" class="update-btn">Update</button>
+
+		</div>
+
+		<div class="vital-card">
+
+			<h3>BMI</h3>
+			<p id="bmiValue">
+				@(Model.BMI != null ? Math.Round(Model.BMI.Value,1) : "No value") 
+			</p>
+
+		</div>
+
+		<div class="vital-card">
+
+			<h3>Blood Pressure</h3>
+			<p id="bpValue">
+				@(Model.BloodPressure ?? "No value") 
+			</p>
+
+			<button onclick="openPopup('bloodPressurePopup')" class="update-btn">Update</button>
+
+		</div>
+	</div>
+
+	<div class="patient-info-card">
+
+		<p><strong>Patient NIC</strong>: @Model.PatientNIC </p>
+		<p><strong>Name</strong>: @Model.FullName </p>
+		<p><strong>Blood Type</strong>: 
+			@if (Model.BloodType == null)
+			{
+				<span>Unknown</span>
+				<button onclick="openPopup('bloodTypePopup')">Add</button>
+			}
+			else
+			{
+				<span>@Model.BloodType</span>
+			}
+		</p>
+		<p><strong>Address</strong>: @Model.Address </p>
+		<p><strong>Phone Number</strong>: @Model.PhoneNumber </p>
+	</div>
+
+	<!--Medical reports-->
+	<div class="medical-reports-section">
+		<h2 class="reports-title">Recent Test Reports</h2>
+
+		<div class="reports-wrapper">
+			<div class="report-cards">
+				@if (Model.MedicalReports != null && Model.MedicalReports.Any())
+				{
+					foreach (var report in Model.MedicalReports)
+					{
+						<div class="report-card">
+
+							<div class="report-header">
+								<h3>@report.PanelName</h3>
+							</div>
+
+							<div class="report-body">
+
+								<!-- Latest -->
+								<div class="report-column">
+									<h4>Latest Results</h4>
+									<p class="report-date">@report.LatestUploadedDate.ToString("dd MMM yyyy")</p>
+
+									@foreach (var p in report.LatestResults)
+									{
+										<div class="parameter-row">
+											<span>@p.ParameterName</span>
+											<span>@p.TestValue @p.Unit</span>
+											<span class="status-dot @(p.ResultStatus == "Normal" ? "green" : p.ResultStatus == "High" ? "orange" : "red")"></span>
+										</div>
+									}
+
+									<a href="@report.LatestReportPath" target="_blank" class="report-link">
+										View Full Report
+									</a>
+								</div>
+
+								<!-- Previous -->
+								<div class="report-column">
+									<h4>Previous Results</h4>
+									@if (report.PreviousResults != null)
+									{
+										<p class="report-date">@report.PreviousUploadedDate?.ToString("dd MMM yyyy")</p>
+
+										foreach (var p in report.PreviousResults)
+										{
+											<div class="parameter-row">
+												<span>@p.ParameterName</span>
+												<span>@p.TestValue @p.Unit</span>
+												<span class="status-dot @(p.ResultStatus == "Normal" ? "green" : p.ResultStatus == "High" ? "orange" : "red")"></span>
+											</div>
+										}
+
+										<a href="@report.PreviousReportPath" target="_blank" class="report-link">
+											View Full Report
+										</a>
+									}
+									else
+									{
+										<p>No previous test available</p>
+									}
+								</div>
+							</div>
+						</div>
+					}
+					<div class="view-all-container">
+						<a href="/Doctor/Reports/Index?nic=@Model.PatientNIC" class="view-all-btn">
+							View All Reports
+						</a>
+					</div>
+				}
+				else
+				{
+					<p class="no-reports">No medical reports uploaded yet.</p>
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Popups-->
+<div class="popup" id="heightPopup">
+
+	<div class="popup-content">
+
+		<h3>Update Height</h3>
+
+		<input type="number" id="heightInput">
+
+		<select id="heightUnit">
+
+			<option value="cm">cm</option>
+
+			<option value="in">inches</option>
+
+		</select>
+
+		<button onclick="saveHeight()" class="save-btn">Save</button>
+		<button onclick="closePopup('heightPopup')" class="cancel-btn">Cancel</button>
+
+	</div>
+
+</div>
+
+<div class="popup" id="weightPopup">
+
+	<div class="popup-content">
+
+		<h3>Update Weight</h3>
+
+		<input type="number" id="weightInput">
+
+		<select id="weightUnit">
+
+			<option value="kg">kg</option>
+
+			<option value="lbs">lbs</option>
+
+		</select>
+
+		<button onclick="saveWeight()" class="save-btn">Save</button>
+		<button onclick="closePopup('weightPopup')" class="cancel-btn">Cancel</button>
+
+	</div>
+
+</div>
+
+<div class="popup" id="bloodPressurePopup">
+
+	<div class="popup-content">
+
+		<h3>Update Blood Presure</h3>
+
+		<input type="text" id="bpInput" placeholder="Example: 120/80">
+
+		<button onclick="saveBP()" class="save-btn">Save</button>
+		<button onclick="closePopup('bloodPressurePopup')" class="cancel-btn">Cancel</button>
+
+	</div>
+
+</div>
+
+<div class="popup" id="bloodTypePopup">
+
+	<div class="popup-content">
+
+		<h3> Add Blood Type</h3>
+
+		<select id="bloodTypeInput">
+			<option value="A+">A+</option>
+			<option value="A-">A-</option>
+			<option value="B+">B+</option>
+			<option value="B-">B-</option>
+			<option value="AB+">AB+</option>
+			<option value="AB-">AB-</option>
+			<option value="O+">O+</option>
+			<option value="O-">O-</option>
+		</select>
+
+		<button onclick="confirmBloodType()" class="save-btn">Save</button>
+		<button onclick="closePopup('bloodTypePopup')" class="cancel-btn">Cancel</button>
+
+	</div>
+</div>
+<div class="popup" id="bloodTypeConfirmPopup">
+
+	<div class="popup-content">
+		<h3>Confirm Blood Type</h3>
+		<p>Make sure the blood type is correct.</p>
+		<p>This action cannot be undone.</p>
+
+		<button onclick="saveBloodType()" class="continue-btn">Continue</button>
+		<button onclick="closePopup('bloodTypeConfirmPopup')" class="back-btn">Back</button>
+
+	</div>
+</div>
+<script src="~/js/doctor/patientProfile.js"></script>
+

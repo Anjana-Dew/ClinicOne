@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Patient Medical Profile</title>
+
+    <link rel="stylesheet" href="~/css/doctor/doctorLayoutStyles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <header class="doctor-header">
+
+        <div class="header-left">
+            <img src="~/images/ClinicOneLogoMain.png" class="logo" alt="ClinicOne Logo" />
+        </div>
+
+        <div class="header-center">
+            <h1>Patient Medical Profile</h1>
+        </div>
+
+        <div class="header-right">
+            <a asp-area="Doctor"
+               asp-controller="Dashboard"
+               asp-action="Index"
+               class="back-btn">
+                Back &rarr;
+            </a>
+        </div>
+
+    </header>
+
+    <main class="doctor-main">
+        @RenderBody()
+    </main>
+
+    <footer class="doctor-footer">
+        <p>&copy; @DateTime.Now.Year ClinicOne</p>
+    </footer>
+
+</body>
+</html>

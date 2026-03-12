@@ -1,6 +1,7 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Admin;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace ClinicOne.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class ClinicSessionsController : Controller
     {
         private readonly ApplicationDbContext _context;
