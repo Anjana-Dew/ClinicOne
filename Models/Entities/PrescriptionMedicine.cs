@@ -31,6 +31,8 @@ namespace ClinicOne.Models.Entities
         [Required]
         public bool PatientConfirmed { get; set; }
 
+        public int TimesPerDay { get; set; }
+
         [ForeignKey("PrescriptionID")]
         public Prescription Prescription { get; set; }
         public ICollection<MedicineReminder> MedicineReminders { get; set; }

@@ -181,24 +181,29 @@
     font-family: Poppins;
     transition: opacity 0.5s ease;
 }
-
+.error-message {
+    color: #ae1e1e;
+    border-left: 4px solid #ae1e1e;
+}
+/*Medical reports*/
 .medical-reports-section{
     margin-top: 20px;
 }
 .reports-title {
-    text-align: left;
+    text-align: center;
     margin-bottom: 20px;
     color: #1e3fae;
     font-weight: 700;
     width: 100%;
     display: block;
+    font-size: clamp(1.2rem, 2vw + 1rem, 2rem);
 }
 .reports-wrapper {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .report-cards{
@@ -206,16 +211,19 @@
     gap: 20px;
     justify-content: flex-start;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .report-card {
     background: rgba(255,255,255,0.85);
     border-radius: 12px;
     padding: 20px;
-    width: 450px;
+    width: /*100%*/550px;
+    max-width: 100%;
     backdrop-filter: blur(8px);
     box-shadow: 0 3px 10px rgba(30, 63, 174, 0.15);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /*flex: 1 1 300px*/;
 }
 .report-card:hover {
     transform: translateY(-6px) scale(1.03);
@@ -227,20 +235,29 @@
     justify-content: space-between;
     margin-bottom: 15px;
 }
-.report-body{
+.report-header h3{
+    color: #1e3fae;
+    font-weight: bold;
+}
+.report-body {
     display: flex;
     gap: 20px;
+    flex-wrap: nowrap;
 }
-.report-column{
-    flex:1;
+.report-column {
+    flex: 1;
     background: rgba(211,220,248,0.35);
     border-radius: 8px;
     padding: 12px;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    min-width: 200px;
 }
 .report-column:hover {
     transform: scale(1.02);
     box-shadow: 0 4px 8px rgba(30,63,174,0.2);
+}
+.report-column h4{
+    color:#1e337a;
 }
 
 .parameter-row {
@@ -274,10 +291,12 @@
 .report-link:hover{
     text-decoration: underline;
 }
-.view-all-container{
-    display:flex;
+.view-all-container {
+    display: flex;
     margin-top: 20px;
     align-items: center;
+    justify-content: center;
+    
 }
 .view-all-btn {
     height: fit-content;
@@ -306,7 +325,229 @@
     color: #6c757d;
     font-style: italic;
     margin-top: 10px;
+    text-align: center;
+    width: 100%;
 }
+
+/*medicine history*/
+.medicine-history-section {
+    margin-top: 30px;
+}
+
+.medicine-dates {
+    margin-bottom: 10px;
+    color: #1e3fae;
+    font-size: 14px;
+}
+
+.medicine-body {
+    max-height: 150px;
+    overflow-y: auto;
+}
+.header-row {
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 5px;
+    color:#1e3fae;
+}
+.medicine-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #6684e5;
+    color: #1e3fae;
+    font-weight: 500;
+}
+.medical-reports-section,
+.medicine-history-section {
+    display: block; 
+    width: 100%; 
+    margin-top: 20px;
+}
+/*Prescriptions & CLinic DAtes*/
+.doctor-action-wrapper {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.doctor-action-section {
+    margin-top: 40px;
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    max-width: 1400px;
+    margin-left: auto; 
+    margin-right: auto;
+}
+.action-card {
+    flex: 0 0 600px;
+    max-width: 600px;
+    min-height: 250px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 3px 10px rgba(30,63,174,0.15);
+    transition: transform 0.2s ease;
+}
+.action-card:hover {
+    transform: translateY(-4px);
+}
+.action-card h3{
+    color:#1e3fae;
+    margin-bottom: 20px;
+}
+.action-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom:15px;
+}
+.action-btn {
+    background: #1e3fae;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease;
+}
+.action-btn:hover {
+    background: #d3dcf8;
+    color:#1e3fae;
+    border: 2px solid #1e3fae;
+}
+
+/*prescription action*/
+
+.prescription-left,
+.clinic-left {
+    flex: 0 0 auto;
+}
+
+.prescription-icon,
+.clinic-icon {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.prescription-right,
+.clinic-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.prescription-right h3,
+.clinic-right h3 {
+    color: #1e3fae;
+    font-weight: 700;
+    margin: 0;
+}
+
+.prescription-right p,
+.clinic-right p {
+    margin: 0;
+    color: #1e3fae;
+    font-weight: 400;
+}
+/*clinic action card*/
+.action-card.clinic-card,
+.action-card.prescription-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    gap: 20px;
+}
+
+.action-card.clinic-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
+.action-btn-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    background: #1e3fae;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.action-btn-btn:hover {
+    background: #d3dcf8;
+    color:#1e3fae;
+    border: 2px solid #1e3fae;
+}
+/*.action-row span {
+    color: #1e337a;
+    font-weight: 500;
+}*/
+/*Session toggle*/
+.session-toggle{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:10px 0;
+}
+
+.session-option{
+    border:1px solid #ccc;
+    padding:8px 12px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.session-option input{
+    display:none;
+}
+
+.session-option span{
+    display:block;
+}
+
+.session-option input:checked + span{
+    background:#2a7be4;
+    color:white;
+    padding:6px 10px;
+    border-radius:4px;
+}
+
+.popup-warning{
+    font-size:13px;
+    margin-top:10px;
+    color:#666;
+}
+.no-session-msg {
+    color: #888;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.slot-remaining {
+    color: green;
+    font-size: 12px;
+}
+
+.slot-full {
+    color: red;
+    font-size: 12px;
+}
+
+.session-full {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -339,6 +580,53 @@
     .popup-content button {
         width: 100%;
         margin-top: 12px 0;
+    }
+    report-card {
+        max-width: 100%;
+    }
+
+    .report-body {
+        flex-direction: column;
+    }
+    .view-all-container {
+        width: 100%;
+    }
+
+    .doctor-action-section{
+        flex-wrap:wrap;
+    }
+    .prescription-card,
+    .action-card {
+        flex: 1 1 90%;
+    }
+    .prescription-icon,
+    .clinic-icon {
+        width: 70px;
+        height: 70px;
+    }
+
+
+}
+@media (max-width: 480px) {
+    .reports-title {
+        text-align: center;
+        font-size: 1.2rem;
+    }
+
+    .report-card {
+        padding: 15px;
+    }
+
+    .report-column {
+        width: 100%;
+    }
+    .view-all-container {
+        width: 100%;
+    }
+    prescription-icon,
+    .clinic-icon {
+        width: 50px;
+        height: 50px;
     }
 
 }

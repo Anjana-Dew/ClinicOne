@@ -1,0 +1,119 @@
+﻿@model List<ClinicOne.Models.ViewModels.Doctor.ReportListViewModel>
+
+<link rel="stylesheet" href="~/css/doctor/reports.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="reports-page">
+
+	<div class="header-bar">
+
+		<a href="javascript:history.back()" class="back-btn">
+			<img src="~/adminImages/ic_back.png" alt="Back" />
+		</a>
+		
+		<h2 class="page-title">Medical Reports</h2>
+
+		<img src="~/images/ClinicOneLogoMain.png" class="logo" />
+	</div>
+	<form method="get" class="filters">
+
+		<input type="hidden" name="nic" value="@ViewBag.PatientNIC" />
+
+		<!--Panel-->
+		<select name="panel" onchange="this.form.submit()">
+
+			<option value="All">All Panels</option>
+
+			@foreach (var p in ViewBag.Panels)
+			{
+				if (ViewBag.SelectedPanel == p)
+				{
+					<option value="@p" selected>@p</option>
+				}
+				else
+				{
+					<option value="@p">@p</option>
+				}
+			}
+		</select>
+
+		<!--Year-->
+		<select name="year" onchange="this.form.submit()">
+
+			<option value="">All Years</option>
+
+			@for (int y = DateTime.Now.Year; y >= 2015; y--)
+			{
+				if (ViewBag.SelectedYear == y)
+				{
+					<option value="@y" selected>@y</option>
+				}
+				else
+				{
+					<option value="@y">@y</option>
+				}
+			}
+		</select>
+
+		<!--Month-->
+		<select name="month" onchange="this.form.submit()">
+
+			<option value="">All Months</option>
+
+			@for (int m = 1; m <= 12; m++)
+			{
+				var name = new DateTime(2000, m, 1).ToString("MMMM");
+
+				if (ViewBag.SelectedMonth == m)
+				{
+					<option value="@m" selected>@name</option>
+				}
+				else
+				{
+					<option value="@m">@name</option>
+				}
+			}
+		</select>
+	</form>
+
+	@if(Model != null && Model.Any())
+	{
+		<table class="reports-table">
+
+			<thead>
+
+				<tr>
+
+					<th>Date</th>
+					<th>Test Panel</th>
+					<th>Report</th>
+				</tr>
+			</thead>
+			<tbody>
+
+				@foreach(var report in Model)
+				{
+					
+					<tr>
+
+						<td>@report.UploadedDate.ToString("dd MMM yyyy")</td>
+
+						<td>@report.PanelName</td>
+
+						<td>
+
+							<a href="@report.ReportPath" target="_blank" class="open-report">
+								Open PDF
+							</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+	else
+	{
+		<p class="no-reports">No reports available for this patient.</p>
+	}
+</div>
+

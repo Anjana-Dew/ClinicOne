@@ -11,7 +11,10 @@
         public decimal? Weight { get; set; }
         public string BloodPressure { get; set; }
         public decimal? BMI { get; set; }
+        public PatientProgressViewModel Progress { get; set; }
 
+        public List<ClinicSessionItemViewModel> ClinicSessions { get; set; }
         public List<MedicalReportCardViewModel> MedicalReports { get; set; }
+        public List<MedicineHistoryCardViewModel> MedicineHistories { get; set; }
     }
 }

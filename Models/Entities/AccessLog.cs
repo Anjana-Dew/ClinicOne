@@ -26,7 +26,7 @@ namespace ClinicOne.Models.Entities
         [ForeignKey("PatientNIC")]
         public Patient Patient { get; set; }
 
-        [ForeignKey("DoctorId")]
+        [ForeignKey("DoctorID")]
         public Doctor Doctor { get; set; }
     }
 }

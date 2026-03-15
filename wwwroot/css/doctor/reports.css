@@ -1,0 +1,137 @@
+﻿body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #d3dcf8;
+}
+.reports-page{
+    background:#d3dcf8;
+    min-height:100vh;
+    padding: 30px;
+}
+.header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    flex-wrap: wrap;
+    gap:15px;
+}
+.back-btn img {
+    height: 32px;
+    width: 48px;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+.logo {
+    height: 70px;
+}
+
+.page-title{
+   color: #1e337a;
+   font-size: clamp(0.85rem, 2vw + 1rem, 2.5rem);
+   font-weight: 600;
+   text-align: center;
+   flex:1;
+}
+.filters {
+    margin: 20px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filters select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filters select:hover,
+.filters select:focus {
+    border-color: #2b7cff;
+    box-shadow: 0 0 6px rgba(43, 124, 255, 0.3);
+    outline: none;
+}
+
+.reports-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.reports-table th{
+    background:#eef2ff;
+    text-align:left;
+    padding:12px;
+    font-weight: 600;
+    color: #1e337a;
+
+}
+
+.reports-table td{
+    padding:12px;
+    border-top:1px solid #e6e6e6;
+    font-size: 0.95rem;
+
+}
+.reports-table tr:hover {
+    background: #f9faff;
+    transition: background 0.3s ease;
+}
+
+.open-report{
+    color:#2b7cff;
+    font-weight:600;
+    text-decoration:none;
+}
+
+.open-report:hover{
+    text-decoration:underline;
+}
+
+.no-reports{
+    color:#666;
+    text-align: center;
+    margin-top: 20px;
+
+}
+@media (max-width: 768px) {
+    .header-bar {
+        justify-content: center; 
+    }
+
+    .logo {
+        height: 45px;
+    }
+    .filters {
+        justify-content: center;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 0.85rem; 
+    }
+
+    .header-bar {
+        flex-direction: column; 
+        align-items: center;
+    }
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filters select {
+        width: 100%;
+    }
+
+}
