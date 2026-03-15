@@ -137,3 +137,72 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 3000);
     }
 });
+
+
+//Clinic scheduling
+
+document.getElementById("clinicDatePicker").addEventListener("change", function () {
+
+    let selectedDate = this.value;
+
+    fetch(`/Doctor/PatientMedicalProfile/GetSessionsForDate?clinicDate=${selectedDate}`)
+        .then(res => res.json())
+        .then(data => {
+
+            let container = document.querySelector(".session-toggle");
+            container.innerHTML = "";
+
+            data.forEach(session => {
+
+                let isFull = session.remainingSlots <= 0;
+
+                let option = `
+                    <label class="session-option ${isFull ? "session-full" : ""}">
+                        <input type="radio"
+                               name="SelectedSessionID"
+                               value="${session.sessionID}"
+                               ${isFull ? "disabled" : ""}
+                               required />
+
+                        <span>
+                            ${session.sessionName}
+                            <small>
+                                (${session.startTime} - ${session.endTime})
+                            </small>
+                            <br>
+
+                            ${isFull
+                        ? `<small class="slot-full">No slots available</small>`
+                        : `<small class="slot-remaining">${session.remainingSlots} slots left</small>`
+                    }
+
+                        </span>
+                    </label>
+                `;
+
+                container.insertAdjacentHTML("beforeend", option);
+            });
+        });
+});
+document.addEventListener("DOMContentLoaded", function () {
+
+    let datePicker = document.getElementById("clinicDatePicker");
+
+    let today = new Date();
+    let yyyy = today.getFullYear();
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let dd = String(today.getDate()).padStart(2, '0');
+
+    let minDate = `${yyyy}-${mm}-${dd}`;
+
+    datePicker.setAttribute("min", minDate);
+});
+document.addEventListener("DOMContentLoaded", function () {
+
+    let picker = document.getElementById("clinicDatePicker");
+
+    if (picker) {
+        picker.dispatchEvent(new Event("change"));
+    }
+
+});

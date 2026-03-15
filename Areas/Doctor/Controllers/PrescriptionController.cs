@@ -1,0 +1,115 @@
+﻿using ClinicOne.Data;
+using ClinicOne.Models.Entities;
+using ClinicOne.Models.ViewModels.Doctor;
+using ClinicOne.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
+
+namespace ClinicOne.Areas.Doctor.Controllers
+{
+    [Area("Doctor")]
+    [Authorize(Roles = "Doctor")]
+    public class PrescriptionController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly AccessLogService _accessLogService;
+
+        public PrescriptionController(ApplicationDbContext context, AccessLogService accessLogService)
+        {
+            _context = context;
+            _accessLogService = accessLogService;
+        }
+
+        public IActionResult Create(string nic)
+        {
+            var tests = _context.TestPanels.Select(t => new TestOptionViewModel
+            {
+                PanelID = t.PanelID,
+                TestName = t.TestName,
+            }).ToList();
+
+            var model = new CreatePrescriptionViewModel
+            {
+                PatientNIC = nic,
+
+                Medicines = new List<MedicineInputViewModel>
+                {
+                    new MedicineInputViewModel()
+                },
+                Tests = new List<TestRowViewModel>
+                {
+                    new TestRowViewModel()
+                },
+                AvailableTests = tests
+            };
+          
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult SavePrescription(CreatePrescriptionViewModel model)
+        {
+            model.Medicines = model.Medicines
+                .Where(m => !string.IsNullOrEmpty(m.MedicineName) &&
+                !string.IsNullOrEmpty(m.Dosage)&&
+                m.TimesPerDay > 0)
+                .ToList();
+
+            if (!model.Medicines.Any() && (model.Tests == null || !model.Tests.Any(t => t.PanelID > 0)))
+            {
+                return BadRequest("Prescription must contain at least a medicine or a test.");
+            }
+
+            var prescription = new Prescription
+            {
+                PatientNIC = model.PatientNIC,
+                PrescriptionDate = DateTime.Now,
+                Notes = model.Notes,
+            };
+
+            _context.Prescriptions.Add(prescription);
+            _context.SaveChanges();
+
+            foreach(var med in model.Medicines)
+            {
+                var medicine = new PrescriptionMedicine
+                {
+                    PrescriptionID = prescription.PrescriptionID,
+                    MedicineName = med.MedicineName,
+                    Dosage = med.Dosage,
+                    TimesPerDay = med.TimesPerDay,
+                    Status = "Not Given"
+                };
+
+                _context.PrescriptionMedicines.Add(medicine);
+            }
+
+            if (model.Tests != null) 
+            { 
+                model.Tests = model.Tests.Where(t => t.PanelID > 0).ToList();
+
+                foreach(var test in model.Tests)
+                {
+                    var prescribedTest = new PrescribedTest
+                    {
+                        PanelID = test.PanelID,
+                        TestCategory = "Lab",
+                        OrderDate = DateTime.Now,
+                        PrescriptionID = prescription.PrescriptionID,
+                        Notes = test.Notes,
+                        Status = "Ordered"
+                    };
+
+                    _context.PrescribedTests.Add(prescribedTest);
+                }
+            }
+            _context.SaveChanges();
+            _accessLogService.Log(model.PatientNIC, "Prescribe");
+
+            TempData["Success"] = "Prescription saved successfully";
+
+            return RedirectToAction("Index", "PatientMedicalProfile", new { id = model.PatientNIC });
+        }
+    }
+}

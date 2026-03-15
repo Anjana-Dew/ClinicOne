@@ -287,11 +287,11 @@ namespace ClinicOne.Data
                 .HasForeignKey(p => p.PatientNIC)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<PatientProgress>()
-                .HasOne(p => p.MedicalReport)
-                .WithMany(m => m.PatientProgresses)
-                .HasForeignKey(p => p.ReportID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<PatientProgress>()
+            //    .HasOne(p => p.MedicalReport)
+            //    .WithMany(m => m.PatientProgresses)
+            //    .HasForeignKey(p => p.ReportID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             // MEDICINE REMINDER
             modelBuilder.Entity<MedicineReminder>()

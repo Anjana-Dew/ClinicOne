@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using ClinicOne.Data;
+using ClinicOne.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<AccessLogService>();
 
 // Add DB Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

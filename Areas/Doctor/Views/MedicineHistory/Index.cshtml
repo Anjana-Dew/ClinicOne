@@ -1,0 +1,100 @@
+﻿@model ClinicOne.Models.ViewModels.Doctor.MedicineHistoryPageViewModel
+
+<link rel="stylesheet" href="~/css/doctor/medicineHistory.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<div class="medicine-history">
+
+    <div class="header-bar">
+
+        <a href="/Doctor/PatientMedicalProfile/Index?id=@Model.PatientNIC" class="back-btn">
+            <img src="~/adminImages/ic_back.png" />
+        </a>
+
+        <h2 class="page-title">Medicine History</h2>
+
+        <img src="~/images/ClinicOneLogoMain.png" class="logo" />
+    </div>
+
+    <form method="get" class="filter-bar">
+
+        <input type="hidden" name="nic" value="@Model.PatientNIC" />
+
+        <select name="month">
+            <option value="">All Months</option>
+            @for (int i = 1; i <= 12; i++)
+            {
+                <option value="@i" selected="@(Model.SelectedMonth == i)">
+                    @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                </option>
+            }
+        </select>
+
+        <select name="year">
+            <option value="">All Years</option>
+            @foreach (var y in Model.AvailableYears)
+            {
+                <option value="@y" selected="@(Model.SelectedYear == y)">
+                    @y
+                </option>
+            }
+        </select>
+
+        <button type="submit">Filter</button>
+
+    </form>
+
+    <div class="reports-wrapper">
+
+        <div class="report-cards">
+
+            @if (Model.MedicineHistories.Any())
+            {
+                foreach (var card in Model.MedicineHistories)
+                {
+                    <div class="report-card">
+
+                        <div class="report-header">
+                            <h3>Prescription</h3>
+                        </div>
+
+                        <div class="medicine-dates">
+                            <p><strong>Prescribed:</strong> @card.PrescriptionDate.ToString("dd MMM yyyy")</p>
+                            <p>
+                                <strong>Until:</strong>
+                                @(card.UntilDate?.ToString("dd MMM yyyy") ?? "Next Visit")
+                            </p>
+                        </div>
+
+                        <div class="medicine-body">
+
+                            <div class="medicine-row header-row">
+                                <span>Medicine Name</span>
+                                <span>Dosage</span>
+                                <span>Times / Day</span>
+                            </div>
+
+                            @foreach (var med in card.Medicines)
+                            {
+                                <div class="medicine-row">
+                                    <span>@med.MedicineName</span>
+                                    <span>@med.Dosage</span>
+                                    <span>@med.TimesPerDay</span>
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="no-reports">No medicine history available.</p>
+            }
+
+        </div>
+
+    </div>
+
+</div>
