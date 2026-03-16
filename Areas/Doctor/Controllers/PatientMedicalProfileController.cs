@@ -170,14 +170,20 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             if (latestReportDate != null && previousReportDate != null)
             {
-                var latestResults = _context.ReportTestResults
-                    .Where(r => r.MedicalReport.PatientNIC == id &&
-                                r.MedicalReport.ReportDate == latestReportDate)
+                var latestResults = (from rtr in _context.ReportTestResults
+                                     join mr in _context.MedicalReports
+                                     on rtr.ReportID equals mr.ReportID
+                                     where mr.PatientNIC == id &&
+                                           mr.ReportDate == latestReportDate
+                                     select rtr)
                     .ToList();
 
-                var previousResults = _context.ReportTestResults
-                    .Where(r => r.MedicalReport.PatientNIC == id &&
-                                r.MedicalReport.ReportDate == previousReportDate)
+                var previousResults = (from rtr in _context.ReportTestResults
+                                       join mr in _context.MedicalReports
+                                       on rtr.ReportID equals mr.ReportID
+                                       where mr.PatientNIC == id &&
+                                             mr.ReportDate == previousReportDate
+                                       select rtr)
                     .ToList();
 
                 var suggested = CalculateProgress(latestResults, previousResults);
