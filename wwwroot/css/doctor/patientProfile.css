@@ -20,7 +20,7 @@
 
 .vital-card{
     background: rgba(255,255,255,0.75);
-/*    border: 2px solid #1e3fae;*/
+    /*border: 2px solid #1e3fae;*/
     padding: 14px 14px;
     width: 140px;
     text-align: center;
@@ -457,21 +457,17 @@
     color:#1e3fae;
     border: 2px solid #1e3fae;
 }
-
 /*prescription action*/
-
 .prescription-left,
 .clinic-left {
     flex: 0 0 auto;
 }
-
 .prescription-icon,
 .clinic-icon {
     width: 100px;
     height: 100px;
     object-fit: contain;
 }
-
 .prescription-right,
 .clinic-right {
     flex: 1;
@@ -480,14 +476,12 @@
     justify-content: center;
     gap: 10px;
 }
-
 .prescription-right h3,
 .clinic-right h3 {
     color: #1e3fae;
     font-weight: 700;
     margin: 0;
 }
-
 .prescription-right p,
 .clinic-right p {
     margin: 0;
@@ -505,7 +499,6 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     gap: 20px;
 }
-
 .action-card.clinic-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 6px 12px rgba(30, 63, 174, 0.25);
