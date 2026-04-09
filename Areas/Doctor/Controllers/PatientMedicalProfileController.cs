@@ -27,6 +27,18 @@ namespace ClinicOne.Areas.Doctor.Controllers
             // vitals and personal info
             var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == id);
 
+            //Vitals
+            var vitals = _context.PatientVitals
+                .Where(v => v.PatientNIC == id)
+                .OrderByDescending(v => v.RecordedDate)
+                .ToList();
+
+            var latestHeight = vitals.FirstOrDefault(v => v.Height != null)?.Height;
+            var latestWeight = vitals.FirstOrDefault(v => v.Weight != null)?.Weight;
+            var latestBp = vitals.FirstOrDefault(v => v.Systolic != null && v.Diastolic != null);
+
+            string bloodPressure = latestBp != null ? $"{latestBp.Systolic}/{latestBp.Diastolic}" : null;
+
             if (patient == null)
             {
                 return RedirectToAction("Index", "Dashboard");
@@ -36,10 +48,11 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             decimal? bmi = null;
 
-            if (patient.Height != null && patient.Weight != null) { 
+
+            if (latestHeight != null && latestWeight != null) { 
                 
-                var heightM = (decimal)patient.Height / 100;
-                bmi = patient.Weight / (heightM * heightM);
+                var heightM = (decimal)latestHeight / 100;
+                bmi = latestWeight / (heightM * heightM);
             }
 
             var model = new PatientMedicalProfileViewModel
@@ -49,14 +62,13 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 BloodType = patient.BloodType,
                 Address = patient.Address,
                 PhoneNumber = patient.PhoneNumber,
-                Height = patient.Height,
-                Weight = patient.Weight,
-                BloodPressure = patient.BloodPressure,
+                Height = latestHeight,
+                Weight = latestWeight,
+                BloodPressure = bloodPressure,
                 BMI = bmi
             };
+            
 
-
-           
             // test reports
             var reports = _context.MedicalReports
                             .Where(r => r.PatientNIC == id)
@@ -189,15 +201,32 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 var suggested = CalculateProgress(latestResults, previousResults);
 
                 var existing = _context.PatientProgresses
-                                .FirstOrDefault(p => p.PatientNIC == id && p.ProgressDate == latestReportDate);
+                                .FirstOrDefault(p => p.PatientNIC == id && p.ProgressDate == latestReportDate.Value);
+
+                if(existing == null)
+                {
+                    var newProgress = new PatientProgress
+                    {
+                        PatientNIC = id,
+                        ProgressDate = latestReportDate.Value,
+                        ProgressStatus = suggested,
+                        IsConfirmed = false,
+                        RecordedDate = DateTime.Now
+                    };
+
+                    _context.PatientProgresses.Add(newProgress);
+                    _context.SaveChanges();
+
+                    existing = newProgress;
+                }
 
                 model.Progress = new PatientProgressViewModel
                 {
                     PatientNIC = id,
                     ProgressDate = latestReportDate.Value,
                     SuggestedStatus = suggested,
-                    CurrentStatus = existing?.ProgressStatus ?? suggested,
-                    IsConfirmed = existing?.IsConfirmed ?? false,
+                    CurrentStatus = existing?.ProgressStatus?? suggested,
+                    IsConfirmed = existing?.IsConfirmed?? false,
                     DoctorNotes = existing?.DoctorNotes
                 };
             }
@@ -238,7 +267,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
             }
             model.MedicineHistories = medicineCards;
 
-            //Clinic Sheduling
+            //Clinic Scheduling
 
             model.ClinicSessions = _context.ClinicSessions
                 .Select(s => new ClinicSessionItemViewModel
@@ -254,6 +283,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
             return View(model);
         }
 
+        // update vital methods
         [HttpPost]
         public IActionResult UpdateHeight([FromBody] HeightUpdateRequest request)
         {
@@ -264,8 +294,13 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 return NotFound();
             }
 
-            patient.Height = request.Height;
-
+            var vital = new PatientVital
+            {
+                PatientNIC = request.Nic,
+                Height = request.Height
+            };
+            
+            _context.PatientVitals.Add(vital);    
             _context.SaveChanges();
 
             _accessLogService.Log(request.Nic, "Update");
@@ -280,12 +315,17 @@ namespace ClinicOne.Areas.Doctor.Controllers
         {
             var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic);
 
-            if (patient == null) 
-            { 
+            if (patient == null)
+            {
                 return NotFound();
             }
+            var vital = new PatientVital
+            {
+                PatientNIC = request.Nic,
+                Weight = request.Weight
+            };
 
-            patient.Weight = request.Weight;
+            _context.PatientVitals.Add(vital);
 
             _context.SaveChanges();
 
@@ -305,8 +345,27 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 return NotFound();
             }
 
-            patient.BloodPressure = request.Bp;
+            int? systolic = null;
+            int? diastolic = null;
 
+            if(!string.IsNullOrEmpty(request.Bp) && request.Bp.Contains("/")) 
+            {
+                var parts = request.Bp.Split('/');
+
+                if(parts.Length == 2)
+                {
+                    systolic = int.Parse(parts[0]);
+                    diastolic= int.Parse(parts[1]);
+                }
+            }
+            var vital = new PatientVital
+            {
+                PatientNIC = request.Nic,
+                Systolic = systolic,
+                Diastolic = diastolic
+            };
+
+            _context.PatientVitals.Add(vital);
             _context.SaveChanges();
 
             _accessLogService.Log(request.Nic, "Update");
@@ -360,7 +419,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             if (alreadyBooked)
             {
-                TempData["Error"] = "Patient already has a clinic appoinment on this date.";
+                TempData["Error"] = "Patient already has a clinic appointment on this date.";
                 return RedirectToAction("Index", new { id = PatientNIC });
             }
             var schedule = new ClinicSchedule
@@ -437,40 +496,46 @@ namespace ClinicOne.Areas.Doctor.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConfirmProgress(string patientNIC, DateTime progressDate, string doctorNotes)
+        public IActionResult ConfirmProgress(string patientNIC, DateTime progressDate, string doctorNotes, string SuggestedStatus)
         {
-            var progress = new PatientProgress
+            var progress = _context.PatientProgresses
+                .FirstOrDefault(p => p.PatientNIC == patientNIC && p.ProgressDate == progressDate);
+            if(progress == null)
             {
-                PatientNIC = patientNIC,
-                ProgressDate = progressDate,
-                ProgressStatus = Request.Form["SuggestedStatus"].ToString() ?? "Stable",
-                DoctorNotes = doctorNotes,
-                IsConfirmed = true,
-                RecordedDate = DateTime.Now
-            };
+                progress = new PatientProgress
+                {
+                    PatientNIC = patientNIC,
+                    ProgressDate = progressDate,
+                    RecordedDate = DateTime.Now
+                };
+                _context.PatientProgresses.Add(progress);
+            }
 
-            _context.PatientProgresses.Add(progress);
+            progress.ProgressStatus = SuggestedStatus ?? "Stable";
+            progress.DoctorNotes = doctorNotes;
+            progress.IsConfirmed = true;
+
             _context.SaveChanges();
 
             TempData["Success"] = "Progress confirmed.";
             return RedirectToAction("Index", new { id = patientNIC });
         }
 
-        public IActionResult UpdateProgressStatus(string patientNIC, DateTime progressDate, string progressStatus, string doctorNotes)
-        {
-            var progress = _context.PatientProgresses.FirstOrDefault(p => p.PatientNIC == patientNIC && p.ProgressDate == progressDate);
+        //public IActionResult UpdateProgressStatus(string patientNIC, DateTime progressDate, string progressStatus, string doctorNotes)
+        //{
+        //    var progress = _context.PatientProgresses.FirstOrDefault(p => p.PatientNIC == patientNIC && p.ProgressDate == progressDate);
 
-            if (progress != null)
-            {
-                progress.ProgressStatus = progressStatus;
-                progress.DoctorNotes = doctorNotes;
+        //    if (progress != null)
+        //    {
+        //        progress.ProgressStatus = progressStatus;
+        //        progress.DoctorNotes = doctorNotes;
 
-                _context.SaveChanges();
-            }
+        //        _context.SaveChanges();
+        //    }
 
-            TempData["Success"] = "Progress updated.";
+        //    TempData["Success"] = "Progress updated.";
 
-            return RedirectToAction("Index", new { id = patientNIC });
-        }
+        //    return RedirectToAction("Index", new { id = patientNIC });
+        //}
     }
 }

@@ -23,7 +23,7 @@ namespace ClinicOne.Models.Entities
         public bool IsConfirmed { get; set; }
 
         [MaxLength(500)]
-        public string DoctorNotes { get; set; }
+        public string? DoctorNotes { get; set; }
         [Required]
         public DateTime RecordedDate { get; set; }
 

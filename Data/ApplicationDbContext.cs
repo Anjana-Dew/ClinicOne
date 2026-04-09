@@ -17,6 +17,8 @@ namespace ClinicOne.Data
         public DbSet<Pharmacist> Pharmacists { get; set; }
         public DbSet<UserAccount> UserAccounts { get; set; }
 
+        public DbSet<PatientVital> PatientVitals { get; set; }
+
         // Medical Reports
         public DbSet<MedicalReport> MedicalReports { get; set; }
         public DbSet<ReportTestResult> ReportTestResults { get; set; }
@@ -105,18 +107,19 @@ namespace ClinicOne.Data
                 .HasDefaultValue(true);
 
             modelBuilder.Entity<Patient>()
-                .Property(p => p.Height)
-                .HasPrecision(5, 2);
-
-            modelBuilder.Entity<Patient>()
-                .Property(p => p.Weight)
-                .HasPrecision(5, 2);
-
-            modelBuilder.Entity<Patient>()
                 .HasOne(p => p.UserAccount)
                 .WithOne(u => u.patient)
                 .HasForeignKey<Patient>(p => p.UserAccountID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            //Vitals
+            modelBuilder.Entity<PatientVital>().ToTable("PatientVitals");
+
+            modelBuilder.Entity<PatientVital>()
+                .HasOne(v => v.Patient)
+                .WithMany(p => p.Vitals)
+                .HasForeignKey(v => v.PatientNIC)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // DOCTOR
             modelBuilder.Entity<Doctor>()

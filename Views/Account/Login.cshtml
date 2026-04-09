@@ -2,26 +2,106 @@
     Layout = null;
 }
 @model ClinicOne.Models.ViewModels.Auth.LoginViewModel
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Success"]
-    </div>
-}
-<h2>Login</h2>
 
-<form asp-action="Login" method="post">
-    <div>
-        <label>Username</label>
-        <input asp-for="Username" type="text" />
+<link rel="stylesheet" href="~/css/auth/loginStyle.css" />
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <img src="~/images/ClinicOneLogoMain.png" alt="ClinicOne Logo">
+        <div class="system-title">Clinic Management System</div>
     </div>
 
-    <div>
-        <label>Password</label>
-        <input asp-for="Password" type="password" />
+    <div class="main-content">
+        <!-- TABS -->
+         <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event,'login')">LOGIN</button>
+            <button class="tab-button" onclick="openTab(event,'support')">SUPPORT & CONTACT</button>
+            <button class="tab-button" onclick="openTab(event,'terms')">TERMS & CONDITIONS</button>
+         </div>
+
+         <!-- LOGIN -->
+         <div id="login" class="tab-content active">
+            @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["Success"]
+                    </div>
+                }
+
+            <div class="login-wrapper">
+                <div class="welcome-text">
+                    <h2>Welcome to ClinicOne</h2>
+                    <p>Your digital health companion.</p>
+                </div>
+                <div class="login-description">
+                    <p>The registration process for this system occurs exclusively through your hospital or clinic's registration desk.</p>
+                    <p>To access the portal, please use the initical credentials provided by your clinic administration duirng your physical registration.</p>
+                </div>
+
+                <div class="card-login">
+  
+                    <form asp-action="Login" method="post">
+                        <div class="input-container">
+                             <label>Username</label>
+                             <input asp-for="Username" type="text" class="login-input" />
+                        </div>
+
+                         <div class="input-container">
+                             <label>Password</label>
+                             <input asp-for="Password" type="password" class="login-input" />
+                         </div>
+
+                          <button type="submit" class="login-btn">Login</button>
+
+                          <div asp-validation-summary="All" class="validation"></div>
+                    </form>
+
+                </div>
+                <div class="login-note">
+                    <p>Upon your first successful login, you will be automatically redirected to change your temporary password for security.</p>
+                    <p>Please ensure you change it to a strong, personal password.</p>
+                </div>
+                <div class="attention">
+                     <strong>Password Reset Notice:</strong>
+                     <p>If you need to reset or change your password later, please contact your hospital administration directly.</p>
+                </div>
+            </div>
+
+         </div>
+            <!-- SUPPORT -->
+            <div id="support" class="tab-content">
+                <h2>Support & Technical Contact</h2>
+
+                <div class="card">
+                    <h3>Technical Support – Team Success Builders</h3>
+                    <p>Email: successbuilders.support@gmail.com</p>
+                    <p>Phone: +94 71 234 5678</p>
+                    <p>Phone: +94 77 456 7890</p>
+                    <p>Working Hours: Monday – Friday (8.00 AM – 5.00 PM)</p>
+                </div>
+
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1580281657527-47c1b0b3c7b7">
+                </div>
+            </div>
+
+            <!-- TERMS -->
+            <div id="terms" class="tab-content">
+                <h2>ClinicOne Terms and Conditions</h2>
+
+                <div class="card">
+                    <p>ClinicOne is a secure EMR system for healthcare institutions.</p>
+                    <p>Users must protect login credentials.</p>
+                    <p>Unauthorized access is prohibited.</p>
+                    <p>System may update policies when required.</p>
+                </div>
+            </div>
     </div>
-
-    <button type="submit">Login</button>
-
-    <div asp-validation-summary="All"></div>
-</form>
+   
+</div>
+<div class="footer">
+    &copy; @DateTime.Now.Year ClinicOne | Success Builders
+</div>
+<script src=~/js/auth/loginScript.js></script>
