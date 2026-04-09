@@ -1,8 +1,8 @@
 ﻿html, body {
-    height: 100%; /* full height */
+    height: 100%; 
     margin: 0;
     display: flex;
-    flex-direction: column; /* stack header, main, footer */
+    flex-direction: column;
     font-family: 'Poppins', sans-serif;
     background-color: #d3dcf8;
 }

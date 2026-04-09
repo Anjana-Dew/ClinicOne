@@ -64,8 +64,11 @@
 			<button onclick="openPopup('bloodPressurePopup')" class="update-btn">Update</button>
 
 		</div>
+		<div class="vitals-history-btn-container">
+			<a asp-area="Doctor" asp-controller="Vitals" asp-action="Index" asp-route-patientNIC="@Model.PatientNIC" class="history-btn">View Vital History</a>
+		</div>
 	</div>
-
+	
 	<div class="patient-info-card">
 
 		<p><strong>Patient NIC</strong>: @Model.PatientNIC </p>
@@ -248,53 +251,75 @@
 					<p>Book the patient's next cinic visit.</p>
 
 					<button onclick="openPopup('clinicPopup')" class="action-btn-btn" id="openClinicModal">
-						Schedule Appoinment
+						Schedule Appointment
 					</button>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="action-card progress-card">
+	<div class="progress-card">
 
-		@* <div class="progress-left">
-			<img src="~/doctorImages/ic_calendar.png" alt="progrss-icon" />
-		</div> *@
-
+		<div class="progress-left">
+			<img src="~/doctorImages/ic-progress.png" alt="progress-icon" />
+		</div>
+		<input type="hidden" id="progressDate" value="@Model.Progress?.ProgressDate.ToString("yyyy-MM-dd")"/>
+		<input type="hidden" id="patientNIC" value="@Model.PatientNIC" />
+		<input type="hidden" id="suggestedStatus" value="@Model.Progress?.SuggestedStatus" />
 		<div class="progress-right">
 
 			<h3>Patient Progress</h3>
-
-			@if(Model.Progress != null)
+			@if (Model.Progress != null)
 			{
-				<p>
-					Suggested Progress:
-					<strong class="progress-status">
-						@Model.Progress.SuggestedStatus
-					</strong>
-				</p>
 				@if (!Model.Progress.IsConfirmed)
 				{
-					<button onclick="openPopup('progressPopup')" class="action-btn">
-						Confirm Progress
-					</button>
+					<p>
+						Suggested Progress:
+						<strong class="progress-status">
+							@Model.Progress.SuggestedStatus
+						</strong>
+					</p>
 				}
 				else
 				{
-					<button onclick="openPopup('changeProgressPopup')" class="action-btn">
-						Change Status
-					</button>
+					<p>
+						Confirmed Progress:
+						<strong class="progress-status">
+							@Model.Progress.CurrentStatus
+						</strong>
+					</p>
+
+					@if (!string.IsNullOrEmpty(Model.Progress.DoctorNotes))
+					{
+						<p>Doctor Notes: 
+							<strong>@Model.Progress.DoctorNotes</strong>
+						</p>
+					}
 				}
+
+				<div class="progress-action">
+					<button onclick="openPopup('confirmProgressPopup')" class="action-btn confirm-btn">
+						Confirm
+					</button>
+
+					<button onclick="openPopup('declineProgressPopup')" class="action-btn decline-btn">
+						Decline
+					</button>
+				</div>	
+				
 			}
 			else
 			{
-				<p>No suffiecient reports to calculate progress.</p>
+				<p>No sufficient reports to calculate progress.</p>
 			}
+			
 		</div>
 	</div>
 </div>
 
 <!--Popups-->
+
+<!--Vital updates popups-->
 <div class="popup" id="heightPopup">
 
 	<div class="popup-content">
@@ -345,7 +370,7 @@
 
 	<div class="popup-content">
 
-		<h3>Update Blood Presure</h3>
+		<h3>Update Blood Pressure</h3>
 
 		<input type="text" id="bpInput" placeholder="Example: 120/80">
 
@@ -390,6 +415,8 @@
 
 	</div>
 </div>
+
+<!--Clinic Scheduling popups-->
 <div class="popup" id="clinicPopup">
 
 	<div class="popup-content">
@@ -474,7 +501,8 @@
 
 </div>
 
-<div class="popup" id="progressPopup">
+<!--Progress popups-->
+@* <div class="popup" id="progressPopup">
 
 	<div class="popup-content">
 
@@ -509,49 +537,32 @@
 		</form>
 
 	</div>
-</div> 
-<div class="popup" id="changeProgressPopup">
+</div>  *@
 
+<div class="popup progress-popups" id="confirmProgressPopup">
 	<div class="popup-content">
+		<h3>Confirm Progress</h3>
 
-		<h3>Change Progress Status</h3>
+		<textarea id="confirmNotes" placeholder="Add notes.." class="doc-notes"></textarea>
 
-		<form asp-action="UpdateProgressStatus" method="post">
+		<button onclick="submitConfirm()" class="save-btn">Confirm</button>
+		<button onclick="closePopup('confirmProgressPopup')" class="cancel-btn">Cancel</button>
+	</div>
+</div>
+<div class="popup" id="declineProgressPopup">
+	<div class="popup-content">
+		<h3>Select Correct Status</h3>
 
-			<input type="hidden" name="patientNIC" value="@Model.PatientNIC" />
-			<input type="hidden" name="progressDate" value="@Model.Progress?.ProgressDate" />
+		<div class="status-options">
+			<button onclick="selectStatus('Improving', event)" class="status-btn">Improving</button>
+			<button onclick="selectStatus('Stable', event)" class="status-btn">Stable</button>
+			<button onclick="selectStatus('Worsening', event)" class="status-btn">Worsening</button>
+		</div>
 
-			<label>Select Status</label>
+		<textarea id="declineNotes" placeholder="Add notes..." class="doc-notes"></textarea>
 
-			<select name="ProgressStatus">
-
-				<option>Improving</option>
-				<option>Stable</option>
-				<option>Worsening</option>
-
-			</select>
-
-			<label>Doctor Notes</label>
-
-			<textarea name="doctorNotes" required></textarea>
-
-			<div class="popup-buttons">
-
-				<button type="button"
-						onclick="closePopup('changeProgressPopup')"
-						class="cancel-btn">
-					Cancel
-				</button>
-
-				<button type="submit"
-						class="save-btn">
-					Update
-				</button>
-
-			</div>
-
-		</form>
-
+		<button onclick="submitDecline()" class="save-btn">Confirm</button>
+		<button onclick="closePopup('declineProgressPopup')" class="cancel-btn">Cancel</button>
 	</div>
 </div>
 <script src="~/js/doctor/patientProfile.js"></script>

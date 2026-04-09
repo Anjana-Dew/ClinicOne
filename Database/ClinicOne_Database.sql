@@ -1,3 +1,4 @@
+CREATE DATABASE ClinicOne_Database;
 USE ClinicOne_Database;
 
 CREATE TABLE UserAccount (
@@ -18,10 +19,8 @@ CREATE TABLE Patient (
 	FullName NVARCHAR(100) NOT NULL,
 	UserAccountID INT UNIQUE,
 	[Address] NVARCHAR(200) NOT NULL,
-	BloodPressure NVARCHAR(20),
 	PhoneNumber VARCHAR(15) NOT NULL,
-	Height DECIMAL(5,2),
-    [Weight] DECIMAL(5,2),
+	
 	BloodType CHAR(3),
 	Gender CHAR(1) NOT NULL
         CHECK (Gender IN ('M','F')),
@@ -31,6 +30,19 @@ CREATE TABLE Patient (
     FOREIGN KEY (UserAccountID) REFERENCES UserAccount(UserAccountID)
 
 );
+CREATE TABLE PatientVitals(
+    VitalId INT IDENTITY PRIMARY KEY,
+    PatientNIC VARCHAR(20),
+    RecordedDate DATETIME DEFAULT GETDATE(),
+
+    Height DECIMAL(5,2),
+    [Weight] DECIMAL(5,2),
+    
+    Systolic INT,
+    Diastolic INT,
+
+    FOREIGN KEY (PatientNIC) REFERENCES Patient(PatientNIC)
+)
 CREATE TABLE Doctor (
 	DoctorID INT IDENTITY(1,1) PRIMARY KEY,
 	FullName NVARCHAR(100) NOT NULL,

@@ -206,3 +206,60 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+
+//progress 
+let selectedStatus = null;
+
+function selectStatus(status, e) {
+    selectedStatus = status;
+
+    document.querySelectorAll(".status-btn").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    e.target.classList.add("active");
+}
+
+function submitConfirm() {
+    const notes = document.getElementById("confirmNotes").value;
+    const nic = document.getElementById("patientNIC").value;
+    const date = document.getElementById("progressDate").value;
+    const suggested = document.getElementById("suggestedStatus").value;
+
+    fetch('/Doctor/PatientMedicalProfile/ConfirmProgress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `patientNIC=${nic}&progressDate=${date}&doctorNotes=${notes}&SuggestedStatus=${suggested}`
+    })
+        .then(res => {
+            if (!res.ok) {
+                alert("Failed to save progress");
+                return;
+            }
+            location.reload();
+        });
+}
+
+function submitDecline() {
+    if (!selectedStatus) {
+        alert("Select a status first");
+        return;
+    }
+
+    const notes = document.getElementById("declineNotes").value;
+    const nic = document.getElementById("patientNIC").value;
+    const date = document.getElementById("progressDate").value;
+
+    fetch('/Doctor/PatientMedicalProfile/ConfirmProgress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `patientNIC=${nic}&progressDate=${date}&doctorNotes=${notes}&SuggestedStatus=${selectedStatus}`
+    })
+        .then(res => {
+            if (!res.ok) {
+                alert("Failed to save progress");
+                return;
+            }
+            location.reload();
+        });
+}
