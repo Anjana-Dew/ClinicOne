@@ -149,7 +149,7 @@ CREATE TABLE ClinicSession (
     DaysOfWeek VARCHAR(50) NULL
 );
 
-CREATE TABLE ClinicSessionDates(
+CREATE TABLE ClinicSessionDate(
     ID INT IDENTITY(1,1) PRIMARY KEY,
     SessionID INT NOT NULL,
     SessionDate DATE NOT NULL,

@@ -20,6 +20,9 @@ namespace ClinicOne.Models.ViewModels.Admin
         [Range(1,1000, ErrorMessage = "Max slots must be grater than 0")]
         public int MaxSlots { get; set; }
 
+        public string ScheduleType { get; set; }
+        public List<string>? DaysOfWeek { get; set; }
+        public DateTime? CustomDate { get; set; }
         public List<ClinicSessionViewModel>? ExistingSessions { get; set; }
 
     }
