@@ -143,7 +143,18 @@ CREATE TABLE ClinicSession (
     SessionName NVARCHAR(100) NOT NULL,
     StartTime TIME NOT NULL,
     EndTime TIME NOT NULL,
-    MaxSlots INT NOT NULL
+    MaxSlots INT NOT NULL,
+    ScheduleType VARCHAR(10) NOT NULL
+        CHECK (ScheduleType IN ('Weekly', 'Custom')),
+    DaysOfWeek VARCHAR(50) NULL
+);
+
+CREATE TABLE ClinicSessionDates(
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    SessionID INT NOT NULL,
+    SessionDate DATE NOT NULL,
+
+    FOREIGN KEY (SessionID) REFERENCES ClinicSession(SessionID) ON DELETE CASCADE
 );
 CREATE TABLE ClinicSchedule (
     ScheduleID INT IDENTITY(1,1) PRIMARY KEY,
