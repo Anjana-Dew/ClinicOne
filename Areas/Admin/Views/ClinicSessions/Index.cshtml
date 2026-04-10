@@ -53,6 +53,33 @@
                 </div>
 
             </div>
+            <div class="form-group">
+                <label>Schedule Type *</label>
+
+                <div>
+                    <input type="radio" name="ScheduleType" value="Weekly" onchange="toggleScheduleType()" />Weekly
+                    <input type="radio" name="ScheduleType" value="Custom" onchange="toggleScheduleType()" /> Custom
+                </div>
+            </div>
+
+            <div class="form-group" id="weeklyOptions" style="display:none;">
+                <label>Select Days *</label>
+
+                <div>
+                    <input type="checkbox" name="DaysOfWeek" value="Monday"/> Mon
+                    <input type="checkbox" name="DaysOfWeek" value="Tuesday" /> Tue
+                    <input type="checkbox" name="DaysOfWeek" value="Wednesday" /> Wed
+                    <input type="checkbox" name="DaysOfWeek" value="Thursday" /> Thu
+                    <input type="checkbox" name="DaysOfWeek" value="Friday" /> Fri
+                    <input type="checkbox" name="DaysOfWeek" value="Saturday" /> Sat
+                    <input type="checkbox" name="DaysOfWeek" value="Sunday" />Sun
+                </div>
+            </div>
+
+            <div class="form-group" id="customOptions" style="display:none;">
+                <label>Select Date *</label>
+                <input type="date" name="CustomDate" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+            </div>
 
             <button type="submit" class="btn-submit">Create Session</button>
         </form>
@@ -71,6 +98,14 @@
                         <p><strong>Start:</strong> @session.StartTime</p>
                         <p><strong>End:</strong> @session.EndTime</p>
                         <p><strong>Max Slots:</strong> @session.MaxSlots</p>
+                        <p><strong>Type:</strong> @session.ScheduleType</p>
+                        @if(session.ScheduleType == "Weekly")
+                        {
+                            <p><strong>Days:</strong> @string.Join(", ", session.DaysOfWeek)</p>
+                        }else if(session.ScheduleType == "Custom")
+                        {
+                            <p><strong>Date:</strong> @session.CustomDate?.ToString("yyyy-MM-dd")</p>
+                        }
 
                         <div class="card-actions">
                             <button type="button" 
@@ -80,7 +115,10 @@
                                     '@session.SessionName',
                                     '@session.StartTime',
                                     '@session.EndTime', 
-                                    @session.MaxSlots)">
+                                    @session.MaxSlots,
+                                    '@session.ScheduleType',
+                                    '@string.Join(",",session.DaysOfWeek ?? new List<string>())',
+                                    '@session.CustomDate?.ToString("yyyy-MM-dd")')">
                                 Edit
                             </button>
                             <form asp-action="Delete" method="post" style="display:inline">
@@ -129,6 +167,31 @@
                 <div class="form-group">
                     <label>Max Slots *</label>
                     <input type="number" id="editMaxSlots" name="MaxSlots" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Schedule Type</label>
+                    <div>
+                        <input type ="radio" name="ScheduleType" value="Weekly" onchange="toggleEditScheduleType()" id="editWeekly"/>Weekly
+                        <input type="radio" name="ScheduleType" value="Custom" onchange="toggleEditScheduleType()" id="editCustom" />Custom
+                    </div>
+                </div>
+                <div class="form-group" id="editWeeklyOptions" style="display:none;">
+                    <label>Select Days *</label>
+
+                    <div>
+                        <input type="checkbox" name="DaysOfWeek" value="Monday"/> Mon
+                        <input type="checkbox" name="DaysOfWeek" value="Tuesday" /> Tue
+                        <input type="checkbox" name="DaysOfWeek" value="Wednesday" /> Wed
+                        <input type="checkbox" name="DaysOfWeek" value="Thursday" /> Thu
+                        <input type="checkbox" name="DaysOfWeek" value="Friday" /> Fri
+                        <input type="checkbox" name="DaysOfWeek" value="Saturday" /> Sat
+                        <input type="checkbox" name="DaysOfWeek" value="Sunday" />Sun
+                    </div>
+                </div>
+
+                <div class="form-group" id="editCustomOptions" style="display:none;">
+                    <label>Select Date</label>
+                    <input type="date" name="CustomDate" id="editCustomDate" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
                 </div>
             </div>
 
