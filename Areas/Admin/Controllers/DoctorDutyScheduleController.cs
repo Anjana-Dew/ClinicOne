@@ -2,6 +2,7 @@
 using ClinicOne.Models.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicOne.Areas.Admin.Controllers
 {
@@ -26,12 +27,17 @@ namespace ClinicOne.Areas.Admin.Controllers
                     FullName = d.FullName
                 }).ToList(),
 
-                Sessions = _context.ClinicSessions.Select(s => new ClinicSessionSelectViewModel
+                Sessions = _context.ClinicSessions
+                    .Include( s => s.SessionDates)
+                    .Select(s => new ClinicSessionSelectViewModel
                 {
                     SessionID = s.SessionID,
                     SessionName = s.SessionName,
                     StartTime = s.StartTime,
-                    EndTime = s.EndTime
+                    EndTime = s.EndTime,
+                    ScheduleType = s.ScheduleType,
+                    DaysOfWeek = s.DaysOfWeek,
+                    CustomDates = s.SessionDates.Select(d => d.SessionDate).ToList()
                 }).ToList(),
 
                 ExistingSchedules = _context.DoctorDutySchedules.Select(x => new DoctorDutyItemViewModel

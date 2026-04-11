@@ -14,7 +14,7 @@ function getMonday(date) {
 // get time in minutes
 function parseTimeToMinutes(timeString) {
     const parts = timeString.split(':');
-    return parseInt(parts[0] * 60 ) + parseInt(parts[1]);
+    return parseInt(parts[0]) * 60 + parseInt(parts[1]);
 }
 function renderWeek() {
 
@@ -75,6 +75,31 @@ function renderWeek() {
         // sessions
         sessionsFromDb.forEach(session => {
 
+            let showSession = false;
+
+            const dayName = dayDate.toLocaleDateString('en-US', { weekday: 'long' });
+
+            //Weekly
+            if (session.ScheduleType === "Weekly" && session.DaysOfWeek) {
+                const days = session.DaysOfWeek.split(',');
+
+                if (days.includes(dayName)) {
+                    showSession = true;
+                }
+            }
+
+            //Custom
+            if (session.ScheduleType === "Custom" && session.CustomDates) {
+                const match = session.CustomDates.some(d => {
+                    const dateStr = new Date(d).toISOString().split('T')[0];
+
+                    return dateStr === formattedDate;
+                });
+                if (match) {
+                    showSession = true;
+                }
+            }
+            if (!showSession) return;
             const now = new Date();
             const currentTime = now.getHours() * 60 + now.getMinutes();
 
