@@ -27,6 +27,5 @@ namespace ClinicOne.Models.Entities
         public Patient Patient { get; set; }
 
         public ICollection<ReportTestResult> ReportTestResults { get; set; }
-        public ICollection<PatientProgress> PatientProgresses { get; set; }
     }
 }

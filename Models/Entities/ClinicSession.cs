@@ -21,7 +21,14 @@ namespace ClinicOne.Models.Entities
         [Required]
         public int MaxSlots { get; set; }
 
+        [Required]
+        [MaxLength(10)]
+        public string ScheduleType { get; set; }
+
+        [MaxLength(50)]
+        public string? DaysOfWeek { get; set; }
         public ICollection<ClinicSchedule> ClinicSchedules { get; set; }
         public ICollection<DoctorDutySchedule> DoctorDutySchedules { get; set; }
+        public ICollection<ClinicSessionDate> SessionDates { get; set; }
     }
 }

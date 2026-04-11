@@ -10,8 +10,9 @@ namespace ClinicOne.Models.ViewModels.Admin
         [Required]
         public string NIC {  get; set; }
 
-        [Required]
-        public DateTime DOB { get; set; }
+        [Required (ErrorMessage = "The Birth Date is required")]
+        [DataType(DataType.Date)]
+        public DateTime? DOB { get; set; }
 
         [Required]
         public string Gender { get; set; }
@@ -26,5 +27,11 @@ namespace ClinicOne.Models.ViewModels.Admin
         public decimal? Weight { get; set; }
         public string? BloodType { get; set; }
         public string? BloodPressure { get; set; }
+
+        //[Range(50, 250, ErrorMessage = "Invalid systolic Value")]
+        //public int? Systolic { get; set; }
+        //[Range(30, 150, ErrorMessage = "Invalid diastolic Value")]
+        //public int? Diastolic { get; set; }
+
     }
 }

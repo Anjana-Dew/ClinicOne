@@ -1,0 +1,112 @@
+﻿body {
+    font-family: 'Poppins', sans-serif;
+}
+.doctor-dashboard{
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+/*search*/
+.search-section{
+    background: rgba(255,255,255,0.6);
+    padding: 40px;
+    border-radius: 10px;
+    flex:1;
+    width: 45%;
+    min-width: 320px;
+    min-height: 200px;
+}
+
+.search-section h2{
+    color: #1e3fae;
+    margin-bottom: 20px;
+}
+
+.search-box{
+    display:flex;
+}
+/*search bar*/
+.search-box input{
+    flex: 1;
+    padding: 12px;
+    border: none;
+    outline: none;
+    border-radius: 6px 0 0 6px;
+    font-size: 0.95rem;
+}
+/*search btn*/
+.search-box button{
+    background: #6684e5;
+    border: none;
+    padding: 12px 22px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 0 6px 6px 0;
+}
+
+.search-box button:hover{
+    background: #4f6cd6;
+}
+/*error*/
+.error-msg{
+    margin-top: 10px;
+    color: #d9534f;
+    font-size: 0.9rem;
+}
+
+/*doc profile*/
+.doctor-card{
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+}
+
+/*profile img*/
+.profile-icon img{
+    width: 70px;
+    margin-bottom: 15px;
+}
+
+.doctor-info{
+    color: #1e3fae;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.specialization{
+    color:#1e3fae;
+    margin-bottom:12px;
+}
+
+.profile-note{
+    font-size: 0.8rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.doctor-date{
+    color: #6684e5;
+    font-weight: 500;
+}
+
+@media (max-width: 768px){
+    .doctor-dashboard{
+        flex-direction: column;
+        align-items: center;
+    }
+    .search-section{
+        width: 100%;
+        max-width: 500px;
+        margin-right: 20px;
+    }
+    .doctor-card {
+        width: 100%;
+        max-width: 300px;
+        margin-right: 15px;
+    }
+}

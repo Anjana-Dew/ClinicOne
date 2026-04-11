@@ -1,3 +1,4 @@
+CREATE DATABASE ClinicOne_Database;
 USE ClinicOne_Database;
 
 CREATE TABLE UserAccount (
@@ -18,10 +19,8 @@ CREATE TABLE Patient (
 	FullName NVARCHAR(100) NOT NULL,
 	UserAccountID INT UNIQUE,
 	[Address] NVARCHAR(200) NOT NULL,
-	BloodPressure NVARCHAR(20),
 	PhoneNumber VARCHAR(15) NOT NULL,
-	Height DECIMAL(5,2),
-    [Weight] DECIMAL(5,2),
+	
 	BloodType CHAR(3),
 	Gender CHAR(1) NOT NULL
         CHECK (Gender IN ('M','F')),
@@ -31,6 +30,19 @@ CREATE TABLE Patient (
     FOREIGN KEY (UserAccountID) REFERENCES UserAccount(UserAccountID)
 
 );
+CREATE TABLE PatientVitals(
+    VitalId INT IDENTITY PRIMARY KEY,
+    PatientNIC VARCHAR(20),
+    RecordedDate DATETIME DEFAULT GETDATE(),
+
+    Height DECIMAL(5,2),
+    [Weight] DECIMAL(5,2),
+    
+    Systolic INT,
+    Diastolic INT,
+
+    FOREIGN KEY (PatientNIC) REFERENCES Patient(PatientNIC)
+)
 CREATE TABLE Doctor (
 	DoctorID INT IDENTITY(1,1) PRIMARY KEY,
 	FullName NVARCHAR(100) NOT NULL,
@@ -122,7 +134,7 @@ CREATE TABLE PrescriptionMedicine (
     Dosage NVARCHAR(100),
     Duration NVARCHAR(50),
     PatientConfirmed BIT NOT NULL DEFAULT 0,
-    TimesPerDay INT NOT NULL
+    TimesPerDay INT NOT NULL,
 
     FOREIGN KEY (PrescriptionID) REFERENCES Prescription(PrescriptionID)
 );
@@ -131,7 +143,18 @@ CREATE TABLE ClinicSession (
     SessionName NVARCHAR(100) NOT NULL,
     StartTime TIME NOT NULL,
     EndTime TIME NOT NULL,
-    MaxSlots INT NOT NULL
+    MaxSlots INT NOT NULL,
+    ScheduleType VARCHAR(10) NOT NULL
+        CHECK (ScheduleType IN ('Weekly', 'Custom')),
+    DaysOfWeek VARCHAR(50) NULL
+);
+
+CREATE TABLE ClinicSessionDate(
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    SessionID INT NOT NULL,
+    SessionDate DATE NOT NULL,
+
+    FOREIGN KEY (SessionID) REFERENCES ClinicSession(SessionID) ON DELETE CASCADE
 );
 CREATE TABLE ClinicSchedule (
     ScheduleID INT IDENTITY(1,1) PRIMARY KEY,
@@ -157,15 +180,14 @@ CREATE TABLE [Notification] (
 CREATE TABLE PatientProgress (
     ProgressID INT IDENTITY(1,1) PRIMARY KEY,
     PatientNIC VARCHAR(20) NOT NULL,
-    ReportID INT NOT NULL,
+    ProgressDate DATE NOT NULL,
     ProgressStatus VARCHAR(20) NOT NULL
         CHECK (ProgressStatus IN ('Improving','Stable','Worsening')),
     IsConfirmed BIT NOT NULL DEFAULT 0,
     DoctorNotes NVARCHAR(500),
     RecordedDate DATETIME NOT NULL DEFAULT GETDATE(),
 
-    FOREIGN KEY (PatientNIC) REFERENCES Patient(PatientNIC),
-    FOREIGN KEY (ReportID) REFERENCES MedicalReport(ReportID)
+    FOREIGN KEY (PatientNIC) REFERENCES Patient(PatientNIC)
 );
 CREATE TABLE MedicineReminder (
     ReminderID INT IDENTITY(1,1) PRIMARY KEY,

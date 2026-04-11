@@ -1,0 +1,57 @@
+﻿@model List<ClinicOne.Models.ViewModels.Doctor.VitalHistoryRowViewModel>
+
+<link rel="stylesheet" href="~/css/doctor/vitals.css" />
+
+<div class="vital-section">
+	<div class="header-bar">
+
+		<a href="javascript:history.back()" class="back-btn">
+			<img src="~/adminImages/ic_back.png" />
+		</a>
+
+		<h2 class="page-title">Vital History</h2>
+
+		<img src="~/images/ClinicOneLogoMain.png" class="logo" />
+
+	</div>
+	<div class="temp-message" id="tempMessage" style="display:none;">
+		@if (TempData["Success"] != null)
+		{
+			@TempData["Success"]
+		}
+	</div>
+
+	@if(Model == null || !Model.Any())
+	{
+		<div class="no-data">
+			No vital history available for this patient
+		</div>
+	}
+	else
+	{
+		<div class="table-container">
+			<table class="vitals-table">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Height (cm)</th>
+						<th>Weight (kg)</th>
+						<th>Blood Pressure</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var v in Model)
+					{
+						<tr>
+							<td>@v.RecordedDate.ToString("yyyy-MM-dd HH:mm")</td>
+							<td>@(v.Height != null ? v.Height : "-")</td>
+							<td>@(v.Weight != null ? v.Weight : "-")</td>
+							<td>@v.BloodPressure</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+
+</div>

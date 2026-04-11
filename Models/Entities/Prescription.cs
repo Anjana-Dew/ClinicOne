@@ -16,7 +16,7 @@ namespace ClinicOne.Models.Entities
         public DateTime PrescriptionDate { get; set; }
 
         [MaxLength(500)]
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         [ForeignKey("PatientNIC")]
         public Patient Patient { get; set; }

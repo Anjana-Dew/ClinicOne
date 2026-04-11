@@ -1,0 +1,569 @@
+﻿@model ClinicOne.Models.ViewModels.Doctor.PatientMedicalProfileViewModel
+@{
+	Layout = "_DoctorPatientLayout";
+}
+
+<link rel="stylesheet" href="~/css/doctor/patientProfile.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+@if(TempData["Success"] != null)
+{
+	<div class="temp-message" id="tempMessage">
+		@TempData["Success"]
+	</div>
+}
+@if (TempData["Error"] != null)
+{
+	<div class="temp-message error-message" id="tempMessage">
+		@TempData["Error"]
+	</div>
+}
+<input type="hidden" id="patientNIC" value="@Model.PatientNIC">
+<div class="profile-container">
+
+	<div class="vitals-section">
+		
+		<div class="vital-card">
+
+			<h3>Height</h3>
+			<p id="heightValue">
+				@(Model.Height != null ? Model.Height + " cm" : "No value") 
+			</p>
+
+			<button onclick="openPopup('heightPopup')" class="update-btn">Update</button>
+
+		</div>
+
+		<div class="vital-card">
+
+			<h3>Weight</h3>
+			<p id="weightValue">
+				@(Model.Weight != null ? Model.Weight + " kg" : "No value") 
+			</p>
+
+			<button onclick="openPopup('weightPopup')" class="update-btn">Update</button>
+
+		</div>
+
+		<div class="vital-card">
+
+			<h3>BMI</h3>
+			<p id="bmiValue">
+				@(Model.BMI != null ? Math.Round(Model.BMI.Value,1) : "No value") 
+			</p>
+
+		</div>
+
+		<div class="vital-card">
+
+			<h3>Blood Pressure</h3>
+			<p id="bpValue">
+				@(Model.BloodPressure ?? "No value") 
+			</p>
+
+			<button onclick="openPopup('bloodPressurePopup')" class="update-btn">Update</button>
+
+		</div>
+		<div class="vitals-history-btn-container">
+			<a asp-area="Doctor" asp-controller="Vitals" asp-action="Index" asp-route-patientNIC="@Model.PatientNIC" class="history-btn">View Vital History</a>
+		</div>
+	</div>
+	
+	<div class="patient-info-card">
+
+		<p><strong>Patient NIC</strong>: @Model.PatientNIC </p>
+		<p><strong>Name</strong>: @Model.FullName </p>
+		<p><strong>Blood Type</strong>: 
+			@if (Model.BloodType == null)
+			{
+				<span>Unknown</span>
+				<button onclick="openPopup('bloodTypePopup')">Add</button>
+			}
+			else
+			{
+				<span>@Model.BloodType</span>
+			}
+		</p>
+		<p><strong>Address</strong>: @Model.Address </p>
+		<p><strong>Phone Number</strong>: @Model.PhoneNumber </p>
+	</div>
+
+	<!--Medical reports-->
+	<div class="medical-reports-section">
+		<h2 class="reports-title">Recent Test Reports</h2>
+
+		<div class="reports-wrapper">
+			<div class="report-cards">
+				@if (Model.MedicalReports != null && Model.MedicalReports.Any())
+				{
+					foreach (var report in Model.MedicalReports)
+					{
+						<div class="report-card">
+
+							<div class="report-header">
+								<h3>@report.PanelName</h3>
+							</div>
+
+							<div class="report-body">
+
+								<!-- Latest -->
+								<div class="report-column">
+									<h4>Latest Results</h4>
+									<p class="report-date">@report.LatestUploadedDate.ToString("dd MMM yyyy")</p>
+
+									@foreach (var p in report.LatestResults)
+									{
+										<div class="parameter-row">
+											<span>@p.ParameterName</span>
+											<span>@p.TestValue @p.Unit</span>
+											<span class="status-dot @(p.ResultStatus == "Normal" ? "green" : p.ResultStatus == "High" ? "orange" : "red")"></span>
+										</div>
+									}
+
+									<a href="@report.LatestReportPath" target="_blank" class="report-link">
+										View Full Report
+									</a>
+								</div>
+
+								<!-- Previous -->
+								<div class="report-column">
+									<h4>Previous Results</h4>
+									@if (report.PreviousResults != null)
+									{
+										<p class="report-date">@report.PreviousUploadedDate?.ToString("dd MMM yyyy")</p>
+
+										foreach (var p in report.PreviousResults)
+										{
+											<div class="parameter-row">
+												<span>@p.ParameterName</span>
+												<span>@p.TestValue @p.Unit</span>
+												<span class="status-dot @(p.ResultStatus == "Normal" ? "green" : p.ResultStatus == "High" ? "orange" : "red")"></span>
+											</div>
+										}
+
+										<a href="@report.PreviousReportPath" target="_blank" class="report-link">
+											View Full Report
+										</a>
+									}
+									else
+									{
+										<p>No previous test available</p>
+									}
+								</div>
+							</div>
+						</div>
+					}
+					<div class="view-all-container">
+						<a href="/Doctor/Reports/Index?nic=@Model.PatientNIC" class="view-all-btn">
+							View All Reports
+						</a>
+					</div>
+				}
+				else
+				{
+					<p class="no-reports">No medical reports uploaded yet.</p>
+				}
+			</div>
+		</div>
+	</div>
+
+	<!--Medicine History-->
+	<div class="medicine-history-section">
+
+		<h2 class="reports-title">Medicine History</h2>
+
+		<div class="reports-wrapper">
+			<div class="report-cards">
+
+				@if(Model.MedicineHistories != null && Model.MedicineHistories.Any()){
+					
+					foreach(var card in Model.MedicineHistories)
+					{
+						<div class="report-card">
+
+							<div class="report-header">
+								<h3>Prescription</h3>
+							</div>
+
+							<div class="medicine-dates">
+								<p><strong>Prescribed:</strong> @card.PrescriptionDate.ToString("dd MMM yyyy")</p>
+								<p><strong>Until:</strong> @card.UntilDate?.ToString("dd MMM yyyy")</p>
+							</div>
+
+							<div class="medicine-body">
+								<div class="medicine-row header-row">
+									<span><strong>Medicine Name</strong></span>
+									<span><strong>Dosage</strong></span>
+									<span><strong>Times Per Day</strong></span>
+								</div>
+
+								@foreach(var med in card.Medicines)
+								{
+									<div class="medicine-row">
+										<span>@med.MedicineName</span>
+										<span>@med.Dosage</span>
+										<span>@med.TimesPerDay</span>
+									</div>
+								}
+							</div>
+						</div>
+					}
+					<div class="view-all-container">
+						<a href="/Doctor/MedicineHistory/Index?nic=@Model.PatientNIC" class="view-all-btn">
+							View all History	
+						</a>
+					</div>
+				}
+				else
+				{
+					<p class="no-reports">No medicine history available.</p>	
+				}
+			</div>
+		</div>
+	</div>
+	<!-- Prescription & Clinic dates -->
+	<div class="doctor-action-wrapper">
+		<h2 class="reports-title">Doctor Actions</h2>
+
+		<div class="doctor-action-section">
+			<!-- prescription -->
+			<div class="action-card prescription-card">
+				<div class="prescription-left">
+					<img src="~/doctorImages/ic_prescription.png" class="prescription-icon" />
+				</div>
+				<div class="prescription-right">
+					<h3>New Prescriptions & Orders</h3>
+					<p>Write and manage the patient’s prescriptions.</p>
+					<a href="/Doctor/Prescription/Create?nic=@Model.PatientNIC" class="action-btn">
+						Write Prescriptions
+					</a>
+				</div>
+			</div>
+
+			<!-- Clinic Sessions -->
+			<div class="action-card clinic-card">
+				
+				<div class="clinic-left">
+					<img src="~/doctorImages/ic_calendar.png" class="clinic-icon" />
+				</div>
+				<div class="clinic-right">
+					<h3>Schedule Next Clinic</h3>
+					<p>Book the patient's next cinic visit.</p>
+
+					<button onclick="openPopup('clinicPopup')" class="action-btn-btn" id="openClinicModal">
+						Schedule Appointment
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="progress-card">
+
+		<div class="progress-left">
+			<img src="~/doctorImages/ic-progress.png" alt="progress-icon" />
+		</div>
+		<input type="hidden" id="progressDate" value="@Model.Progress?.ProgressDate.ToString("yyyy-MM-dd")"/>
+		<input type="hidden" id="patientNIC" value="@Model.PatientNIC" />
+		<input type="hidden" id="suggestedStatus" value="@Model.Progress?.SuggestedStatus" />
+		<div class="progress-right">
+
+			<h3>Patient Progress</h3>
+			@if (Model.Progress != null)
+			{
+				@if (!Model.Progress.IsConfirmed)
+				{
+					<p>
+						Suggested Progress:
+						<strong class="progress-status">
+							@Model.Progress.SuggestedStatus
+						</strong>
+					</p>
+				}
+				else
+				{
+					<p>
+						Confirmed Progress:
+						<strong class="progress-status">
+							@Model.Progress.CurrentStatus
+						</strong>
+					</p>
+
+					@if (!string.IsNullOrEmpty(Model.Progress.DoctorNotes))
+					{
+						<p>Doctor Notes: 
+							<strong>@Model.Progress.DoctorNotes</strong>
+						</p>
+					}
+				}
+
+				<div class="progress-action">
+					<button onclick="openPopup('confirmProgressPopup')" class="action-btn confirm-btn">
+						Confirm
+					</button>
+
+					<button onclick="openPopup('declineProgressPopup')" class="action-btn decline-btn">
+						Decline
+					</button>
+				</div>	
+				
+			}
+			else
+			{
+				<p>No sufficient reports to calculate progress.</p>
+			}
+			
+		</div>
+	</div>
+</div>
+
+<!--Popups-->
+
+<!--Vital updates popups-->
+<div class="popup" id="heightPopup">
+
+	<div class="popup-content">
+
+		<h3>Update Height</h3>
+
+		<input type="number" id="heightInput">
+
+		<select id="heightUnit">
+
+			<option value="cm">cm</option>
+
+			<option value="in">inches</option>
+
+		</select>
+
+		<button onclick="saveHeight()" class="save-btn">Save</button>
+		<button onclick="closePopup('heightPopup')" class="cancel-btn">Cancel</button>
+
+	</div>
+
+</div>
+
+<div class="popup" id="weightPopup">
+
+	<div class="popup-content">
+
+		<h3>Update Weight</h3>
+
+		<input type="number" id="weightInput">
+
+		<select id="weightUnit">
+
+			<option value="kg">kg</option>
+
+			<option value="lbs">lbs</option>
+
+		</select>
+
+		<button onclick="saveWeight()" class="save-btn">Save</button>
+		<button onclick="closePopup('weightPopup')" class="cancel-btn">Cancel</button>
+
+	</div>
+
+</div>
+
+<div class="popup" id="bloodPressurePopup">
+
+	<div class="popup-content">
+
+		<h3>Update Blood Pressure</h3>
+
+		<input type="text" id="bpInput" placeholder="Example: 120/80">
+
+		<button onclick="saveBP()" class="save-btn">Save</button>
+		<button onclick="closePopup('bloodPressurePopup')" class="cancel-btn">Cancel</button>
+
+	</div>
+
+</div>
+
+<div class="popup" id="bloodTypePopup">
+
+	<div class="popup-content">
+
+		<h3> Add Blood Type</h3>
+
+		<select id="bloodTypeInput">
+			<option value="A+">A+</option>
+			<option value="A-">A-</option>
+			<option value="B+">B+</option>
+			<option value="B-">B-</option>
+			<option value="AB+">AB+</option>
+			<option value="AB-">AB-</option>
+			<option value="O+">O+</option>
+			<option value="O-">O-</option>
+		</select>
+
+		<button onclick="confirmBloodType()" class="save-btn">Save</button>
+		<button onclick="closePopup('bloodTypePopup')" class="cancel-btn">Cancel</button>
+
+	</div>
+</div>
+<div class="popup" id="bloodTypeConfirmPopup">
+
+	<div class="popup-content">
+		<h3>Confirm Blood Type</h3>
+		<p>Make sure the blood type is correct.</p>
+		<p>This action cannot be undone.</p>
+
+		<button onclick="saveBloodType()" class="continue-btn">Continue</button>
+		<button onclick="closePopup('bloodTypeConfirmPopup')" class="back-btn">Back</button>
+
+	</div>
+</div>
+
+<!--Clinic Scheduling popups-->
+<div class="popup" id="clinicPopup">
+
+	<div class="popup-content">
+
+		<h3>Schedule Clinic Appointment</h3>
+
+		<form asp-area="doctor" asp-action="ScheduleClinic" asp-controller="PatientMedicalProfile" method="post">
+
+			<input type="hidden" name="PatientNIC" value="@Model.PatientNIC" />
+
+			<label>Select Date</label>
+			<input type="date" name="ClinicDate" id="clinicDatePicker" value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+
+			<label>Select Clinic Session</label>
+
+			@if (Model.ClinicSessions == null || !Model.ClinicSessions.Any())
+			{
+				<p class="no-session-msg">No clinic sessions available.</p>
+			}
+			else
+			{
+				<div class="session-toggle">
+
+					@foreach (var session in Model.ClinicSessions)
+					{
+						bool isFull = session.RemainingSlots <= 0;
+
+						<label class="session-option @(isFull ? "session-full" : "")">
+
+							<input type="radio"
+								   name="SelectedSessionID"
+								   value="@session.SessionID"
+							@(isFull ? "disabled" : "")
+								   required />
+
+							<span>
+								@session.SessionName
+								<small>
+									(@session.StartTime.ToString(@"hh\:mm")
+									-
+									@session.EndTime.ToString(@"hh\:mm"))
+								</small>
+
+								<br />
+
+								@if (isFull)
+								{
+									<small class="slot-full">No slots available</small>
+								}
+								else
+								{
+									<small class="slot-remaining">
+										@session.RemainingSlots slots left
+									</small>
+								}
+
+							</span>
+
+						</label>
+					}
+
+				</div>
+			}
+
+			<p class="popup-warning">
+				Make sure everything is correct. This action cannot be undone.
+			</p>
+
+			<div class="popup-buttons">
+				<button type="button" onclick="closePopup('clinicPopup')" class="cancel-btn">
+					Cancel
+				</button>
+
+				<button type="submit" class="save-btn">
+					Save Appointment
+				</button>
+			</div>
+
+		</form>
+
+	</div>
+
+</div>
+
+<!--Progress popups-->
+@* <div class="popup" id="progressPopup">
+
+	<div class="popup-content">
+
+		<h3>Confirm Patient Progress</h3>
+
+		<form asp-action="ConfirmProgress" method="post">
+
+			<input type="hidden" name="PatientNIC" value="@Model.PatientNIC" />
+			<input type="hidden" name="ProgressDate" value="@Model.Progress?.ProgressDate" />
+
+			<p>Suggested Progress: <strong>@Model.Progress?.SuggestedStatus</strong></p>
+
+			<label>Doctor Notes</label>
+
+			<textarea name="DoctorNotes" required></textarea>
+
+			<div class="popup-buttons">
+
+				<button type="button"
+						onclick="closePopup('progressPopup')"
+						class="cancel-btn">
+					Cancel
+				</button>
+
+				<button type="submit"
+						class="save-btn">
+					Confirm
+				</button>
+
+			</div>
+
+		</form>
+
+	</div>
+</div>  *@
+
+<div class="popup progress-popups" id="confirmProgressPopup">
+	<div class="popup-content">
+		<h3>Confirm Progress</h3>
+
+		<textarea id="confirmNotes" placeholder="Add notes.." class="doc-notes"></textarea>
+
+		<button onclick="submitConfirm()" class="save-btn">Confirm</button>
+		<button onclick="closePopup('confirmProgressPopup')" class="cancel-btn">Cancel</button>
+	</div>
+</div>
+<div class="popup" id="declineProgressPopup">
+	<div class="popup-content">
+		<h3>Select Correct Status</h3>
+
+		<div class="status-options">
+			<button onclick="selectStatus('Improving', event)" class="status-btn">Improving</button>
+			<button onclick="selectStatus('Stable', event)" class="status-btn">Stable</button>
+			<button onclick="selectStatus('Worsening', event)" class="status-btn">Worsening</button>
+		</div>
+
+		<textarea id="declineNotes" placeholder="Add notes..." class="doc-notes"></textarea>
+
+		<button onclick="submitDecline()" class="save-btn">Confirm</button>
+		<button onclick="closePopup('declineProgressPopup')" class="cancel-btn">Cancel</button>
+	</div>
+</div>
+<script src="~/js/doctor/patientProfile.js"></script>
+

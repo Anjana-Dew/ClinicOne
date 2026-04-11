@@ -1,6 +1,38 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-    // For Doctor Nav bar, Footer
-}
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<title>Doctor Portal</title>
+
+	<link rel="stylesheet" href="~/css/doctor/doctorLayoutStyles.css" />
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+	<header class="doctor-header">
+		
+		<div class="header-left">
+			<img src="~/images/ClinicOneLogoMain.png" class="logo" alt="CLinicOne Log" />
+		</div>
+
+		<div class="header-center">
+			<h1>Doctor Portal</h1>
+		</div>
+
+		<div class="header-right">
+			<a href="/Account/Logout" class="logout-btn">Logout</a>
+		</div>
+
+	</header>
+	<main class="doctor-main">
+		@RenderBody()
+	</main>
+	<footer class="doctor-footer">
+		<p>&copy; @DateTime.Now.Year ClinicOne</p>
+	</footer>
+</body>
+</html>

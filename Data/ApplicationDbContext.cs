@@ -17,6 +17,8 @@ namespace ClinicOne.Data
         public DbSet<Pharmacist> Pharmacists { get; set; }
         public DbSet<UserAccount> UserAccounts { get; set; }
 
+        public DbSet<PatientVital> PatientVitals { get; set; }
+
         // Medical Reports
         public DbSet<MedicalReport> MedicalReports { get; set; }
         public DbSet<ReportTestResult> ReportTestResults { get; set; }
@@ -38,6 +40,7 @@ namespace ClinicOne.Data
         // Scheduling
         public DbSet<ClinicSession> ClinicSessions { get; set; }
         public DbSet<ClinicSchedule> ClinicSchedules { get; set; }
+        public DbSet<ClinicSessionDate> ClinicSessionDates { get; set; }
         public DbSet<DoctorDutySchedule> DoctorDutySchedules { get; set; }
 
         // Notifications & Logs
@@ -60,6 +63,7 @@ namespace ClinicOne.Data
             modelBuilder.Entity<PrescriptionMedicine>().ToTable("PrescriptionMedicine");
             modelBuilder.Entity<ClinicSession>().ToTable("ClinicSession");
             modelBuilder.Entity<ClinicSchedule>().ToTable("ClinicSchedule");
+            modelBuilder.Entity<ClinicSessionDate>().ToTable("ClinicSessionDate");
             modelBuilder.Entity<Notification>().ToTable("Notification");
             modelBuilder.Entity<PatientProgress>().ToTable("PatientProgress");
             modelBuilder.Entity<MedicineReminder>().ToTable("MedicineReminder");
@@ -105,18 +109,19 @@ namespace ClinicOne.Data
                 .HasDefaultValue(true);
 
             modelBuilder.Entity<Patient>()
-                .Property(p => p.Height)
-                .HasPrecision(5, 2);
-
-            modelBuilder.Entity<Patient>()
-                .Property(p => p.Weight)
-                .HasPrecision(5, 2);
-
-            modelBuilder.Entity<Patient>()
                 .HasOne(p => p.UserAccount)
                 .WithOne(u => u.patient)
                 .HasForeignKey<Patient>(p => p.UserAccountID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            //Vitals
+            modelBuilder.Entity<PatientVital>().ToTable("PatientVitals");
+
+            modelBuilder.Entity<PatientVital>()
+                .HasOne(v => v.Patient)
+                .WithMany(p => p.Vitals)
+                .HasForeignKey(v => v.PatientNIC)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // DOCTOR
             modelBuilder.Entity<Doctor>()
@@ -247,6 +252,22 @@ namespace ClinicOne.Data
                 .HasForeignKey(c => c.SessionID)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            //Clinic Session
+            modelBuilder.Entity<ClinicSession>()
+                .HasCheckConstraint("CK_ClinicSession_ScheduleType","ScheduleType IN ('Weekly','Custom')");
+
+            //ClinicSessionDate
+
+            modelBuilder.Entity<ClinicSessionDate>()
+                .HasOne(d => d.ClinicSession)
+                .WithMany(s => s.SessionDates)
+                .HasForeignKey(d => d.SessionID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ClinicSessionDate>()
+                .HasIndex(d => new { d.SessionID, d.SessionDate })
+                .IsUnique();
+
             // NOTIFICATION
             modelBuilder.Entity<Notification>()
                 .Property(n => n.SentDate)
@@ -285,12 +306,6 @@ namespace ClinicOne.Data
                 .HasOne(p => p.Patient)
                 .WithMany(p => p.PatientProgresses)
                 .HasForeignKey(p => p.PatientNIC)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<PatientProgress>()
-                .HasOne(p => p.MedicalReport)
-                .WithMany(m => m.PatientProgresses)
-                .HasForeignKey(p => p.ReportID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // MEDICINE REMINDER

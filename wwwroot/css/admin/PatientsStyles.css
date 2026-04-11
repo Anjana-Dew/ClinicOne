@@ -153,7 +153,6 @@
     border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
-    font-family: 'Poppins', sans-serif;
     transition: 0.2s ease;
 }
 
@@ -162,6 +161,9 @@
 }
 
 .cancel-btn {
+    display: inline-block;
+    text-align: center;
+    box-sizing: border-box;
     background-color: #6c755d;
     color: white;
     border: none;
@@ -171,7 +173,6 @@
     transition: 0.2s ease-in-out;
     font-weight: 500;
     font-size: 0.95rem;
-    font-family: 'Poppins', sans-serif;
     text-decoration: none;
 }
 
@@ -285,4 +286,36 @@
 }
 .close-result-btn:hover {
     color: #dc3545;
+}
+@media (max-width: 600px) {
+ 
+    .register-btn-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .register-btn,
+    .cancel-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-btn {
+        width: 100%;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 12px; 
+    }
+    .search-patient-section,
+    .register-patients-section {
+        margin-right: 15px;
+        margin-left: 15px;
+    }
 }

@@ -1,0 +1,125 @@
+﻿html, body {
+    height: 100%; 
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+    background-color: #d3dcf8;
+}
+
+/* Header */
+.doctor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 30px;
+    background: white;
+    height: 70px;
+    box-shadow: 0 6px 10px rgba(30, 63, 174, 0.3);
+    z-index: 1100;
+}
+
+.logo {
+    height: clamp(40px, 8vw, 70px);
+    
+}
+.header-center {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-center h1{
+    margin:0;
+    color:#1e3fae;
+    font-size: clamp(1.2rem 2.5vw 2.2rem);
+}
+.header-right{
+    display: flex;
+    align-items: center;
+}
+
+/*logout btn*/
+.logout-btn {
+    background: #d3dcf8;
+    border: 2px solid #1e3fae;
+    padding: clamp(5px, 1vw, 8px) clamp(12px, 2vw, 18px);
+    border-radius: 6px;
+    text-decoration: none;
+    color: #1e3fae;
+    font-weight: 600;
+    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+    transition: all 0.2s ease;
+}
+.logout-btn:hover{
+    background: #1e3fae;
+    color: white;
+}
+
+.back-btn{
+    background: #d3dcf8;
+    border: 2px solid #1e3fae;
+    padding: 6px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #1e3fae;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover{
+    background: #1e3fae;
+    color:white;
+}
+.doctor-main {
+    flex: 1;
+    padding: 30px;
+}
+
+/*footer*/
+.doctor-footer {
+    text-align: center;
+    padding: 10px;
+    background: rgb(163, 178, 224, 0.6);
+    color: white;
+    font-size: 0.9rem;
+    margin-top: 20px;
+}
+@media (max-width: 900px) {
+    .doctor-header {
+        padding: 8px 20px;
+        height: 65px;
+    }
+}
+
+@media (max-width: 600px) {
+    .doctor-header {
+        height: 60px;
+    }
+
+    .header-center h1 {
+        font-size: clamp(1rem, 3vw, 1.6rem);
+    }
+}
+@media (max-width: 400px) {
+    .doctor-header {
+        padding: 6px 15px;
+        height: 55px;
+    }
+
+    .logo {
+        height: 40px; 
+    }
+
+    .header-center h1 {
+        font-size: clamp(0.9rem, 4vw, 1.4rem);
+    }
+    .back.btn,
+    .logout-btn {
+        padding: 4px 10px;
+        font-size: 0.75rem;
+    }
+}
+

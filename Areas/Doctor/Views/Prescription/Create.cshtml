@@ -1,0 +1,134 @@
+﻿@model ClinicOne.Models.ViewModels.Doctor.CreatePrescriptionViewModel
+
+<link rel="stylesheet" href="~/css/doctor/prescribeMedicines.css" />
+
+<div class="medicine-prescribe">
+
+	<div class="header-bar">
+
+		<a href="javascript:history.back()" class="back-btn">
+			<img src="~/adminImages/ic_back.png" />
+		</a>
+
+		<h2 class="page-title">Create Prescription</h2>
+
+		<img src="~/images/ClinicOneLogoMain.png" class="logo" />
+
+	</div>
+	<div class="temp-message" id="tempMessage" style="display:none;">
+		@if (TempData["Success"] != null)
+		{
+			@TempData["Success"]
+		}
+	</div>
+
+	<form method="post" asp-action="SavePrescription">
+
+		<input type="hidden" name="PatientNIC" value="@Model.PatientNIC" />
+
+		<h3>Medicines</h3>
+
+		<table id="MedicineTable" class="styled-table">
+
+			<thead>
+				<tr>
+					<th>Medicine Name</th>
+					<th>Dosage</th>
+					<th>Times / Day</th>
+					<th></th>
+				</tr>
+			</thead>
+
+			<tbody>
+
+				<tr>
+					<td><input name="Medicines[0].MedicineName"/></td>
+					<td><input name="Medicines[0].Dosage"/></td>
+					<td><input type="number" name="Medicines[0].TimesPerDay" /></td>
+					<td><button type="button" onclick="removeMedicineRow(this)">X</button></td>
+				</tr>
+
+			</tbody>
+		</table>
+
+		<button type="button" onclick="addMedicineRow()">+ Add Medicine</button>
+
+		<br><br>
+
+		<h3>Blood Tests</h3>
+
+		<table id="testTable" class="styled-table">
+
+			<thead>
+				<tr>
+					<th>Test</th>
+					<th>Notes</th>
+					<th></th>
+				</tr>
+			</thead>
+
+			<tbody>
+
+				<tr>
+					<td>
+						<select name="Tests[0].PanelID" onchange="updateTestDropdowns()">
+							<option value="">Select Test</option>
+
+							@foreach (var test in Model.AvailableTests)
+							{
+								<option value="@test.PanelID">@test.TestName</option>
+							}
+
+						</select>
+					</td>
+
+					<td>
+						<input name="Tests[0].Notes" />
+					</td>
+
+					<td>
+						<button type="button" onclick="removeTestRow(this)">X</button>
+					</td>
+
+				</tr>
+
+			</tbody>
+
+		</table>
+
+		<button type="button" onclick="addTestRow()">+ Add Test</button>
+
+		<br><br>
+
+		<label>Notes</label>
+
+		<textarea name="Notes"></textarea>
+
+		<br><br>
+
+		<button type="button" onclick="confirmSave()">Save Prescription</button>
+
+	</form>
+
+	<div class="popup" id="confirmPopup">
+
+		<div class="popup-content">
+
+			<h3>Confirm Prescription</h3>
+			<p>
+				Please review the prescription details carefully before continuing.
+				Once submitted, this action cannot be undone, and the record will be
+				permanently saved. Make sure all medicines, dosages, and timings are correct.
+			</p>
+
+			<button onclick="submitPrescription()">Continue</button>
+
+			<button onclick="closeConfirm()">Cancel</button>
+
+		</div>
+
+	</div>
+
+</div>
+
+<script src="~/js/doctor/prescription.js"></script>

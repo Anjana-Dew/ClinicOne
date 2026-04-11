@@ -1,11 +1,14 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.ViewModels;
 using ClinicOne.Models.ViewModels.Admin;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicOne.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class TestReportsController : Controller
     {
         private readonly ApplicationDbContext _context;

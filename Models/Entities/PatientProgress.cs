@@ -13,7 +13,7 @@ namespace ClinicOne.Models.Entities
         public string PatientNIC { get; set; }
 
         [Required]
-        public int ReportID { get; set; }
+        public DateTime ProgressDate { get; set; }
 
         [Required]
         [MaxLength(20)]
@@ -23,7 +23,7 @@ namespace ClinicOne.Models.Entities
         public bool IsConfirmed { get; set; }
 
         [MaxLength(500)]
-        public string DoctorNotes { get; set; }
+        public string? DoctorNotes { get; set; }
         [Required]
         public DateTime RecordedDate { get; set; }
 
@@ -31,7 +31,5 @@ namespace ClinicOne.Models.Entities
         [ForeignKey("PatientNIC")]
         public Patient Patient { get; set; }
 
-        [ForeignKey("ReportID")]
-        public MedicalReport MedicalReport { get; set; }
     }
 }

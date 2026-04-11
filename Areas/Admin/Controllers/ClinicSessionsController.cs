@@ -1,6 +1,7 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Admin;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace ClinicOne.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class ClinicSessionsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,20 +20,21 @@ namespace ClinicOne.Areas.Admin.Controllers
             _context = context;
         }
 
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
         public IActionResult Index()
         {
-            var sessions =  _context.ClinicSessions.Select(s => new ClinicSessionViewModel
-            {
-                SessionID = s.SessionID,
-                SessionName = s.SessionName,
-                StartTime = s.StartTime,
-                EndTime = s.EndTime,
-                MaxSlots = s.MaxSlots
-            }).ToList();
+            var sessions = _context.ClinicSessions
+                .Include(s => s.SessionDates)
+                .Select(s => new ClinicSessionViewModel
+                {
+                    SessionID = s.SessionID,
+                    SessionName = s.SessionName,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    MaxSlots = s.MaxSlots,
+                    ScheduleType = s.ScheduleType,
+                    DaysOfWeek = s.ScheduleType == "Weekly" && s.DaysOfWeek != null ? s.DaysOfWeek.Split(',').ToList() : null,
+                    CustomDate = s.SessionDates.Select(d => (DateTime?)d.SessionDate).FirstOrDefault()
+                }).ToList();
 
             var viewModel = new ClinicSessionViewModel
             {
@@ -49,6 +53,18 @@ namespace ClinicOne.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("", "End time must be later than start time");
             }
+            if(model.ScheduleType == "Weekly" && (model.DaysOfWeek == null || !model.DaysOfWeek.Any()))
+            {
+                ModelState.AddModelError("", "Please select at least one day for weekly schedule.");
+            }
+            if(model.ScheduleType == "Custom" && model.CustomDate == null)
+            {
+                ModelState.AddModelError("", "Please select a date for custom schedule.");
+            }
+            if(model.ScheduleType == "Custom" && model.CustomDate < DateTime.Today)
+            {
+                ModelState.AddModelError("", "You cannot select a past date.");
+            }
             if (!ModelState.IsValid)
             {
                 model.ExistingSessions = GetSessions();
@@ -60,12 +76,25 @@ namespace ClinicOne.Areas.Admin.Controllers
                 SessionName = model.SessionName,
                 StartTime = model.StartTime,
                 EndTime = model.EndTime,
-                MaxSlots = model.MaxSlots
+                MaxSlots = model.MaxSlots,
+                ScheduleType = model.ScheduleType,
+                DaysOfWeek = model.ScheduleType == "Weekly" ? string.Join(",", model.DaysOfWeek) : null
             };
 
             _context.ClinicSessions.Add(session);
             _context.SaveChanges();
 
+            if(model.ScheduleType == "Custom")
+            {
+                var sessionDate = new ClinicSessionDate
+                {
+                    SessionID = session.SessionID,
+                    SessionDate = model.CustomDate.Value
+                };
+
+                _context.ClinicSessionDates.Add(sessionDate);
+                _context.SaveChanges();
+            }
             TempData["SuccessMessage"] = $"Session '{session.SessionName}' was created successfully.";
 
             return RedirectToAction(nameof(Index));
@@ -100,12 +129,22 @@ namespace ClinicOne.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("", "End time must be later than start time.");
             }
+            if (model.ScheduleType == "Weekly" && (model.DaysOfWeek == null || !model.DaysOfWeek.Any()))
+            {
+                ModelState.AddModelError("", "Please select at least one day.");
+            }
+            if (model.ScheduleType == "Custom" && model.CustomDate == null)
+            {
+                ModelState.AddModelError("", "Please select a date.");
+            }
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var session = _context.ClinicSessions.Find(model.SessionID);
+            var session = _context.ClinicSessions
+                .Include(s => s.SessionDates)
+                .FirstOrDefault(s => s.SessionID == model.SessionID);
             if(session == null)
             {
                 return NotFound();
@@ -115,6 +154,26 @@ namespace ClinicOne.Areas.Admin.Controllers
             session.StartTime = model.StartTime;
             session.EndTime = model.EndTime;
             session.MaxSlots = model.MaxSlots;
+            session.ScheduleType = model.ScheduleType;
+
+            if(model.ScheduleType == "Weekly")
+            {
+                session.DaysOfWeek = string.Join(",", model.DaysOfWeek);
+
+                _context.ClinicSessionDates.RemoveRange(session.SessionDates);
+            }
+            else
+            {
+                session.DaysOfWeek = null;
+
+                _context.ClinicSessionDates.RemoveRange(session.SessionDates);
+
+                _context.ClinicSessionDates.Add(new ClinicSessionDate
+                {
+                    SessionID = session.SessionID,
+                    SessionDate = model.CustomDate.Value
+                });
+            }
 
             _context.SaveChanges();
 

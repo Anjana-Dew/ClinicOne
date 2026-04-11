@@ -1,9 +1,11 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.ViewModels.Auth;
 using ClinicOne.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
-using System.Text;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 namespace ClinicOne.Controllers
 {
@@ -21,7 +23,7 @@ namespace ClinicOne.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -71,6 +73,22 @@ namespace ClinicOne.Controllers
             user.LastLogin = DateTime.Now;
 
             _context.SaveChanges();
+
+            var claims = new List<Claim>
+{
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role),
+            new Claim("UserID", user.UserAccountID.ToString())
+};
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal
+            );
 
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Role", user.Role);
@@ -131,10 +149,17 @@ namespace ClinicOne.Controllers
 
             return RedirectToAction("Login");
         }
-        public IActionResult Logout()
+
+        public async  Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync();
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

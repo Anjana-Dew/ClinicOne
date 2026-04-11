@@ -2,6 +2,7 @@
 using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Admin;
 using ClinicOne.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -10,6 +11,8 @@ using System.Text;
 namespace ClinicOne.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class PatientsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,7 +30,6 @@ namespace ClinicOne.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(RegisterPatientViewModel model)
         {
-            //return Content("REGISTER HIT");
             if (!ModelState.IsValid)
             {
                 //foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
@@ -38,7 +40,7 @@ namespace ClinicOne.Areas.Admin.Controllers
             }
 
             //NIC Validation
-            if(!IsValidNIC(model.NIC, model.DOB))
+            if(!IsValidNIC(model.NIC, model.DOB.Value))
             {
                 ModelState.AddModelError("NIC", "Invalid NIC format or NIC does not match Date of Birth.");
                 return View("Index", model);
@@ -57,6 +59,29 @@ namespace ClinicOne.Areas.Admin.Controllers
 
             string hashedPassword = PasswordService.HashPassword(generatedPassword);
 
+            //Vital validation
+            int? systolic = null;
+            int? diastolic = null;
+
+            if (!string.IsNullOrWhiteSpace(model.BloodPressure))
+            {
+                if (!model.BloodPressure.Contains("/"))
+                {
+                    ModelState.AddModelError("BloodPressure", "invalid format. Use 120/80");
+                    return View("Index", model);
+                }
+
+                var parts = model.BloodPressure.Split('/');
+
+                if (parts.Length != 2 || !int.TryParse(parts[0], out int sys) || !int.TryParse(parts[1], out int dia))
+                {
+                    ModelState.AddModelError("BloodPressure", "Invalid number in BP.");
+                    return View("Index", model);
+                }
+
+                systolic = sys;
+                diastolic = dia;
+            }
             //create UserAccount
             var user = new UserAccount
             {
@@ -70,6 +95,8 @@ namespace ClinicOne.Areas.Admin.Controllers
             _context.UserAccounts.Add(user);
             _context.SaveChanges();
 
+
+            
             //Create Patient 
             var patient = new ClinicOne.Models.Entities.Patient
             {
@@ -79,15 +106,37 @@ namespace ClinicOne.Areas.Admin.Controllers
                 Address = model.Address,
                 PhoneNumber = model.PhoneNumber,
                 Gender = model.Gender,
-                DOB = model.DOB,
-                Height = model.Height,
-                Weight = model.Weight,
+                DOB = model.DOB.Value,
                 BloodType = model.BloodType,
-                BloodPressure = model.BloodPressure,
                 IsActive = true
             };
 
             _context.Patients.Add(patient);
+            _context.SaveChanges();
+
+            //Vitals
+            
+           
+            if (!string.IsNullOrEmpty(model.BloodPressure) && model.BloodPressure.Contains("/"))
+            {
+                var parts = model.BloodPressure.Split('/');
+
+                if (parts.Length == 2)
+                {
+                    systolic = int.Parse(parts[0]);
+                    diastolic = int.Parse(parts[1]);
+                }
+            }
+            var vital = new PatientVital
+            {
+                PatientNIC = patient.PatientNIC,
+                Height = model.Height,
+                Weight = model.Weight,
+                Systolic = systolic,
+                Diastolic = diastolic
+            };
+
+            _context.PatientVitals.Add(vital);
             _context.SaveChanges();
 
             TempData["SuccessMessage"] =
@@ -206,5 +255,17 @@ namespace ClinicOne.Areas.Admin.Controllers
 
             return Json(new { success = true });
         }
+
+        //Bp parse helper methods
+        //private int? ParseSystolic(string bp)
+        //{
+        //    if (string.IsNullOrEmpty(bp) || !bp.Contains("/")) return null;
+        //    return int.Parse(bp.Split('/')[0]);
+        //}
+        //private int? ParseDiastolic(string bp)
+        //{
+        //    if (string.IsNullOrEmpty(bp) || !bp.Contains("/")) return null;
+        //    return int.Parse(bp.Split('/')[1]);
+        //}
     }
 }
