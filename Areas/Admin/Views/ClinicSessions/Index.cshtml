@@ -55,10 +55,12 @@
             </div>
             <div class="form-group">
                 <label>Schedule Type *</label>
+                <div class="schedule-type-options">
+                    <input type="radio" id="weekly" name="ScheduleType" value="Weekly" onchange="toggleScheduleType()" />
+                    <label for="weekly">Weekly</label>
 
-                <div>
-                    <input type="radio" name="ScheduleType" value="Weekly" onchange="toggleScheduleType()" />Weekly
-                    <input type="radio" name="ScheduleType" value="Custom" onchange="toggleScheduleType()" /> Custom
+                    <input type="radio" id="custom" name="ScheduleType" value="Custom" onchange="toggleScheduleType()" />
+                    <label for="custom">Custom</label>
                 </div>
             </div>
 
@@ -169,30 +171,41 @@
                     <input type="number" id="editMaxSlots" name="MaxSlots" class="form-control" required />
                 </div>
                 <div class="form-group">
-                    <label>Schedule Type</label>
-                    <div>
-                        <input type ="radio" name="ScheduleType" value="Weekly" onchange="toggleEditScheduleType()" id="editWeekly"/>Weekly
-                        <input type="radio" name="ScheduleType" value="Custom" onchange="toggleEditScheduleType()" id="editCustom" />Custom
+                    <label>Schedule Type *</label>
+                    <div class="schedule-type-options">
+                        <input type="radio" id="editWeekly" name="ScheduleType" value="Weekly" onchange="toggleEditScheduleType()" />
+                        <label for="editWeekly">Weekly</label>
+
+                        <input type="radio" id="editCustom" name="ScheduleType" value="Custom" onchange="toggleEditScheduleType()" />
+                        <label for="editCustom">Custom</label>
                     </div>
                 </div>
-                <div class="form-group" id="editWeeklyOptions" style="display:none;">
-                    <label>Select Days *</label>
+                
+            </div>
+            <div class="form-group" id="editWeeklyOptions" style="display:none;">
+                <label>Select Days *</label>
 
-                    <div>
-                        <input type="checkbox" name="DaysOfWeek" value="Monday"/> Mon
-                        <input type="checkbox" name="DaysOfWeek" value="Tuesday" /> Tue
-                        <input type="checkbox" name="DaysOfWeek" value="Wednesday" /> Wed
-                        <input type="checkbox" name="DaysOfWeek" value="Thursday" /> Thu
-                        <input type="checkbox" name="DaysOfWeek" value="Friday" /> Fri
-                        <input type="checkbox" name="DaysOfWeek" value="Saturday" /> Sat
-                        <input type="checkbox" name="DaysOfWeek" value="Sunday" />Sun
-                    </div>
+                <div class="weekly-days">
+                    <input type="checkbox" name="DaysOfWeek" value="Monday" /> 
+                    <label for="editMon">Mon</label>
+                    <input type="checkbox" name="DaysOfWeek" value="Tuesday" /> 
+                    <label for="editTue">Tue</label>
+                    <input type="checkbox" name="DaysOfWeek" value="Wednesday" />
+                    <label for="editWed">Wed</label>
+                    <input type="checkbox" name="DaysOfWeek" value="Thursday" />
+                    <label for="editThu">Thu</label>
+                    <input type="checkbox" name="DaysOfWeek" value="Friday" />
+                    <label for="editFri">Fri</label>
+                    <input type="checkbox" name="DaysOfWeek" value="Saturday" />
+                    <label for="editSat">Sat</label>
+                    <input type="checkbox" name="DaysOfWeek" value="Sunday" />
+                    <label for="editSun">Sun</label>
                 </div>
+            </div>
 
-                <div class="form-group" id="editCustomOptions" style="display:none;">
-                    <label>Select Date</label>
-                    <input type="date" name="CustomDate" id="editCustomDate" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                </div>
+            <div class="form-group" id="editCustomOptions" style="display:none;">
+                <label>Select Date</label>
+                <input type="date" name="CustomDate" id="editCustomDate" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
             </div>
 
             <button type="submit" class="btn-submit">Update Session</button>
