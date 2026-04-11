@@ -1,92 +1,51 @@
-﻿@{
+﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientSessionViewModel>
+
+@{
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_PatientLayout.cshtml";
 }
 
-<link rel="stylesheet" href="~/css/patient/patientDashboardStyles.css">
+<link rel="stylesheet" href="~/css/patient/patientSessions.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<div class="container">
 
-    <!-- SECURITY ALERT -->
-    <div class="security-alert">
-        <div class="alert-content">
-            <span class="alert-icon">🔒</span>
-            <div>
-                <strong>Security Notice</strong>
-                <p>For your account safety, please update your password.</p>
-            </div>
+
+<div class="report-container">
+    <h2>Clinic Sessions</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="no-results">
+            <p>No sessions found.</p>
         </div>
-        <button class="btn-secondary">Update Password</button>
-    </div>
-
-    <!-- WELCOME -->
-    <div class="welcome fade-in">
-        <h2>Welcome back, Hiruni</h2>
-        <p>Your health summary has been updated.</p>
-    </div>
-
-    <div class="dashboard-grid">
-
-        <!-- HEALTH SUMMARY -->
-        <div class="card health-card slide-up">
-            <h4>Health Summary</h4>
-
-            <div class="health-stats">
-
-                <div class="health-stat">
-                    <p class="stat-label">Body Mass Index</p>
-                    <h3>22.4</h3>
-                    <span class="stat-status good">Normal</span>
-                </div>
-
-                <div class="health-stat">
-                    <p class="stat-label">Blood Pressure</p>
-                    <h3>120 / 80</h3>
-                    <span class="stat-status good">Stable</span>
-                </div>
-
-            </div>
+    }
+    else
+    {
+        <div class="session-history">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Session Name</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var session in Model)
+                    {
+                        <tr class="@((session.IsNextSession) ? "next-session" : "")">
+                            <td>@session.ClinicDate.ToString("yyyy-MM-dd")</td>
+                            <td>@session.SessionName</td>
+                            <td>@session.StartTime.ToString(@"hh\:mm")</td>
+                            <td>@session.EndTime.ToString(@"hh\:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-
-        <!-- MEDICATIONS -->
-        <div class="card slide-up delay-1">
-            <h4>Current Medications</h4>
-
-            <div class="medicine-list">
-                <div class="medicine-item">
-                    <strong>Paracetamol</strong>
-                    <span>500mg – Twice Daily</span>
-                </div>
-
-                <div class="medicine-item">
-                    <strong>Vitamin D</strong>
-                    <span>Once Daily</span>
-                </div>
-
-                <div class="medicine-item">
-                    <strong>Metformin</strong>
-                    <span>After Meals</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- REPORT -->
-        <div class="card slide-up delay-2">
-            <h4>Latest Medical Report</h4>
-            <p>Blood Report - 15 Feb 2026</p>
-            <button class="btn-primary">View Report</button>
-        </div>
-
-        <!-- APPOINTMENT -->
-        <div class="card slide-up delay-3">
-            <h4>Next Appointment</h4>
-            <p>25 Feb 2026 - 9:00 AM</p>
-            <button class="btn-primary">View Details</button>
-        </div>
-
-    </div>
+    }
 </div>
 
 <script src="js/patient/patientDashboard.js"></script>

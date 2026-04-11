@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace ClinicOne.Areas.Pharmacist.Views.SearchPatients
+namespace ClinicOne.Areas.Pharmacist.Views.Dashboard
 {
-    public class IndexModel : PageModel
+    public class ExternalPrescriptionModel : PageModel
     {
         public void OnGet()
         {

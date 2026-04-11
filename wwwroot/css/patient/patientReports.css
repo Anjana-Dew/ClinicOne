@@ -1,0 +1,192 @@
+﻿/* General Body */
+body {
+    background: #f0f4fb;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.report-container {
+    width: 95%;
+    max-width: 120rem; /* allows full width on very large screens */
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    box-shadow: 0 0.3rem 1.2rem rgba(0, 0, 0, 0.08);
+    border-radius: 0.6rem;
+}
+
+/* Heading */
+h2 {
+    margin-bottom: 2rem;
+    color: #2c3e50;
+    font-weight: 700;
+    text-align: center;
+    font-size: 2rem;
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+    .filters input[type="text"],
+    .filters input[type="date"] {
+        padding: 0.8rem 1rem;
+        border: 0.15rem solid #bbb;
+        border-radius: 0.6rem;
+        width: 20rem;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+        .filters input[type="text"]:focus,
+        .filters input[type="date"]:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 1rem 0.8rem;
+    text-align: left;
+    font-size: 1rem;
+}
+
+th {
+    background: #4a90e2;
+    color: #fff;
+    font-weight: 600;
+}
+
+td {
+    background: #fefefe;
+    color: #333;
+    vertical-align: middle;
+}
+
+/* Hover effect */
+tbody tr:hover td {
+    background: #e8f0fe;
+}
+
+/* Buttons */
+.download-btn {
+    background: #4a90e2;
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 0.6rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s;
+}
+
+    .download-btn:hover {
+        background: #357abd;
+    }
+
+/* Status Badges */
+.status {
+    padding: 0.4rem 1rem;
+    border-radius: 1.2rem;
+    font-weight: 700;
+    display: inline-block;
+    min-width: 5rem;
+    text-align: center;
+}
+
+    .status.normal {
+        background: #d9f0e6;
+        color: #26734d;
+    }
+
+    .status.high {
+        background: #fdecea;
+        color: #a94442;
+    }
+
+    .status.risk {
+        background: #fce4b4;
+        color: #a57c00;
+    }
+
+/* Pending Row */
+.pending-row {
+    background: #fff8e1;
+}
+
+.pending-badge {
+    background: #f1c40f;
+    padding: 0.5rem 1.2rem;
+    border-radius: 1.2rem;
+    font-weight: 700;
+    display: inline-block;
+    color: #6e5900;
+}
+
+/* No results */
+.no-results {
+    text-align: center;
+    padding: 5rem 0;
+    color: #666;
+}
+
+    .no-results img {
+        width: 12rem;
+        opacity: 0.6;
+    }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .report-container {
+        width: 95%;
+        padding: 1rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    .filters input[type="text"],
+    .filters input[type="date"] {
+        width: 100%;
+    }
+
+    th, td {
+        padding: 0.6rem 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .download-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    th, td {
+        font-size: 0.8rem;
+        padding: 0.5rem 0.3rem;
+    }
+
+    .download-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+    }
+}
