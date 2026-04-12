@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ClinicOne.Services;
 using System.Diagnostics;
 using ClinicOne.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicOne.Areas.Doctor.Controllers
 {
@@ -270,12 +271,16 @@ namespace ClinicOne.Areas.Doctor.Controllers
             //Clinic Scheduling
 
             model.ClinicSessions = _context.ClinicSessions
+                .Include(s => s.SessionDates)
                 .Select(s => new ClinicSessionItemViewModel
                 {
                     SessionID = s.SessionID,
                     SessionName = s.SessionName,
                     StartTime = s.StartTime,
                     EndTime = s.EndTime,
+                    ScheduleType = s.ScheduleType,
+                    DaysOfWeek = s.DaysOfWeek,
+                    CustomDates = s.SessionDates.Select(d => d.SessionDate).ToList(),
                     RemainingSlots = s.MaxSlots - _context.ClinicSchedules
                     .Count(c => c.SessionID == s.SessionID && c.ClinicDate == DateTime.Today)
                 }).ToList();
@@ -397,20 +402,29 @@ namespace ClinicOne.Areas.Doctor.Controllers
         [HttpPost]
         public IActionResult ScheduleClinic(string PatientNIC, DateTime ClinicDate, int SelectedSessionID)
         {
+            
+            if (SelectedSessionID == 0)
+            {
+                TempData["ClinicError"] = "Please select a clinic session.";
+                return RedirectToAction("Index", new { id = PatientNIC });
+            }
+
             var session = _context.ClinicSessions
                 .FirstOrDefault(s => s.SessionID == SelectedSessionID);
 
-            if(session == null)
+            if (session == null)
             {
+                TempData["ClinicError"] = "Invalid session selected.";
                 return RedirectToAction("Index", new { id = PatientNIC });
             }
 
             var bookedCount = _context.ClinicSchedules
                 .Count(c => c.SessionID == SelectedSessionID && c.ClinicDate == ClinicDate);
 
+            
             if(bookedCount >= session.MaxSlots)
             {
-                TempData["Error"] = "No more available slots for this clinic session.";
+                TempData["ClinicError"] = "No more available slots for this clinic session.";
                 return RedirectToAction("Index", new { id = PatientNIC });
             }
 
@@ -419,7 +433,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             if (alreadyBooked)
             {
-                TempData["Error"] = "Patient already has a clinic appointment on this date.";
+                TempData["ClinicError"] = "Patient already has a clinic appointment on this date.";
                 return RedirectToAction("Index", new { id = PatientNIC });
             }
             var schedule = new ClinicSchedule
@@ -439,7 +453,12 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
         public IActionResult GetSessionsForDate(DateTime clinicDate)
         {
+            var dayName = clinicDate.DayOfWeek.ToString();
+
             var sessions = _context.ClinicSessions
+                .Include(s => s.SessionDates)
+                .ToList()
+                .Where(s => (s.ScheduleType == "Weekly" && s.DaysOfWeek != null && s.DaysOfWeek.Split(',').Contains(dayName)) || (s.ScheduleType == "Custom" && s.SessionDates.Any(d => d.SessionDate.Date == clinicDate.Date)))
                 .Select(s => new
                 {
                     s.SessionID,
@@ -450,16 +469,15 @@ namespace ClinicOne.Areas.Doctor.Controllers
                     Booked = _context.ClinicSchedules
                     .Count(c => c.SessionID == s.SessionID && c.ClinicDate == clinicDate)
                 })
-                .ToList()
                 .Select(s => new
                 {
                     s.SessionID,
                     s.SessionName,
                     s.StartTime,
                     s.EndTime,
-                    RemainingSlots = clinicDate.Date == DateTime.Today && s.StartTime <= DateTime.Now.TimeOfDay
-                    ? 0 : s.MaxSlots - s.Booked
-                });
+                    RemainingSlots = s.MaxSlots - _context.ClinicSchedules.Count(c => c.SessionID == s.SessionID && c.ClinicDate.Date == clinicDate.Date)
+                })
+                .ToList();
 
             return Json(sessions);
         }
@@ -521,21 +539,5 @@ namespace ClinicOne.Areas.Doctor.Controllers
             return RedirectToAction("Index", new { id = patientNIC });
         }
 
-        //public IActionResult UpdateProgressStatus(string patientNIC, DateTime progressDate, string progressStatus, string doctorNotes)
-        //{
-        //    var progress = _context.PatientProgresses.FirstOrDefault(p => p.PatientNIC == patientNIC && p.ProgressDate == progressDate);
-
-        //    if (progress != null)
-        //    {
-        //        progress.ProgressStatus = progressStatus;
-        //        progress.DoctorNotes = doctorNotes;
-
-        //        _context.SaveChanges();
-        //    }
-
-        //    TempData["Success"] = "Progress updated.";
-
-        //    return RedirectToAction("Index", new { id = patientNIC });
-        //}
     }
 }

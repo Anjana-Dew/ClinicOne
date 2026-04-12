@@ -137,7 +137,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 3000);
     }
 });
+document.addEventListener("DOMContentLoaded", function () {
 
+    let msg = document.getElementById("ClinicTempMessage");
+
+    if (msg) {
+        setTimeout(function () {
+            msg.style.opacity = "0";
+
+            setTimeout(function () {
+                msg.style.display = "none";
+            }, 500);
+        }, 3000);
+    }
+});
 
 //Clinic scheduling
 
@@ -152,6 +165,12 @@ document.getElementById("clinicDatePicker").addEventListener("change", function 
             let container = document.querySelector(".session-toggle");
             container.innerHTML = "";
 
+            if (data.length === 0) {
+                container.innerHTML = `<p class="no-session-msg">
+                    No session available for selected date.
+                </p>`;
+                return;
+            }
             data.forEach(session => {
 
                 let isFull = session.remainingSlots <= 0;
