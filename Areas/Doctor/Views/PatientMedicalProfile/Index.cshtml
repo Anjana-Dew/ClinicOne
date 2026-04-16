@@ -257,7 +257,7 @@
 			</div>
 		</div>
 	</div>
-
+	<!--Patient Progress -->
 	<div class="progress-card">
 
 		<div class="progress-left">
@@ -313,6 +313,34 @@
 				<p>No sufficient reports to calculate progress.</p>
 			}
 			
+		</div>
+	</div>
+	<!--Charts-->
+	<div class="chart-wrapper">
+		<!--BP-->
+		<div class="bp-chart-card">
+			<h3>Blood Pressure Trend</h3>
+			@if (ViewBag.BPData == null || !((IEnumerable<dynamic>)ViewBag.BPData).Any())
+			{
+				<p class="no-data-msg">No BP data available</p>
+			}
+			else
+			{
+				<canvas id="bpChart"></canvas>
+			}
+		</div>
+		<!--Progress-->
+		<div class="progress-chart-card">
+			<h3>Patient Progress Trend</h3>
+
+			@if (ViewBag.ProgressData == null || !((IEnumerable<dynamic>)ViewBag.ProgressData).Any())
+			{
+				<p class="no-data-msg">No progress data available</p>
+			}
+			else
+			{
+				<canvas id="progressChart"></canvas>
+			}
 		</div>
 	</div>
 </div>
@@ -544,14 +572,11 @@
 		<button onclick="closePopup('declineProgressPopup')" class="cancel-btn">Cancel</button>
 	</div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
 <script>
-	window.addEventListener("load", function() {
-		const hasError = document.getElementById("hasClinicError").value === "true";
-
-		if(hasError) {
-			openPopup('clinicPopup');
-		}
-	});
+	const bpData = @Html.Raw(Json.Serialize(ViewBag.BPData ?? new List<object>()));
+	const progressData = @Html.Raw(Json.Serialize(ViewBag.ProgressData ?? new List<object>()));
 </script>
 <script src="~/js/doctor/patientProfile.js"></script>
 

@@ -25,6 +25,35 @@ namespace ClinicOne.Areas.Doctor.Controllers
         }
         public IActionResult Index(string id)
         {
+            //Access restriction
+            var userId = HttpContext.Session.GetInt32("UserID");
+            if(userId == null)
+            {
+                return RedirectToAction("Login", "Account", new { area = "" });
+            }
+            var doctor = _context.Doctors.FirstOrDefault(d => d.UserAccountID == userId);
+            if(doctor == null)
+            {
+                return RedirectToAction("AccessDenied", "Account", new { area = "" });
+            }
+
+            var now = DateTime.Now;
+            var today = now.Date;
+            var currentTime = now.TimeOfDay;
+
+            var hasActiveSession = (from d in _context.DoctorDutySchedules
+                                    join s in _context.ClinicSessions
+                                    on d.SessionID equals s.SessionID
+                                    where d.DoctorID == doctor.DoctorID
+                                    && d.ClinicDate == today 
+                                    && s.StartTime <= currentTime
+                                    && s.EndTime >= currentTime
+                                    select d).Any();
+
+            if (!hasActiveSession)
+            {
+                return RedirectToAction("AccessDenied", "Account", new {area = ""});
+            }
             // vitals and personal info
             var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == id);
 
@@ -285,6 +314,39 @@ namespace ClinicOne.Areas.Doctor.Controllers
                     .Count(c => c.SessionID == s.SessionID && c.ClinicDate == DateTime.Today)
                 }).ToList();
 
+            // trend charts
+            // BP
+            var bpData = _context.PatientVitals
+                .Where(v => v.PatientNIC == id && v.Systolic != null && v.Diastolic != null)
+                .OrderBy(v => v.RecordedDate)
+                .Select(v => new
+                {
+                    date = v.RecordedDate.ToString("yyyy-MM-dd"),
+                    systolic = v.Systolic,
+                    diastolic = v.Diastolic
+                }).ToList();
+
+            ViewBag.BPData = bpData;
+
+            //Progress
+            var progressData = _context.PatientProgresses
+                .Where(p => p.PatientNIC == id)
+                .OrderBy(p => p.ProgressDate)
+                .Select(p => new
+                {
+                    date = p.ProgressDate.ToString("yyyy-MM-dd"),
+                    status = p.ProgressStatus
+                }).ToList();
+
+            var mapped = progressData.Select(p => new
+            {
+                date = p.date,
+                value = p.status == "Worsening" ? 0 :
+                        p.status == "Stable" ? 1 :
+                        p.status == "Improving" ? 2 : 1
+            }).ToList();
+
+            ViewBag.ProgressData = mapped;
             return View(model);
         }
 

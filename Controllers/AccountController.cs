@@ -75,11 +75,11 @@ namespace ClinicOne.Controllers
             _context.SaveChanges();
 
             var claims = new List<Claim>
-{
+            {
             new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.Role, user.Role),
             new Claim("UserID", user.UserAccountID.ToString())
-};
+            };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 

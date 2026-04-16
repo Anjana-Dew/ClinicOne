@@ -226,6 +226,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+//clinic error
+
+window.addEventListener("load", function () {
+    const hasError = document.getElementById("hasClinicError").value === "true";
+
+    if (hasError) {
+        openPopup('clinicPopup');
+    }
+});
 //progress 
 let selectedStatus = null;
 
@@ -282,3 +291,122 @@ function submitDecline() {
             location.reload();
         });
 }
+
+//Bp chart
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (typeof bpData !== "undefined" && bpData.length > 0) {
+
+        const labels = bpData.map(x => x.date);
+        const systolicData = bpData.map(x => x.systolic);
+        const diastolicData = bpData.map(x => x.diastolic);
+
+        const ctx = document.getElementById('bpChart');
+
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Systolic',
+                        data: systolicData,
+                        borderWidth: 2,
+                        tension: 0.3
+
+                    }, {
+                        label: 'Diastolic',
+                        data: diastolicData,
+                        borderWidth: 2,
+                        tension: 0.3
+                    }
+                    ]
+                }
+            });
+        }
+    }
+});
+
+//progress chart
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (typeof progressData !== "undefined" && progressData.length > 0) {
+
+        const labels = progressData.map(x => x.date);
+        const values = progressData.map(x => x.value);
+
+        const ctx = document.getElementById('progressChart');
+
+        if (ctx) {
+            new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Patient Progress',
+                        data: values,
+                        borderWidth: 2,
+                        tension: 0.3,
+                        stepped: true
+                    }]
+                },
+                options: {
+                    plugins: {
+                        annotation: {
+                            annotations: {
+                                worseningZone: {
+                                    type: 'box',
+                                    yMin: -0.5,
+                                    yMax: 0.5,
+                                    backgroundColor: 'rgba(255,0,0,0.1)'
+                                },
+                                stableZone: {
+                                    type: 'box',
+                                    yMin: 0.5,
+                                    yMax: 1.5,
+                                    backgroundColor: 'rgba(255,206,86,0.1)'
+                                },
+                                improvingZone: {
+                                    type: 'box',
+                                    yMin: 1.5,
+                                    yMax: 2.5,
+                                    backgroundColor: 'rgba(75,192,192,0.1)'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function (value) {
+                                    if (value === 0) return "Worsening";
+                                    if (value === 1) return "Stable";
+                                    if (value === 2) return "Improving";
+                                }
+                            },
+                            min: -0.5,
+                            max: 2.5,
+                            grid: {
+                                color: function (context) {
+                                    const value = context.tick.value;
+
+                                    if (value === 0) return 'rgba(255,99,132,0.6)';
+                                    if (value === 1) return 'rgba(255,206,86,0.6)';
+                                    if (value === 2) return 'rgba(75,192,192,0.6)';
+
+                                    return '#eee';
+                                },
+                                lineWidth: function (context) {
+                                    const value = context.tick.value;
+
+                                    return (value === 0 || value === 1 || value === 2) ? 2 : 1;
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+});
