@@ -106,10 +106,10 @@ function submitReport() {
             if (data.success) {
                 showMessage("Report saved successfully.", "success");
 
-                setTimeout(() => {
-                    window.location.href = "/Admin/TestReports"
+                //setTimeout(() => {
+                //    window.location.href = "/Admin/TestReports"
 
-                }, 1000);
+                //}, 1000);
             }
         });
 }

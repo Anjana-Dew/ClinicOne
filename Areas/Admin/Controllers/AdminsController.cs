@@ -26,9 +26,6 @@ namespace ClinicOne.Areas.Admin.Controllers
         }
         private bool IsMainAdmin()
         {
-            //return true;
-
-            // when loggin is doen uncomment these
             var username = HttpContext.Session.GetString("Username");
             return username != null &&
                 username.Equals(MAIN_ADMIN_EMAIL, StringComparison.OrdinalIgnoreCase);
