@@ -91,7 +91,15 @@ function renderWeek() {
             //Custom
             if (session.ScheduleType === "Custom" && session.CustomDates) {
                 const match = session.CustomDates.some(d => {
-                    const dateStr = new Date(d).toISOString().split('T')[0];
+
+                    const tempDate = new Date(d);
+                    tempDate.setHours(0, 0, 0, 0);
+
+                    const year = tempDate.getFullYear();
+                    const month = String(tempDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(tempDate.getDate()).padStart(2, '0');
+
+                    const dateStr = `${year}-${month}-${day}`;
 
                     return dateStr === formattedDate;
                 });

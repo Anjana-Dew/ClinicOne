@@ -257,7 +257,7 @@
 			</div>
 		</div>
 	</div>
-
+	<!--Patient Progress -->
 	<div class="progress-card">
 
 		<div class="progress-left">
@@ -313,6 +313,34 @@
 				<p>No sufficient reports to calculate progress.</p>
 			}
 			
+		</div>
+	</div>
+	<!--Charts-->
+	<div class="chart-wrapper">
+		<!--BP-->
+		<div class="bp-chart-card">
+			<h3>Blood Pressure Trend</h3>
+			@if (ViewBag.BPData == null || !((IEnumerable<dynamic>)ViewBag.BPData).Any())
+			{
+				<p class="no-data-msg">No BP data available</p>
+			}
+			else
+			{
+				<canvas id="bpChart"></canvas>
+			}
+		</div>
+		<!--Progress-->
+		<div class="progress-chart-card">
+			<h3>Patient Progress Trend</h3>
+
+			@if (ViewBag.ProgressData == null || !((IEnumerable<dynamic>)ViewBag.ProgressData).Any())
+			{
+				<p class="no-data-msg">No progress data available</p>
+			}
+			else
+			{
+				<canvas id="progressChart"></canvas>
+			}
 		</div>
 	</div>
 </div>
@@ -423,9 +451,16 @@
 
 		<h3>Schedule Clinic Appointment</h3>
 
-		<form asp-area="doctor" asp-action="ScheduleClinic" asp-controller="PatientMedicalProfile" method="post">
+		@if(TempData["ClinicError"] != null)
+		{
+			<p class="temp-message error-message" id="clinicTempMessage">
+				@TempData["ClinicError"]
+			</p>
+		}
+		<form asp-area="doctor" asp-action="ScheduleClinic" asp-controller="PatientMedicalProfile" method="post" id="clinicPopupForm">
 
 			<input type="hidden" name="PatientNIC" value="@Model.PatientNIC" />
+			<input type="hidden" id="hasClinicError" value="@(TempData["ClinicError"] != null ? "true" : "false")" />
 
 			<label>Select Date</label>
 			<input type="date" name="ClinicDate" id="clinicDatePicker" value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
@@ -449,8 +484,7 @@
 							<input type="radio"
 								   name="SelectedSessionID"
 								   value="@session.SessionID"
-							@(isFull ? "disabled" : "")
-								   required />
+							@(isFull ? "disabled" : "")/>
 
 							<span>
 								@session.SessionName
@@ -461,7 +495,17 @@
 								</small>
 
 								<br />
-
+								@if(session.ScheduleType == "Weekly")
+								{
+									<small class="session-days">Weekly: @session.DaysOfWeek</small>
+								}
+								else if (session.ScheduleType == "Custom")
+								{
+									<small class="session-days">
+										Custom: @string.Join(",",session.CustomDates.Select(d => d.ToString("yyyy-MM-dd")))
+									</small>	
+								}
+								<br />
 								@if (isFull)
 								{
 									<small class="slot-full">No slots available</small>
@@ -502,43 +546,6 @@
 </div>
 
 <!--Progress popups-->
-@* <div class="popup" id="progressPopup">
-
-	<div class="popup-content">
-
-		<h3>Confirm Patient Progress</h3>
-
-		<form asp-action="ConfirmProgress" method="post">
-
-			<input type="hidden" name="PatientNIC" value="@Model.PatientNIC" />
-			<input type="hidden" name="ProgressDate" value="@Model.Progress?.ProgressDate" />
-
-			<p>Suggested Progress: <strong>@Model.Progress?.SuggestedStatus</strong></p>
-
-			<label>Doctor Notes</label>
-
-			<textarea name="DoctorNotes" required></textarea>
-
-			<div class="popup-buttons">
-
-				<button type="button"
-						onclick="closePopup('progressPopup')"
-						class="cancel-btn">
-					Cancel
-				</button>
-
-				<button type="submit"
-						class="save-btn">
-					Confirm
-				</button>
-
-			</div>
-
-		</form>
-
-	</div>
-</div>  *@
-
 <div class="popup progress-popups" id="confirmProgressPopup">
 	<div class="popup-content">
 		<h3>Confirm Progress</h3>
@@ -565,5 +572,11 @@
 		<button onclick="closePopup('declineProgressPopup')" class="cancel-btn">Cancel</button>
 	</div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+<script>
+	const bpData = @Html.Raw(Json.Serialize(ViewBag.BPData ?? new List<object>()));
+	const progressData = @Html.Raw(Json.Serialize(ViewBag.ProgressData ?? new List<object>()));
+</script>
 <script src="~/js/doctor/patientProfile.js"></script>
 

@@ -22,23 +22,23 @@ namespace ClinicOne.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var sessions = _context.ClinicSessions
-                .Include(s => s.SessionDates)
-                .Select(s => new ClinicSessionViewModel
-                {
-                    SessionID = s.SessionID,
-                    SessionName = s.SessionName,
-                    StartTime = s.StartTime,
-                    EndTime = s.EndTime,
-                    MaxSlots = s.MaxSlots,
-                    ScheduleType = s.ScheduleType,
-                    DaysOfWeek = s.ScheduleType == "Weekly" && s.DaysOfWeek != null ? s.DaysOfWeek.Split(',').ToList() : null,
-                    CustomDate = s.SessionDates.Select(d => (DateTime?)d.SessionDate).FirstOrDefault()
-                }).ToList();
+            //var sessions = _context.ClinicSessions
+            //    .Include(s => s.SessionDates)
+            //    .Select(s => new ClinicSessionViewModel
+            //    {
+            //        SessionID = s.SessionID,
+            //        SessionName = s.SessionName,
+            //        StartTime = s.StartTime,
+            //        EndTime = s.EndTime,
+            //        MaxSlots = s.MaxSlots,
+            //        ScheduleType = s.ScheduleType,
+            //        DaysOfWeek = s.ScheduleType == "Weekly" && s.DaysOfWeek != null ? s.DaysOfWeek.Split(',').ToList() : null,
+            //        CustomDate = s.SessionDates.Select(d => (DateTime?)d.SessionDate).FirstOrDefault()
+            //    }).ToList();
 
             var viewModel = new ClinicSessionViewModel
             {
-                ExistingSessions = sessions
+                ExistingSessions = GetSessions()
             };
 
             return View(viewModel);
@@ -193,7 +193,14 @@ namespace ClinicOne.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            string sessionName = session.SessionName;
+            bool hasAssignments = _context.DoctorDutySchedules.Any(d => d.SessionID == id);
+
+            if (hasAssignments)
+            {
+                TempData["ErrorMessage"] = $"The session '{session.SessionName}' cannot be deleted if it has past doctor assignments. Future sessions may be deleted only after removing assignments.";
+                return RedirectToAction(nameof(Index));
+            }
+            
 
             _context.ClinicSessions.Remove(session);
             _context.SaveChanges();
@@ -206,13 +213,21 @@ namespace ClinicOne.Areas.Admin.Controllers
         //Get session list
         private List<ClinicSessionViewModel> GetSessions()
         {
-            return _context.ClinicSessions.Select(s => new ClinicSessionViewModel
+            return _context.ClinicSessions.OrderByDescending(s => s.SessionID)
+                .Select(s => new ClinicSessionViewModel
             {
                 SessionID = s.SessionID,
                 SessionName = s.SessionName,
                 StartTime = s.StartTime,
                 EndTime = s.EndTime,
-                MaxSlots = s.MaxSlots
+                MaxSlots = s.MaxSlots,
+                ScheduleType = s.ScheduleType,
+                DaysOfWeek = s.ScheduleType == "Weekly" && s.DaysOfWeek != null
+                ? s.DaysOfWeek.Split(',').ToList(): null,
+                CustomDate = s.SessionDates
+                .Select(d => (DateTime?)d.SessionDate)
+                .FirstOrDefault()
+
             }).ToList();
         }
     }

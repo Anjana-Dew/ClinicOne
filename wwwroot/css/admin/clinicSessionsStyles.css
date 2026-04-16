@@ -129,6 +129,7 @@
     color: #888;
 }
 /* Success Message*/
+.error-message,
 .success-message {
     background-color: #d4edda;
     color: #155724;
@@ -139,7 +140,10 @@
     justify-content: space-between;
     align-items: center;
 }
-
+.error-message {
+    background-color: #f8d7da;
+    color: #d9534f;
+}
 .close-btn {
     background: none;
     border: none;
@@ -151,6 +155,18 @@
 
 .close-btn:hover {
     color: #062b15;
+}
+.close-btn.error {
+    background: none;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #d9534f;   
+    cursor: pointer;
+}
+
+.close-btn.error:hover {
+    color: #a94442;  
 }
 
 /* Validation error styles*/

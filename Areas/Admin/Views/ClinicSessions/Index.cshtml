@@ -13,6 +13,13 @@
         <button type="button" class="close-btn" onclick="closeAlert()">×</button>
     </div>
 }
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="error-message" id="successAlert">
+        <span>@TempData["ErrorMessage"]</span>
+        <button type="button" class="close-btn error" onclick="closeAlert()">×</button>
+    </div>
+}
 
 <div class="clinic-session-management">
 

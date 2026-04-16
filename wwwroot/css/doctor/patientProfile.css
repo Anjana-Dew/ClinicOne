@@ -725,6 +725,38 @@
     color: #1e3fae;
 }
 
+/*Trend cards*/
+.chart-wrapper{
+    display: flex;
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+.bp-chart-card,
+.progress-chart-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 1;
+    min-height: 300px;
+    transition: transform 0.25s ease,box-shadow 0.25s ease;
+}
+.bp-chart-card:hover,
+.progress-chart-card:hover{
+    transform: translateY(-4px);
+    box-shadow:0 6px 12px rgba(20,63,`74,0.2);
+} 
+.bp-chart-card h3,
+.progress-chart-card h3{
+    color: #1e3fae;
+    margin-bottom: 15px;
+}
+.no-data-msg {
+    color: #1e3fae;
+    font-weight: 400;
+    margin-top: 20px;
+}
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -790,6 +822,9 @@
     .progress-left img {
         width: 70px;
         height: 70px;
+    }
+    .chart-wrapper{
+        flex-direction: column;
     }
 
 }

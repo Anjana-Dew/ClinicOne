@@ -40,16 +40,16 @@ namespace ClinicOne.Areas.Admin.Controllers
         }
 
         public IActionResult Upload(string nic) {
-            var patien = _context.Patients.FirstOrDefault(x => x.PatientNIC == nic);
+            var patient = _context.Patients.FirstOrDefault(x => x.PatientNIC == nic);
 
-            if(patien == null)
+            if(patient == null)
             {
                 return RedirectToAction("Index");
             }
             var model = new UploadTestReportViewModel
             {
                 PatientNIC = nic,
-                PatientName = patien.FullName,
+                PatientName = patient.FullName,
 
                 Panels = _context.TestPanels.Select(x => new TestPanelViewModel
                 {
