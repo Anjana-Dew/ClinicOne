@@ -102,6 +102,11 @@
             {
                 foreach(var session in Model.ExistingSessions)
                 {
+                    
+                    bool disableEdit = session.ScheduleType == "Custom"
+                            && session.CustomDate != null
+                            && session.CustomDate.Value.Date <= DateTime.Today;
+                   
                     <div class="session-card">
                         <h3>@session.SessionName</h3>
                         <p><strong>Start:</strong> @session.StartTime</p>
@@ -117,23 +122,25 @@
                         }
 
                         <div class="card-actions">
-                            <button type="button" 
-                                class="btn-edit" 
-                                onclick="openEditModal(
-                                    @session.SessionID,
-                                    '@session.SessionName',
-                                    '@session.StartTime',
-                                    '@session.EndTime', 
-                                    @session.MaxSlots,
-                                    '@session.ScheduleType',
-                                    '@string.Join(",",session.DaysOfWeek ?? new List<string>())',
-                                    '@session.CustomDate?.ToString("yyyy-MM-dd")')">
+                            <button type="button"
+                                    class="btn-edit"
+                                    disabled="@(disableEdit)"
+                                    style="@(disableEdit ? "opacity:0.5; cursor:not-allowed;" : "")"
+                                    data-id="@session.SessionID"
+                                    data-name="@session.SessionName"
+                                    data-start="@session.StartTime"
+                                    data-end="@session.EndTime"
+                                    data-max="@session.MaxSlots"
+                                    data-type="@session.ScheduleType"
+                                    data-days="@string.Join(",", session.DaysOfWeek ?? new List<string>())"
+                                    data-date="@session.CustomDate?.ToString("yyyy-MM-dd")"
+                                    onclick="handleEditClick(this)">
                                 Edit
                             </button>
                             <form asp-action="Delete" method="post" style="display:inline">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@session.SessionID" />
-                                <button type="submit" class="btn-delete">Detele</button>
+                                <button type="submit" class="btn-delete">Delete</button>
                             </form>
                         </div>
                     </div>
