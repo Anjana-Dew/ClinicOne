@@ -3,6 +3,19 @@ function closeAlert() {
     document.getElementById("successAlert").style.display = "none";
 }
 
+function handleEditClick(btn) {
+    openEditModal(
+        btn.getAttribute("data-id"),
+        btn.getAttribute("data-name"),
+        btn.getAttribute("data-start"),
+        btn.getAttribute("data-ent"),
+        btn.getAttribute("data-max"),
+        btn.getAttribute("data-type"),
+        btn.getAttribute("data-days"),
+        btn.getAttribute("data-date"),
+
+    )
+}
 // Edit popup
 function openEditModal(id, name, start, end, maxSlots, type, days, customDate) {
     document.getElementById("editSessionID").value = id;
