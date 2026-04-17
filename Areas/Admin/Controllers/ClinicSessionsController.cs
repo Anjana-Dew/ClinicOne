@@ -157,6 +157,14 @@ namespace ClinicOne.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            bool hasAssignments = _context.DoctorDutySchedules.Any(d => d.SessionID == model.SessionID);
+
+            if (hasAssignments)
+            {
+                TempData["ErrorMessage"] = $"The session '{session.SessionName}' cannot be edited because it already has doctor assignments.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var existingDate = session.SessionDates
                 .Select(d => (DateTime?)d.SessionDate)
                 .FirstOrDefault();

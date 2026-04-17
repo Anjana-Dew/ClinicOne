@@ -8,7 +8,7 @@ function handleEditClick(btn) {
         btn.getAttribute("data-id"),
         btn.getAttribute("data-name"),
         btn.getAttribute("data-start"),
-        btn.getAttribute("data-ent"),
+        btn.getAttribute("data-end"),
         btn.getAttribute("data-max"),
         btn.getAttribute("data-type"),
         btn.getAttribute("data-days"),
