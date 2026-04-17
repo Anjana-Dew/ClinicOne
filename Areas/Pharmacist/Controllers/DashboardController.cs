@@ -78,10 +78,10 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
                 .Select(m => new
                 {
                     PrescMedID = m.PrescMedID,
-                    MedicineName = m.MedicineName,
-                    Dosage = m.Dosage,
-                    Status = m.Status,
-                    Reason = m.Reason
+                    MedicineName = m.MedicineName ?? "",
+                    Dosage = m.Dosage ?? "",
+                    Status = m.Status ?? "",
+                    Reason = m.Reason ?? ""
                 })
                 .ToList();
 

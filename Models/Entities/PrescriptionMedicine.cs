@@ -36,7 +36,7 @@ namespace ClinicOne.Models.Entities
         [ForeignKey("PrescriptionID")]
         public Prescription Prescription { get; set; }
 
-        public int TimesPerDay { get; set; }
+        
         public ICollection<MedicineReminder> MedicineReminders { get; set; }
     }
 }

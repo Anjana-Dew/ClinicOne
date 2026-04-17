@@ -35,18 +35,19 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
                             m.Status == "Not Given")
                 .Select(m => new MedicineItemViewModel
                 {
-                    MedicineName = m.MedicineName,
-                    Dosage = m.Dosage,
-                    Duration = m.Duration,
+                    MedicineName = m.MedicineName ?? "",
+                    Dosage = m.Dosage ?? "",
+                    Duration = m.Duration ?? "",
                     TimesPerDay = m.TimesPerDay
                 })
+
                 .ToList();
 
             var model = new ExternalPrescriptionPdfModel
             {
                 PatientName = patient.FullName,
                 NIC = patient.PatientNIC,
-                Notes = prescription.Notes,
+                Notes = prescription.Notes ?? " ",
                 Medicines = medicines
             };
 

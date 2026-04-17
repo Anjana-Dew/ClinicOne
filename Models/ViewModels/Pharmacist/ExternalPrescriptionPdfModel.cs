@@ -2,10 +2,9 @@
 {
     public class ExternalPrescriptionPdfModel
     {
-        public string PatientName { get; set; }
-        public string NIC { get; set; }
-        public string Notes { get; set; }
-
-        public List<MedicineItemViewModel> Medicines { get; set; }
+        public string PatientName { get; set; } = string.Empty;
+        public string NIC { get; set; } = string.Empty;
+        public string Notes { get; set; } = string.Empty;
+        public List<MedicineItemViewModel> Medicines { get; set; } = new();
     }
 }
