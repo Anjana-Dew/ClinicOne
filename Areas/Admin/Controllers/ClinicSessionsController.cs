@@ -115,7 +115,13 @@ namespace ClinicOne.Areas.Admin.Controllers
                 SessionName = session.SessionName,
                 StartTime = session.StartTime,
                 EndTime = session.EndTime,
-                MaxSlots = session.MaxSlots
+                MaxSlots = session.MaxSlots,
+                ScheduleType = session.ScheduleType,
+                DaysOfWeek = session.ScheduleType == "Weekly" && session.DaysOfWeek != null ?
+                                session.DaysOfWeek.Split(',').ToList() : null,
+                CustomDate = session.SessionDates
+                .Select( d => (DateTime?)d.SessionDate)
+                .FirstOrDefault()
             };
 
             return View(model);
@@ -145,9 +151,32 @@ namespace ClinicOne.Areas.Admin.Controllers
             var session = _context.ClinicSessions
                 .Include(s => s.SessionDates)
                 .FirstOrDefault(s => s.SessionID == model.SessionID);
+
             if(session == null)
             {
                 return NotFound();
+            }
+
+            bool hasAssignments = _context.DoctorDutySchedules.Any(d => d.SessionID == model.SessionID);
+
+            if (hasAssignments)
+            {
+                TempData["ErrorMessage"] = $"The session '{session.SessionName}' cannot be edited because it already has doctor assignments.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var existingDate = session.SessionDates
+                .Select(d => (DateTime?)d.SessionDate)
+                .FirstOrDefault();
+
+            if (session.ScheduleType == "Custom" && existingDate != null)
+            {
+                if (existingDate.Value.Date <= DateTime.Today)
+                {
+                    TempData["ErrorMessage"] = "You cannot edit a session that is today or in the past.";
+
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             session.SessionName = model.SessionName;
