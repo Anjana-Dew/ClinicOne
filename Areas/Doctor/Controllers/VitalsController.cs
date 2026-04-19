@@ -33,6 +33,10 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             foreach (var v in vitals)
             {
+                if (v.Height == null && v.Weight == null && v.Systolic == null && v.Diastolic == null)
+                {
+                    continue;
+                }
                 if (v.Height != null) lastHeight = v.Height;
                 if (v.Weight != null) lastWeight = v.Weight;
                 if (v.Systolic != null) lastSys = v.Systolic;

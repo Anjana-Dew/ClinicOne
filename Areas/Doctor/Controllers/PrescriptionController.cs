@@ -58,7 +58,8 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             if (!model.Medicines.Any() && (model.Tests == null || !model.Tests.Any(t => t.PanelID > 0)))
             {
-                return BadRequest("Prescription must contain at least a medicine or a test.");
+                TempData["Error"] = "Prescription must contain at least a medicine or a test.";
+                return RedirectToAction("Create", new { nic = model.PatientNIC });
             }
 
             var prescription = new Prescription

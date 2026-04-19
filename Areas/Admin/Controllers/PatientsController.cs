@@ -210,7 +210,7 @@ namespace ClinicOne.Areas.Admin.Controllers
 
             if (patient == null) 
             {
-                return Json(new { success = false, message = "Patinet not found." });
+                return Json(new { success = false, message = "Patient not found." });
             
             }
             return Json(new

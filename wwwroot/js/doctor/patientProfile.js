@@ -249,6 +249,8 @@ function selectStatus(status, e) {
 }
 
 function submitConfirm() {
+    const errorBox = document.getElementById("confirmError");
+    errorBox.style.display = "none";
     const notes = document.getElementById("confirmNotes").value;
     const nic = document.getElementById("patientNIC").value;
     const date = document.getElementById("progressDate").value;
@@ -261,7 +263,8 @@ function submitConfirm() {
     })
         .then(res => {
             if (!res.ok) {
-                alert("Failed to save progress");
+                errorBox.innerText = "Failed to save progress";
+                errorBox.style.display = "block"
                 return;
             }
             location.reload();
@@ -269,8 +272,11 @@ function submitConfirm() {
 }
 
 function submitDecline() {
+    const errorBox = document.getElementById("declineError");
+    errorBox.style.display = "none";
     if (!selectedStatus) {
-        alert("Select a status first");
+        errorBox.innerText = "Please select a status first";
+        errorBox.style.display = "block"
         return;
     }
 
@@ -285,7 +291,8 @@ function submitDecline() {
     })
         .then(res => {
             if (!res.ok) {
-                alert("Failed to save progress");
+                errorBox.innerText = "Failed to save progress";
+                errorBox.style.display = "block"
                 return;
             }
             location.reload();
@@ -346,8 +353,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         label: 'Patient Progress',
                         data: values,
                         borderWidth: 2,
-                        tension: 0.3,
-                        stepped: true
+                        tension: 0,
+                        //stepped: true
                     }]
                 },
                 options: {

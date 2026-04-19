@@ -205,7 +205,7 @@ function openDoctorModal() {
     const checkboxes = document.querySelectorAll("#doctorModal input[type='checkbox']");
     checkboxes.forEach(cb => {
 
-        const doctorId = cb.value;
+        const doctorId = parseInt(cb.value);
 
         if (existingDoctorIds.includes(doctorId)) {
             cb.disabled = true;

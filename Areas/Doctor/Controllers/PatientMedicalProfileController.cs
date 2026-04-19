@@ -73,7 +73,10 @@ namespace ClinicOne.Areas.Doctor.Controllers
             {
                 return RedirectToAction("Index", "Dashboard");
             }
-
+            if (!patient.IsActive)
+            {
+                return RedirectToAction("AccessDenied", "Account", new { area = "" });
+            }
             _accessLogService.Log(id, "View");
 
             decimal? bmi = null;
@@ -354,7 +357,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
         [HttpPost]
         public IActionResult UpdateHeight([FromBody] HeightUpdateRequest request)
         {
-            var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic);
+            var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic && p.IsActive);
 
             if(patient == null)
             {
@@ -380,7 +383,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
         [HttpPost]
         public IActionResult UpdateWeight([FromBody] WeightUpdateRequest request) 
         {
-            var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic);
+            var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic && p.IsActive);
 
             if (patient == null)
             {
@@ -405,26 +408,43 @@ namespace ClinicOne.Areas.Doctor.Controllers
         [HttpPost]
         public IActionResult UpdateBP([FromBody] BPUpdateRequest request)
         {
-            var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic);
+            var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic && p.IsActive);
 
             if (patient == null)
             {
                 return NotFound();
             }
-
-            int? systolic = null;
-            int? diastolic = null;
-
-            if(!string.IsNullOrEmpty(request.Bp) && request.Bp.Contains("/")) 
+            if (string.IsNullOrWhiteSpace(request.Bp))
             {
-                var parts = request.Bp.Split('/');
-
-                if(parts.Length == 2)
-                {
-                    systolic = int.Parse(parts[0]);
-                    diastolic= int.Parse(parts[1]);
-                }
+                TempData["Error"] = "Blood Pressure cannot be empty";
+                return Ok();
             }
+            if (!request.Bp.Contains("/"))
+            {
+                TempData["Error"] = "Invalid format. Use format like 120/80.";
+                return Ok();
+            }
+
+            var parts = request.Bp.Split('/');
+
+            if(parts.Length != 2)
+            {
+                TempData["Error"] = "Invalid format. Use format like 120/80.";
+                return Ok();
+            }
+
+            if (!int.TryParse(parts[0], out int systolic) || !int.TryParse(parts[1], out int diastolic))
+            {
+                TempData["Error"] = "Blood Pressure must contain numbers only.";
+                return Ok();
+            }
+
+            if(systolic < 70 || systolic > 250 || diastolic < 40 || diastolic > 150)
+            {
+                TempData["Error"] = "Blood Pressure values are out of valid range.";
+                return Ok();
+            }
+
             var vital = new PatientVital
             {
                 PatientNIC = request.Nic,
@@ -444,7 +464,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
         [HttpPost]
         public IActionResult UpdateBloodType([FromBody] BloodTypeRequest request)
         {
-            var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic);
+            var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic && p.IsActive);
 
             if (patient == null)
                 return NotFound();

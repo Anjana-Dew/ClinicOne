@@ -146,7 +146,7 @@ CREATE TABLE ClinicSession (
     MaxSlots INT NOT NULL,
     ScheduleType VARCHAR(10) NOT NULL
         CHECK (ScheduleType IN ('Weekly', 'Custom')),
-    DaysOfWeek VARCHAR(50) NULL
+    DaysOfWeek VARCHAR(100) NULL
 );
 
 CREATE TABLE ClinicSessionDate(
