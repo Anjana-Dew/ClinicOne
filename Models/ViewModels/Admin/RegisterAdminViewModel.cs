@@ -7,7 +7,7 @@ namespace ClinicOne.Models.ViewModels.Admin
         [Required]
         public string Name { get; set; }
         [Required]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
         public string Email { get; set; }
     }
 }

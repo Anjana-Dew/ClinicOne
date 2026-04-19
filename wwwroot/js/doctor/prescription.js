@@ -29,7 +29,7 @@ function validateMedicines() {
         let times = row.querySelector("[name*='TimesPerDay']").value.trim();
 
         if (name && (!dosage || !times)) {
-            showTempMessage("Dosage and Times/Day required when medicine name is entered.");
+            showTempMessage("Dosage and Times/Day required.");
             return false;
         }
         if (!name && (dosage || times)) {
@@ -74,7 +74,7 @@ function closeConfirm() {
 }
 
 function submitPrescription() {
-
+    closeConfirm();
     let medRows = document.querySelectorAll("#MedicineTable tbody tr");
 
     medRows.forEach((row, index) => {
@@ -185,6 +185,6 @@ function showTempMessage(message) {
 
     setTimeout(() => {
         msg.style.display = "none";
-    }, 3000);
+    }, 6000);
 }
 

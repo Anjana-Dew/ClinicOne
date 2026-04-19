@@ -550,6 +550,8 @@
 	<div class="popup-content">
 		<h3>Confirm Progress</h3>
 
+		<div class="popup-message error" id="confirmError" style="display:none;"></div>
+
 		<textarea id="confirmNotes" placeholder="Add notes.." class="doc-notes"></textarea>
 
 		<button onclick="submitConfirm()" class="save-btn">Confirm</button>
@@ -559,6 +561,8 @@
 <div class="popup" id="declineProgressPopup">
 	<div class="popup-content">
 		<h3>Select Correct Status</h3>
+
+		<div class="popup-message error" id="declineError" style="display:none;"></div>
 
 		<div class="status-options">
 			<button onclick="selectStatus('Improving', event)" class="status-btn">Improving</button>
