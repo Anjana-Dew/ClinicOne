@@ -19,7 +19,6 @@ namespace ClinicOne.Areas.Patient.Controllers
         {
             var nic = HttpContext.Session.GetString("PatientNIC");
 
-            // 🔥 Recover session
             if (string.IsNullOrEmpty(nic))
             {
                 var username = User.Identity?.Name;
@@ -41,30 +40,25 @@ namespace ClinicOne.Areas.Patient.Controllers
             if (string.IsNullOrEmpty(nic))
                 return RedirectToAction("Login", "Account");
 
-            // ✅ GET PATIENT
             var patientEntity = await _context.Patients
                 .FirstOrDefaultAsync(p => p.PatientNIC == nic);
 
-            // ✅ PROGRESS
-            var progress = await _context.PatientProgress
+            var progress = await _context.PatientProgresses
                 .Where(p => p.PatientNIC == nic)
                 .OrderByDescending(p => p.ProgressDate)
                 .FirstOrDefaultAsync();
 
-            // ✅ REPORT (ONLY FIELDS THAT EXIST)
             var report = await _context.MedicalReports
                 .Where(r => r.PatientNIC == nic)
                 .OrderByDescending(r => r.UploadedDate)
                 .FirstOrDefaultAsync();
 
-            // ✅ SESSION
             var session = await _context.ClinicSchedules
                 .Where(s => s.PatientNIC == nic && s.ClinicDate >= DateTime.Today)
                 .Include(s => s.ClinicSession)
                 .OrderBy(s => s.ClinicDate)
                 .FirstOrDefaultAsync();
 
-            // ✅ MEDICINES (LATEST ONLY)
             var medicines = await _context.PrescriptionMedicines
                 .Where(m => m.Prescription.PatientNIC == nic && m.Status != "Not Given")
                 .OrderByDescending(m => m.PrescMedID)
@@ -84,7 +78,6 @@ namespace ClinicOne.Areas.Patient.Controllers
                 Address = patientEntity?.Address ?? "-",
                 PhoneNumber = patientEntity?.PhoneNumber ?? "-",
 
-                // ❗ YOUR DB DOES NOT HAVE THESE → KEEP SAFE
                 Height = 0,
                 Weight = 0,
                 BMI = 0,
@@ -99,7 +92,6 @@ namespace ClinicOne.Areas.Patient.Controllers
                 ? $"{DateTime.Today.Add(session.ClinicSession.StartTime):hh:mm tt} - {DateTime.Today.Add(session.ClinicSession.EndTime):hh:mm tt}"
                 : "-",
 
-                // ✅ ONLY USE EXISTING FIELDS
                 ReportID = report?.ReportID,
                 ReportDate = report?.UploadedDate,
                 ReportStatus = report != null ? "Completed" : "Pending",

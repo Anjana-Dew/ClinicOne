@@ -16,7 +16,6 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
         }
 
 
-
         [HttpGet]
         public IActionResult GetPrescriptionByNIC(string nic)
         {

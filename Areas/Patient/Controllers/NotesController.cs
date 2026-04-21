@@ -43,7 +43,7 @@ namespace ClinicOne.Areas.Patient.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var notes = await _context.PatientProgress
+            var notes = await _context.PatientProgresses
                 .Where(p => p.PatientNIC == nic)
                 .OrderByDescending(p => p.ProgressDate)
                 .ThenByDescending(p => p.ProgressID)
