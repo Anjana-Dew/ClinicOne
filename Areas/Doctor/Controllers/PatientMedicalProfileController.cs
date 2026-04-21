@@ -128,7 +128,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
                                    rtr.TestValue,
                                    rtr.ResultStatus
                                }).ToList();
-                Debug.WriteLine($"Paramteres found: {results.Count}");
+                Debug.WriteLine($"Parameters found: {results.Count}");
                 var panelId = results.FirstOrDefault()?.PanelID;
                 var panelName = results.FirstOrDefault()?.TestName;
                 Debug.WriteLine($"Panel : {panelId}");
@@ -470,7 +470,9 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 return NotFound();
 
             if (patient.BloodType != null)
-                return BadRequest();
+                TempData["Error"] = "An error occurred.";
+                return Ok();
+
 
             patient.BloodType = request.BloodType;
 
