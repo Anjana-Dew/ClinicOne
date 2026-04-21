@@ -240,7 +240,7 @@
     display: block;
 }
 
-/* for validation summary box */
+/* validation summary box */
 .validation-summary-errors {
     background-color: #f8d7da;
     color: #721c24;
