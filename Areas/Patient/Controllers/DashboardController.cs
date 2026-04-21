@@ -46,7 +46,7 @@ namespace ClinicOne.Areas.Patient.Controllers
                 .FirstOrDefaultAsync(p => p.PatientNIC == nic);
 
             // ✅ PROGRESS
-            var progress = await _context.PatientProgress
+            var progress = await _context.PatientProgresses
                 .Where(p => p.PatientNIC == nic)
                 .OrderByDescending(p => p.ProgressDate)
                 .FirstOrDefaultAsync();
