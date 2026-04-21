@@ -525,18 +525,27 @@
     font-weight: 500;
 }*/
 /*Session toggle*/
-.session-toggle{
-    display:flex;
+.session-toggle {
+    /*display:flex;
     gap:10px;
     flex-wrap:wrap;
-    margin:10px 0;
+    margin:10px 0;*/
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    justify-items: center;
+    margin: 12px 0;
 }
 
-.session-option{
-    border:1px solid #ccc;
-    padding:8px 12px;
-    border-radius:6px;
-    cursor:pointer;
+.session-option {
+    border: 1px solid #ccc;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 240px;
+    text-align: center;
+    transition: background 0.25s ease, transform 0.25s ease;
 }
 
 .session-option input{
@@ -548,7 +557,7 @@
 }
 
 .session-option input:checked + span{
-    background:#2a7be4;
+    background:#0e41f086;
     color:white;
     padding:6px 10px;
     border-radius:4px;
@@ -694,7 +703,14 @@
     font-size: 1.2rem;
     color: #1e3fae;
 }
-
+.popup-message.error {
+    color: #b00020;
+    background: #ffe5e5;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
 .doc-notes {
     width: 100%;
     min-height: 80px;

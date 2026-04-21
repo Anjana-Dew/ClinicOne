@@ -23,7 +23,7 @@
 
         <div class="search-container">
 
-            <input type="text" id="searchEmail" placeholder="Eanter Admin Email" class="search-input" />
+            <input type="text" id="searchEmail" placeholder="Enter Admin Email" class="search-input" />
             <button type="button" class="search-btn" onclick="searchAdmin()">
                 Search
             </button>
@@ -36,7 +36,7 @@
         <h2 class="section-title">Register Admin</h2>
         @Html.AntiForgeryToken()
         <div asp-validation-summary="All" class="validation-summary"></div>
-        <form method="post" asp-action="Register">
+        <form method="post" asp-action="Register" novalidate>
 
             <div class="form-group">
                 <label>Name *</label>

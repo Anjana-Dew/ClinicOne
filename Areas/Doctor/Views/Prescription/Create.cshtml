@@ -21,6 +21,12 @@
 			@TempData["Success"]
 		}
 	</div>
+	@if (TempData["Error"] != null)
+	{
+		<div class="temp-message error">
+			@TempData["Error"]
+		</div>
+	}
 
 	<form method="post" asp-action="SavePrescription">
 

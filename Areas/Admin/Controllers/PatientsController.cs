@@ -32,10 +32,6 @@ namespace ClinicOne.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                //foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                //{
-                //    Console.WriteLine(error.ErrorMessage);
-                //}
                 return View("Index", model);
             }
 
@@ -210,7 +206,7 @@ namespace ClinicOne.Areas.Admin.Controllers
 
             if (patient == null) 
             {
-                return Json(new { success = false, message = "Patinet not found." });
+                return Json(new { success = false, message = "Patient not found." });
             
             }
             return Json(new
@@ -255,17 +251,5 @@ namespace ClinicOne.Areas.Admin.Controllers
 
             return Json(new { success = true });
         }
-
-        //Bp parse helper methods
-        //private int? ParseSystolic(string bp)
-        //{
-        //    if (string.IsNullOrEmpty(bp) || !bp.Contains("/")) return null;
-        //    return int.Parse(bp.Split('/')[0]);
-        //}
-        //private int? ParseDiastolic(string bp)
-        //{
-        //    if (string.IsNullOrEmpty(bp) || !bp.Contains("/")) return null;
-        //    return int.Parse(bp.Split('/')[1]);
-        //}
     }
 }

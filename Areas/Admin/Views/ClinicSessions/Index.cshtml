@@ -29,14 +29,14 @@
     <div class="create-session-card">
         <h2>Create New Session</h2>
 
-        <form asp-action="create" id="createSessionForm" method="post">
+        <form asp-action="create" id="createSessionForm" method="post" novalidate>
             <div asp-validation-summary="All" class="validation-summary"></div>
             @Html.AntiForgeryToken()
 
             <div class="form-group">
                 <label>Session Name *</label>
                 <input asp-for="SessionName" type="text" id="SessionName" class="form-control" placeholder="Morning Clinic" required />
-                <span asp-validation-for="SessionName" class="error-msg"></span>
+                @* <span asp-validation-for="SessionName" class="error-msg"></span> *@
             </div>
 
             <div class="form-row">
@@ -44,19 +44,19 @@
                 <div class="form-group">
                     <label>Start Time *</label>
                     <input asp-for="StartTime" type="time" id="StartTime" class="form-control" required />
-                    <span asp-validation-for="StartTime" class="error-msg"></span>
+                    @* <span asp-validation-for="StartTime" class="error-msg"></span> *@
                 </div>
 
                 <div class="form-group">
                     <label>End Time *</label>
                     <input asp-for="EndTime" type="time" id="EndTime" class="form-control" required />
-                    <span asp-validation-for="EndTime" class="error-msg"></span>
+                    @* <span asp-validation-for="EndTime" class="error-msg"></span> *@
                 </div>
 
                 <div class="form-group">
                     <label>Max Slots *</label>
                     <input asp-for="MaxSlots" type="number" id="MaxSlots" class="form-control" min="1" required />
-                    <span asp-validation-for="MaxSlots" class="error-msg"></span>
+                    @* <span asp-validation-for="MaxSlots" class="error-msg"></span> *@
                 </div>
 
             </div>

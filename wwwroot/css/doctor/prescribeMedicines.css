@@ -209,7 +209,10 @@ button:active {
     font-family: Poppins;
     transition: opacity 0.5s ease;
 }
-
+.temp-message.error{
+    color: #a52a1d;
+    border-left: 4px solid #a52a1d;
+}
 @keyframes fadeIn {
     from {
         opacity: 0;

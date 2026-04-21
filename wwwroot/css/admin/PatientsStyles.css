@@ -255,7 +255,7 @@
     border-radius: 6px;
     cursor: pointer;
 }
-.deactive-btn:hover{
+.deactivate-btn:hover{
     background-color: #c82333;
 }
 

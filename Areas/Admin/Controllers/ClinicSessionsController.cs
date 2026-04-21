@@ -22,19 +22,6 @@ namespace ClinicOne.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            //var sessions = _context.ClinicSessions
-            //    .Include(s => s.SessionDates)
-            //    .Select(s => new ClinicSessionViewModel
-            //    {
-            //        SessionID = s.SessionID,
-            //        SessionName = s.SessionName,
-            //        StartTime = s.StartTime,
-            //        EndTime = s.EndTime,
-            //        MaxSlots = s.MaxSlots,
-            //        ScheduleType = s.ScheduleType,
-            //        DaysOfWeek = s.ScheduleType == "Weekly" && s.DaysOfWeek != null ? s.DaysOfWeek.Split(',').ToList() : null,
-            //        CustomDate = s.SessionDates.Select(d => (DateTime?)d.SessionDate).FirstOrDefault()
-            //    }).ToList();
 
             var viewModel = new ClinicSessionViewModel
             {

@@ -66,6 +66,42 @@ namespace ClinicOne.Controllers
                 return View(model);
             }
 
+            bool isActive = false;
+
+            if(user.Role == "Doctor")
+            {
+                isActive = _context.Doctors
+                    .Where(d => d.UserAccountID == user.UserAccountID)
+                    .Select(d => d.IsActive)
+                    .FirstOrDefault();
+            }
+            else if( user.Role == "Admin")
+            {
+                isActive = _context.Admins
+                    .Where(a => a.UserAccountID == user.UserAccountID)
+                    .Select(a => a.IsActive)
+                    .FirstOrDefault();
+            }
+            else if (user.Role == "Pharmacist")
+            {
+                isActive = _context.Pharmacists
+                    .Where(p => p.UserAccountID == user.UserAccountID)
+                    .Select(p => p.IsActive)
+                    .FirstOrDefault();
+            }
+            else if (user.Role == "Patient")
+            {
+                isActive = _context.Patients
+                    .Where(p => p.UserAccountID == user.UserAccountID)
+                    .Select(p => p.IsActive)
+                    .FirstOrDefault();
+            }
+
+            if (!isActive)
+            {
+                ModelState.AddModelError("", "Your account hav been deactivated. Please contact Admin.");
+                return View(model);
+            }
             // success
 
             user.FailedAttempts = 0;
