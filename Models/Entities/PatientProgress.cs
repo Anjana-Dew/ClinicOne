@@ -6,7 +6,7 @@ namespace ClinicOne.Models.Entities
     public class PatientProgress
     {
         [Key]
-        public int progressID { get; set; }
+        public int ProgressID { get; set; }
 
         [Required]
         [MaxLength(20)]

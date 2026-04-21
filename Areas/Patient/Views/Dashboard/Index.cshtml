@@ -1,269 +1,241 @@
-﻿@{
-    ViewData["Title"] = "Dashboard";
-    var patientName = "Hiruni";
-    Layout = "~/Views/Shared/_PatientLayout.cshtml";
+﻿@model ClinicOne.Models.ViewModels.Patient.PatientDashboardViewModel
+
+@{
+    Layout = "_PatientLayout";
 }
 
 <link rel="stylesheet" href="~/css/patient/patientDashboardStyles.css" />
+<script src="~/js/patient/patientDashboard.js"></script>
 
-<!-- PASSWORD CHANGE MODAL -->
-@* LOGIN NOT IMPLEMENTED YET *@
-@* When login is implemented, enable this *@
-@*
-@if (ViewBag.FirstLogin == true)
-{
-    <div id="passwordModal" class="password-modal">
-        <div class="password-box">
-            <h3>🔐 Security Update Required</h3>
-            <p>Please update your password before accessing the system.</p>
+<div class="dashboard-wrapper">
 
-            <input type="password" placeholder="New Password" class="input-field"/>
-            <input type="password" placeholder="Confirm Password" class="input-field"/>
-
-            <button class="btn-primary full-btn" onclick="closePasswordModal()">
-                Update Password
-            </button>
-        </div>
-    </div>
-}
-*@
-
-
-<main class="main-content container">
-
-    <!-- FLOATING HEALTH ICONS -->
-    <div class="floating-icons">
-        <img src="~/patientImages/pill.png">
-        <img src="~/patientImages/heart.png">
-        <img src="~/patientImages/plus.png">
+    <div class="dashboard-header">
+        <h2>🏥 Patient Dashboard</h2>
+        <p>Overview of your health and medical activity</p>
     </div>
 
+    <div class="dashboard-grid">
 
-    <main class="main-content container">
+        <!-- PROFILE -->
+        <div class="card profile-card">
 
-        <div class="top-section">
-
-            <!-- PATIENT INFO CARD -->
-            <div class="patient-card slide-up">
-
-                <div class="card-layers">
-                    <div class="layer layer1"></div>
-
-                </div>
-
-                <div class="patient-header">
-                    Patient Info
-                </div>
-
-                <div class="patient-body">
-
-                    <div class="patient-left">
-
-                        <img src="~/patientImages/profileD.png" class="patient-avatar" />
-
-                        <div class="patient-contact">
-
-                            <p>📞 0771234567</p>
-                            <p>📧 patient@mail.com</p>
-                            <p>📍 12/A Colombo</p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="patient-right">
-
-                        <h2>Hiruni</h2>
-                        <p class="patient-role">Patient</p>
-
-                        <p class="patient-desc">
-                            Registered patient of ClinicOne. Monitoring health records,
-                            prescriptions and medical reports through the portal.
-                        </p>
-
-                        <a asp-area="Patient"
-                           asp-controller="Profile"
-                           asp-action="Index"
-                           class="btn-primary">
-                            Edit Profile
-                        </a>
-
-                    </div>
-
-                </div>
-
+            <div class="profile-img">
+                <img src="/patientImages/defaultProfile.png" />
             </div>
 
-            <!-- HEALTH PROGRESS + SUMMARY CARD -->
-            <div class="health-progress slide-up">
+            <h3>@Model.PatientName</h3>
 
-                <h4>Overall Health Status</h4>
+            <div class="profile-info">
+                <p><span class="label">NIC:</span> @ViewBag.NIC</p>
+                <p>
+                    <span class="label">Blood:</span>
+                    @(!string.IsNullOrEmpty(ViewBag.BloodType) ? ViewBag.BloodType : "⚠ Add Blood Type")
+                </p>
+                <p><span class="label">Phone:</span> @Model.PhoneNumber</p>
+                <p><span class="label">Address:</span> @Model.Address</p>
+            </div>
 
-                <div class="health-meter">
+            <a href="/Patient/Profile/Edit" class="btn primary">
+                Edit Profile
+            </a>
 
-                    <div class="meter-bar">
+        </div>
 
-                        <div class="meter-fill good"></div>
+        <!-- NEXT SESSION -->
+        <div class="card next-session">
 
+            <div class="card-header">
+                <h3>📅 Next Session</h3>
+            </div>
+
+            @if (Model.NextSessionDate != null)
+            {
+                <div class="next-session-box">
+
+                    <h3>@ViewBag.NextSessionName</h3>
+
+                    <div class="big-date">
+                        @Model.NextSessionDate.Value.ToString("dddd, dd MMM yyyy")
                     </div>
 
-                    <div class="meter-labels">
+                    <div class="time">
+                        @Model.SessionTime
+                    </div>
 
-                        <span>Risk</span>
-                        <span>Average</span>
-                        <span class="active">Good</span>
-                        <span>Very Good</span>
-
+                    <div id="countdown"
+                         data-date="@Model.NextSessionDate.Value.ToString("yyyy-MM-dd")"
+                         data-time="@ViewBag.StartTime">
+                        ⏳ Calculating...
                     </div>
 
                 </div>
+            }
+            else
+            {
+                <p class="muted">No upcoming session</p>
+            }
 
-                <div class="health-summary">
+        </div>
 
-                    <h4>Health Summary</h4>
+        <!-- HEALTH PROGRESS -->
+        <div class="card">
 
-                    <div class="health-stats">
+            <div class="card-header">
+                <h3>📈 Health Progress</h3>
+            </div>
 
-                        <div class="health-stat bmi">
-                            <img src="~/patientImages/bmi.png" alt="BMI" />
-                            <h3 class="counter">22.4</h3>
-                            <span>BMI</span>
-                        </div>
+            <div class="progress-status @Model.ProgressStatus.ToLower()">
+                @Model.ProgressStatus
+            </div>
 
-                        <div class="health-stat weight">
-                            <img src="~/patientImages/weight.png" alt="Weight" />
-                            <h3>60kg</h3>
-                            <span>Weight</span>
-                        </div>
+            <div class="progress-bar">
+                <div class="progress-fill @Model.ProgressStatus.ToLower()"></div>
+            </div>
 
-                        <div class="health-stat height">
-                            <img src="~/patientImages/height.png" alt="Height" />
-                            <h3>165cm</h3>
-                            <span>Height</span>
-                        </div>
+            <p class="notes">
+                <strong>Doctor Notes:</strong><br />
+                @Model.DoctorNotes
+            </p>
 
-                        <div class="health-stat pressure">
-                            <img src="~/patientImages/blood-pressure.png" alt="Blood Pressure" />
-                            <h3>120/80</h3>
-                            <span>Blood Pressure</span>
-                        </div>
+        </div>
 
-                    </div>
+        <!-- HEALTH SUMMARY -->
+        <div class="card">
 
+            <div class="card-header">
+                <h3>🧬 Health Summary</h3>
+            </div>
+
+            <div class="health-grid">
+
+                <div class="health-box">
+                    <img src="/icons/bmi.png" />
+                    <div>BMI</div>
+                    <h4>@Model.BMI</h4>
+                </div>
+
+                <div class="health-box">
+                    <img src="/icons/weight.png" />
+                    <div>Weight</div>
+                    <h4>@Model.Weight kg</h4>
+                </div>
+
+                <div class="health-box">
+                    <img src="/icons/height.png" />
+                    <div>Height</div>
+                    <h4>@Model.Height cm</h4>
+                </div>
+
+                <div class="health-box">
+                    <img src="/icons/pressure.png" />
+                    <div>BP</div>
+                    <h4>@Model.BloodPressure</h4>
                 </div>
 
             </div>
 
         </div>
 
-    </main>
+        <!-- REPORT -->
+        <div class="card">
 
-    <!-- DASHBOARD GRID -->
-    <div class="dashboard-container">
-
-        <div class="dashboard-grid">
-
-            <!-- LEFT COLUMN -->
-            <div class="dashboard-column">
-
-                <!-- APPOINTMENTS -->
-                <div class="card slide-up delay-1">
-                    <h4>Upcoming Appointment</h4>
-
-                    <p class="session-date">25 Feb 2026</p>
-                    <p>9:00 AM</p>
-
-                    <p class="doctor">Dr. Silva – Cardiology</p>
-
-                    <a class="btn-primary">View Appointments</a>
-                </div>
-
-
-                <!-- DOCTOR NOTES -->
-                <div class="card slide-up delay-2">
-
-                    <h4>Doctor Notes</h4>
-
-                    <p>
-                        Patient showing good recovery. Continue medication
-                        and maintain healthy diet.
-                    </p>
-
-                    <p>
-                        Blood pressure slightly elevated last visit.
-                    </p>
-
-                </div>
-
+            <div class="card-header">
+                <h3>📄 Latest Report</h3>
             </div>
 
+            <table class="mini-table">
+                <tr><td>ID</td><td>@ViewBag.ReportID</td></tr>
+                <tr><td>Test</td><td>@ViewBag.TestName</td></tr>
+                <tr><td>Results</td><td>@ViewBag.Result</td></tr>
+                <tr><td>Date</td><td>@ViewBag.ReportDate</td></tr>
+                <tr><td>Status</td><td>@Model.ReportStatus</td></tr>
+            </table>
 
-
-            <!-- RIGHT COLUMN -->
-            <div class="dashboard-column">
-
-                <!-- TEST REPORT -->
-                <div class="card slide-up delay-3">
-
-                    <h4>Latest Test Report</h4>
-
-                    <p><strong>Report:</strong> Blood Test</p>
-
-                    <p>
-                        <strong>Status:</strong>
-                        <span class="status-badge good">Stable</span>
-                    </p>
-
-                    <p><strong>Date:</strong> 15 Feb 2026</p>
-
-                    <a class="btn-primary">View Full Report</a>
-
-                </div>
-
-
-
-                <!-- MEDICATIONS -->
-                <div class="card slide-up delay-4">
-
-                    <h4>Current Medications</h4>
-
-                    <div class="medicine-scroll">
-
-                        <div class="medicine-item">
-                            <span>Paracetamol</span>
-                            <small>500mg – Twice Daily</small>
-                        </div>
-
-                        <div class="medicine-item">
-                            <span>Vitamin D</span>
-                            <small>Once Daily</small>
-                        </div>
-
-                        <div class="medicine-item">
-                            <span>Calcium</span>
-                            <small>Night – After Meal</small>
-                        </div>
-
-                        <div class="medicine-item">
-                            <span>Omega 3</span>
-                            <small>Morning</small>
-                        </div>
-
-                    </div>
-
-                </div>
-
+            <div class="report-actions">
+                <a href="@Model.ReportPath" class="btn success">Download</a>
+                <a href="/Patient/Reports" class="btn primary">View All</a>
             </div>
 
         </div>
 
+        <!-- MEDICINES -->
+        <div class="card">
+
+            <div class="card-header">
+                <h3>💊 Current Medicines</h3>
+            </div>
+
+            <div class="medicine-list scroll">
+
+                @foreach (var med in Model.Medicines.Take(3))
+                {
+                    <div class="medicine-item">
+                        <strong>@med.Name</strong>
+                        <span>@med.Dosage</span>
+                    </div>
+                }
+
+            </div>
+
+            <a href="/Patient/Prescriptions" class="btn primary">
+                View All
+            </a>
+
+        </div>
+
     </div>
-    
+</div>
 
-</main>
+<div id="editModal" class="modal">
+    <div class="modal-content">
 
+        <span class="close" onclick="closeEditProfile()">&times;</span>
+
+        <h3>Edit Profile</h3>
+
+        <form method="post" action="/Patient/Profile/Update">
+
+            <label>Full Name</label>
+            <input type="text" name="FullName" value="@Model.PatientName" required />
+
+            <label>Phone</label>
+            <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" required />
+
+            <label>Blood Type</label>
+            <input type="text" name="BloodType" value="@Model.BloodType" />
+
+            <label>Address</label>
+            <input type="text" name="Address" value="@Model.Address" />
+
+            <button type="submit" class="btn success">Save</button>
+
+        </form>
+
+    </div>
+</div>
 
 @section Scripts {
-    <script src="~/js/patient/patientDashboard.js"></script>
-}
+    <script>
+        const el = document.getElementById("countdown");
 
+        if (el) {
+            const target = new Date(el.dataset.date + "T00:00:00");
+
+            setInterval(() => {
+                const now = new Date();
+                const diff = target - now;
+
+                if (diff <= 0) {
+                    el.innerHTML = "Session Started";
+                    return;
+                }
+
+                const d = Math.floor(diff / (1000*60*60*24));
+                const h = Math.floor((diff/(1000*60*60))%24);
+                const m = Math.floor((diff/(1000*60))%60);
+
+                el.innerHTML = d + "d " + h + "h " + m + "m";
+            }, 1000);
+        }
+    </script>
+}

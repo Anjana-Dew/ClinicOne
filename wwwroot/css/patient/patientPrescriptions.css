@@ -1,0 +1,106 @@
+﻿.wrapper {
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+    /* ACTIVE */
+    .card.active {
+        border-left: 6px solid #16a34a;
+        background: linear-gradient(to right, #f0fdf4, #ffffff);
+    }
+
+    /* HISTORY */
+    .card.history {
+        border-left: 6px solid #2563eb;
+    }
+
+.card-header {
+    margin-bottom: 10px;
+}
+
+/* PROGRESS */
+.progress {
+    height: 8px;
+    background: #eee;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #16a34a;
+    border-radius: 10px;
+}
+
+/* MEDICINES */
+.medicine-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: #f9fafb;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+    .medicine-item small {
+        display: block;
+        color: #777;
+    }
+
+/* STATUS */
+.pill {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+    .pill.done {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .pill.pending {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+/* ACTIONS */
+.actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+    .btn.confirm {
+        background: #16a34a;
+        color: white;
+    }
+
+    .btn.download {
+        background: #2563eb;
+        color: white;
+    }
+
+.section-title {
+    margin-top: 30px;
+}

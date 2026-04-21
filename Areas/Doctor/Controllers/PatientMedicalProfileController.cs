@@ -27,12 +27,12 @@ namespace ClinicOne.Areas.Doctor.Controllers
         {
             //Access restriction
             var userId = HttpContext.Session.GetInt32("UserID");
-            if(userId == null)
+            if (userId == null)
             {
                 return RedirectToAction("Login", "Account", new { area = "" });
             }
             var doctor = _context.Doctors.FirstOrDefault(d => d.UserAccountID == userId);
-            if(doctor == null)
+            if (doctor == null)
             {
                 return RedirectToAction("AccessDenied", "Account", new { area = "" });
             }
@@ -45,14 +45,14 @@ namespace ClinicOne.Areas.Doctor.Controllers
                                     join s in _context.ClinicSessions
                                     on d.SessionID equals s.SessionID
                                     where d.DoctorID == doctor.DoctorID
-                                    && d.ClinicDate == today 
+                                    && d.ClinicDate == today
                                     && s.StartTime <= currentTime
                                     && s.EndTime >= currentTime
                                     select d).Any();
 
             if (!hasActiveSession)
             {
-                return RedirectToAction("AccessDenied", "Account", new {area = ""});
+                return RedirectToAction("AccessDenied", "Account", new { area = "" });
             }
             // vitals and personal info
             var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == id);
@@ -82,8 +82,9 @@ namespace ClinicOne.Areas.Doctor.Controllers
             decimal? bmi = null;
 
 
-            if (latestHeight != null && latestWeight != null) { 
-                
+            if (latestHeight != null && latestWeight != null)
+            {
+
                 var heightM = (decimal)latestHeight / 100;
                 bmi = latestWeight / (heightM * heightM);
             }
@@ -100,7 +101,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 BloodPressure = bloodPressure,
                 BMI = bmi
             };
-            
+
 
             // test reports
             var reports = _context.MedicalReports
@@ -236,7 +237,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 var existing = _context.PatientProgresses
                                 .FirstOrDefault(p => p.PatientNIC == id && p.ProgressDate == latestReportDate.Value);
 
-                if(existing == null)
+                if (existing == null)
                 {
                     var newProgress = new PatientProgress
                     {
@@ -258,8 +259,8 @@ namespace ClinicOne.Areas.Doctor.Controllers
                     PatientNIC = id,
                     ProgressDate = latestReportDate.Value,
                     SuggestedStatus = suggested,
-                    CurrentStatus = existing?.ProgressStatus?? suggested,
-                    IsConfirmed = existing?.IsConfirmed?? false,
+                    CurrentStatus = existing?.ProgressStatus ?? suggested,
+                    IsConfirmed = existing?.IsConfirmed ?? false,
                     DoctorNotes = existing?.DoctorNotes
                 };
             }
@@ -269,13 +270,13 @@ namespace ClinicOne.Areas.Doctor.Controllers
             var prescriptions = _context.Prescriptions.
                 Where(p => p.PatientNIC == id)
                 .OrderByDescending(p => p.PrescriptionDate)
-                .ThenByDescending(p =>p.PrescriptionID)
+                .ThenByDescending(p => p.PrescriptionID)
                 .Take(2)
                 .ToList();
 
             var medicineCards = new List<MedicineHistoryCardViewModel>();
 
-            foreach(var pres in prescriptions)
+            foreach (var pres in prescriptions)
             {
                 var meds = _context.PrescriptionMedicines
                     .Where(m => m.PrescriptionID == pres.PrescriptionID)
@@ -359,7 +360,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
         {
             var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic && p.IsActive);
 
-            if(patient == null)
+            if (patient == null)
             {
                 return NotFound();
             }
@@ -369,8 +370,8 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 PatientNIC = request.Nic,
                 Height = request.Height
             };
-            
-            _context.PatientVitals.Add(vital);    
+
+            _context.PatientVitals.Add(vital);
             _context.SaveChanges();
 
             _accessLogService.Log(request.Nic, "Update");
@@ -381,7 +382,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateWeight([FromBody] WeightUpdateRequest request) 
+        public IActionResult UpdateWeight([FromBody] WeightUpdateRequest request)
         {
             var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic && p.IsActive);
 
@@ -427,7 +428,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             var parts = request.Bp.Split('/');
 
-            if(parts.Length != 2)
+            if (parts.Length != 2)
             {
                 TempData["Error"] = "Invalid format. Use format like 120/80.";
                 return Ok();
@@ -439,7 +440,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 return Ok();
             }
 
-            if(systolic < 70 || systolic > 250 || diastolic < 40 || diastolic > 150)
+            if (systolic < 70 || systolic > 250 || diastolic < 40 || diastolic > 150)
             {
                 TempData["Error"] = "Blood Pressure values are out of valid range.";
                 return Ok();
@@ -471,7 +472,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             if (patient.BloodType != null)
                 TempData["Error"] = "An error occurred.";
-                return Ok();
+            return Ok();
 
 
             patient.BloodType = request.BloodType;
@@ -486,7 +487,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
         [HttpPost]
         public IActionResult ScheduleClinic(string PatientNIC, DateTime ClinicDate, int SelectedSessionID)
         {
-            
+
             if (SelectedSessionID == 0)
             {
                 TempData["ClinicError"] = "Please select a clinic session.";
@@ -505,8 +506,8 @@ namespace ClinicOne.Areas.Doctor.Controllers
             var bookedCount = _context.ClinicSchedules
                 .Count(c => c.SessionID == SelectedSessionID && c.ClinicDate == ClinicDate);
 
-            
-            if(bookedCount >= session.MaxSlots)
+
+            if (bookedCount >= session.MaxSlots)
             {
                 TempData["ClinicError"] = "No more available slots for this clinic session.";
                 return RedirectToAction("Index", new { id = PatientNIC });
@@ -585,12 +586,12 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 if (r.ResultStatus == "Risk") riskCurr++;
             }
 
-            if(riskCurr < riskPrev || highCurr < highPrev)
+            if (riskCurr < riskPrev || highCurr < highPrev)
             {
                 return "Improving";
             }
 
-            if(riskCurr > riskPrev)
+            if (riskCurr > riskPrev)
             {
                 return "Worsening";
             }
@@ -602,7 +603,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
         {
             var progress = _context.PatientProgresses
                 .FirstOrDefault(p => p.PatientNIC == patientNIC && p.ProgressDate == progressDate);
-            if(progress == null)
+            if (progress == null)
             {
                 progress = new PatientProgress
                 {

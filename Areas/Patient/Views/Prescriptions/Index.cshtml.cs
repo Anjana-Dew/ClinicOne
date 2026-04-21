@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace ClinicOne.Areas.Pharmacist.Views.SearchPatients
+namespace ClinicOne.Areas.Patient.Views.Prescriptions
 {
     public class IndexModel : PageModel
     {

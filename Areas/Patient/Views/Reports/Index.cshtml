@@ -1,69 +1,152 @@
-﻿@{
-    Layout = null;
-    var patientName = ViewBag.PatientName ?? "Hiruni";
+﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientReportViewModel>
+
+@{
     Layout = "~/Views/Shared/_PatientLayout.cshtml";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ClinicOne - Reports</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="~/css/patient/patientReports.css" />
 
-    <style>
-        /* COPY SAME CSS FROM DASHBOARD (IMPORTANT) */
-        body { font-family: 'Poppins', sans-serif; background:#f4f7fb; margin:0; }
+<div class="report-wrapper">
 
-        /* SIMPLE CONTENT STYLE */
-        .page-title{
-            font-size:24px;
-            font-weight:600;
-            margin-bottom:30px;
-        }
+    <div class="header">
+        <h2>🧪 Laboratory Reports</h2>
+        <p>View and download your medical test results</p>
+    </div>
 
-        .report-card{
-            background:white;
-            padding:20px;
-            border-radius:16px;
-            box-shadow:0 8px 24px rgba(0,0,0,0.05);
-            margin-bottom:20px;
-        }
+    <form method="get" class="filter-bar">
 
-        .btn-primary{
-            background:#2563eb;
-            color:white;
-            border:none;
-            padding:8px 16px;
-            border-radius:10px;
-            cursor:pointer;
-        }
-    </style>
-</head>
+        <input type="text" name="search"
+               placeholder="Search test..."
+               value="@Context.Request.Query["search"]" />
 
-<body>
+        <input type="date" name="date"
+               value="@Context.Request.Query["date"]" />
 
-    <!-- COPY YOUR NAVBAR HERE (same as dashboard) -->
+        <select name="panelId">
+            <option value="">All Tests</option>
+            @foreach (var p in ViewBag.TestPanels)
+            {
+                <option value="@p.PanelID"
+                        selected="@(Context.Request.Query["panelId"] == p.PanelID.ToString())">
+                    @p.TestName
+                </option>
+            }
+        </select>
 
-    <main style="padding:40px 50px; min-height:70vh;">
+        <select name="status">
+            <option value="">All Status</option>
+            <option value="Completed" selected="@(Context.Request.Query["status"] == "Completed")">Completed</option>
+            <option value="Pending" selected="@(Context.Request.Query["status"] == "Pending")">Pending</option>
+        </select>
 
-        <h2 class="page-title">Medical Reports</h2>
+        <button type="submit" class="btn primary">Filter</button>
+        <button type="button" class="btn clear" onclick="clearFilters()">Clear</button>
 
-        <div class="report-card">
-            <h4>Blood Report</h4>
-            <p>Date: 15 Feb 2026</p>
-            <button class="btn-primary">Download</button>
+    </form>
+
+    @if (ViewBag.NoResults == true)
+    {
+        <div class="no-data">
+            <img src="/patientImages/no-data.png" />
+            <h3>No Reports Found</h3>
+            <p>Try adjusting filters</p>
         </div>
+    }
+    else
+    {
 
-        <div class="report-card">
-            <h4>X-Ray Report</h4>
-            <p>Date: 10 Jan 2026</p>
-            <button class="btn-primary">Download</button>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Test</th>
+                        <th>Results</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @{
+                        var latestDate = Model.Any() ? Model.Max(x => x.ReportDate) : DateTime.MinValue;
+                    }
+
+                    @foreach (var r in Model)
+                    {
+                        var isLatest = r.ReportDate == latestDate;
+
+                        <tr class="@(isLatest ? "latest" : (r.ReportStatus == "Pending" ? "pending" : ""))">
+
+                            <td>#@r.ReportID</td>
+
+                            <td>
+                                <div class="test-name">
+                                    @r.TestName
+
+                                    @if (isLatest)
+                                    {
+                                        <span class="badge-new">NEW</span>
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                @if (r.Parameters.Any())
+                                {
+                                    foreach (var p in r.Parameters)
+                                    {
+                                        <div class="param">
+                                            <span>@p.ParameterName: @p.TestValue</span>
+
+                                            <span class="pill @p.ResultStatus.ToLower()">
+                                                @p.ResultStatus
+                                            </span>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="pill pending-pill">Pending</span>
+                                }
+                            </td>
+
+                            <td>@r.ReportDate.ToString("yyyy-MM-dd")</td>
+
+                            <td>
+                                <span class="status @(r.ReportStatus == "Pending" ? "pending-status" : "ok")">
+                                    @r.ReportStatus
+                                </span>
+                            </td>
+
+                            <td>
+                                @if (r.ReportStatus == "Completed")
+                                {
+                                    <a href="@Url.Content(r.ReportPath)" download class="btn download">
+                                        ⬇ Download
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="disabled">-</span>
+                                }
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
+    }
 
-    </main>
+</div>
 
-    <!-- COPY SAME FOOTER HERE -->
+@section Scripts {
+    <script>
+        function clearFilters() {
+            window.location.href = '/Patient/Reports';
+        }
+    </script>
+}
 
-</body>
-</html>

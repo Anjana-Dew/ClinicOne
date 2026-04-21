@@ -1,28 +1,15 @@
-﻿function closePasswordModal() {
-
-    document.getElementById("passwordModal").style.display = "none";
-    document.querySelector(".main-content").classList.remove("blur");
-
-    fetch('/Patient/Dashboard/DisableFirstLogin');
-
+﻿function openEditProfile() {
+    document.getElementById("editModal").style.display = "block";
 }
-document.addEventListener("DOMContentLoaded", function () {
 
-    console.log("Patient Dashboard Loaded");
+function closeEditProfile() {
+    document.getElementById("editModal").style.display = "none";
+}
 
-    const elements = document.querySelectorAll(".slide-up");
-
-    elements.forEach((el, index) => {
-
-        el.style.opacity = 0;
-        el.style.transform = "translateY(20px)";
-
-        setTimeout(() => {
-            el.style.transition = "0.6s";
-            el.style.opacity = 1;
-            el.style.transform = "translateY(0)";
-        }, 200 * index)
-
-    });
-
-});
+// CLOSE IF CLICK OUTSIDE
+window.onclick = function (event) {
+    const modal = document.getElementById("editModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+};

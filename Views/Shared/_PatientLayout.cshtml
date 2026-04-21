@@ -1,62 +1,146 @@
 ﻿@{
     var patientName = ViewBag.PatientName ?? "Patient";
-    var hasNotifications = ViewBag.HasNotifications ?? true;
+    var hasNotifications = ViewBag.HasNotifications ?? false;
 }
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
+    <!-- RESPONSIVE VIEWPORT -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>ClinicOne</title>
 
+    <!-- GOOGLE FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="~/css/patient/patientLayout.css" asp-append-version="true" />
+
 </head>
+
 <body>
+
     <header class="navbar">
 
+        <!-- LEFT SIDE -->
         <div class="nav-left">
-            <div class="logo">
-                <img src="~/images/logo_White.png" alt="Logo">
+
+            <a asp-area="Patient"
+               asp-controller="Dashboard"
+               asp-action="Index"
+               class="logo">
+
+                <img src="~/images/logo_White.png" alt="ClinicOne Logo">
                 <span>ClinicOne</span>
-            </div>
+
+            </a>
+
         </div>
 
-       
+
+        <!-- CENTER NAVIGATION -->
+
         <nav class="nav-center">
-            <a asp-area="Patient" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-            <a asp-area="Patient" asp-controller="Dashboard" asp-action="Reports">Reports</a>
-            <a asp-area="Patient" asp-controller="Dashboard" asp-action="Sessions">Sessions</a>
-            <a asp-area="Patient" asp-controller="Dashboard" asp-action="Prescriptions">Prescriptions</a>
+
+            <a asp-area="Patient"
+               asp-controller="Dashboard"
+               asp-action="Index">
+                Dashboard
+            </a>
+
+            <a asp-area="Patient"
+               asp-controller="Reports"
+               asp-action="Index">
+                Reports
+            </a>
+
+            <a asp-area="Patient"
+               asp-controller="Sessions"
+               asp-action="Index">
+                Sessions
+            </a>
+
+            <a asp-area="Patient"
+               asp-controller="Prescriptions"
+               asp-action="Index">
+                Prescriptions
+            </a>
+
+            <a asp-area="Patient"
+               asp-controller="Notes"
+               asp-action="Index">
+                Notes
+            </a>
+
         </nav>
 
-       
+
+        <!-- RIGHT SIDE -->
+
         <div class="nav-right">
 
-            <span id="currentDateTime" class="datetime"></span>
-
-            <div class="notification">
-                <span class="bell">🔔</span>
-                <span class="badge"></span>
+            <!-- Date and Time -->
+            <div class="date-pill">
+                <span id="currentDateTime"></span>
             </div>
 
-            <button class="logout-btn">
+            <!-- Notification -->
+            <div class="notification" aria-label="Notifications">
+
+                <span class="bell">🔔</span>
+
+                @if (hasNotifications)
+                {
+                    <span class="badge"></span>
+                }
+
+            </div>
+
+           
+
+            <!-- Logout -->
+
+            <a asp-controller="Account"
+               asp-action="Logout"
+               asp-area=""
+               class="logout-btn">
                 Logout
-            </button>
+            </a>
 
         </div>
 
     </header>
+
+
+    <!-- PAGE CONTENT -->
+
     <main class="main-content">
+
         @RenderBody()
+
     </main>
 
+
+    <!-- FOOTER -->
+
     <footer class="footer">
+
         <p>© 2026 ClinicOne. All Rights Reserved.</p>
+
     </footer>
 
+
+    <!-- JS -->
+
     <script src="~/js/patient/patientLayout.js"></script>
+
     @RenderSection("Scripts", required: false)
 
 </body>
+
 </html>

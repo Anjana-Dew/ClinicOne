@@ -1,0 +1,104 @@
+﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
+
+@{
+    Layout = "_PatientLayout";
+
+    var activeList = Model.Where(p => !p.IsConfirmed).ToList();
+    var history = Model.Where(p => p.IsConfirmed).ToList();
+}
+
+<link rel="stylesheet" href="~/css/patient/patientPrescriptions.css" />
+
+<div class="wrapper">
+
+    <div class="header">
+        <h2>💊 Prescriptions</h2>
+        <p>Track your medicines and progress</p>
+    </div>
+
+    @if (activeList.Any())
+    {
+        foreach (var active in activeList)
+        {
+            var percent = active.TotalMedicines == 0 ? 0 :
+            (active.TakenMedicines * 100 / active.TotalMedicines);
+
+            <div class="card active">
+
+                <div class="card-header">
+                    <div>
+                        <h3>🟢 Active Prescription</h3>
+                        <span>@active.PrescriptionDate.ToString("yyyy-MM-dd")</span>
+                    </div>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-fill" style="width:@percent%"></div>
+                </div>
+
+                <p class="progress-text">
+                    ✔ @active.TakenMedicines / @active.TotalMedicines Medicines Taken
+                </p>
+
+                <div class="medicine-list">
+                    @foreach (var m in active.Medicines)
+                    {
+                        <div class="medicine-item">
+                            <div>
+                                <strong>@m.MedicineName</strong>
+                                <small>@m.Dosage • @m.TimesPerDay x/day</small>
+                            </div>
+
+                            <span class="pill @(m.PatientConfirmed ? "done" : "pending")">
+                                @(m.PatientConfirmed ? "Taken" : "Pending")
+                            </span>
+                        </div>
+                    }
+                </div>
+
+                <div class="actions">
+                    @if (!active.IsConfirmed)
+                    {
+                        <form method="post" asp-action="Confirm">
+                            <input type="hidden" name="id" value="@active.PrescriptionID" />
+                            <button class="btn confirm">✔ Confirm All Taken</button>
+                        </form>
+                    }
+
+                    @if (!string.IsNullOrEmpty(active.PDFPath))
+                    {
+                        <a href="@active.PDFPath" class="btn download">📄 Download</a>
+                    }
+                </div>
+
+            </div>
+        }
+    }
+
+    <h3 class="section-title">Past Prescriptions</h3>
+
+    @foreach (var p in history)
+    {
+        <div class="card history">
+
+            <div class="card-header">
+                <div>
+                    <h4>Prescription #@p.PrescriptionID</h4>
+                    <span>@p.PrescriptionDate.ToString("yyyy-MM-dd")</span>
+                </div>
+            </div>
+
+            <div class="medicine-list compact">
+                @foreach (var m in p.Medicines)
+                {
+                    <div class="medicine-item">
+                        <span>@m.MedicineName</span>
+                        <small>@m.Dosage • @m.TimesPerDay x/day</small>
+                    </div>
+                }
+            </div>
+
+        </div>
+    }
+
+</div>

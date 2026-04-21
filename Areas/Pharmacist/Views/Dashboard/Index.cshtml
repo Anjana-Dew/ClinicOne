@@ -1,61 +1,111 @@
 ﻿@{
-    Layout = "_PharmacistLayout";
+    Layout = "~/Views/Shared/_PharmacistLayout.cshtml";
 }
 
 <link rel="stylesheet" href="~/css/pharmacist/pharmacistDashboardStyles.css" />
 
-<h2 class="section-title">Search Patient</h2>
 
-<div class="search-container">
+<div class="dashboard-container">
 
-    <form asp-area="Pharmacist"
-          asp-controller="Prescription"
-          asp-action="Search"
-          method="get">
+    <h2 class="section-title">Search Patient</h2>
+    
+        
 
-        <input type="text"
-               name="nic"
-               placeholder="Enter Patient NIC"
-               required />
+    <div class="search-container">
+        
+        <form onsubmit="event.preventDefault(); searchPatient();">
+            <input type="text"
+                   id="nicInput"
+                   placeholder="Enter Patient NIC" />
+            <button type="submit">Search</button>
+            
+            
 
-        <button type="submit">Search</button>
+        </form>
 
-    </form>
+        <div id="searchValidation" class="validation-message"></div>
+        
+    </div>
+
+
+  
+
+    <h2 class="dashboard-title">Dashboard</h2>
+
+    <div class="dashboard-cards">
+
+        <div class="dashboard-card">
+            <img src="~/pharmacistImages/MedicineToday.png" />
+            <p class="card-count">
+                Prescriptions Today: @ViewBag.TodayPrescriptions
+            </p>
+        </div>
+
+        <div class="dashboard-card">
+            <img src="~/pharmacistImages/MedicineGiven.png" />
+            <p class="card-count">
+                Medicines Given: @ViewBag.GivenMedicines
+            </p>
+        </div>
+
+        <div class="dashboard-card">
+            <img src="~/pharmacistImages/MedicinePending.png" />
+            <p class="card-count">
+                Pending Medicines: @ViewBag.PendingMedicines
+            </p>
+        </div>
+
+    </div>
 
 </div>
 
-<h2 class="dashboard-title">Dashboard</h2>
+@section Scripts{
+<script src="~/js/pharmacist/pharmacistPrescription.js"></script>
+}
 
-<div class="dashboard-cards">
 
-    <div class="dashboard-card">
+<div id="prescriptionPopup" class="popup-overlay" style="display:none;">
+    <div class="popup-container">
 
-        <img src="~/pharmacistImages/MedicineToday.png" />
+        <div class="popup-header">
+            <h3>Patient Prescription</h3>
+            <span class="close-btn" onclick="closePopup()">✖</span>
+        </div>
 
-        <p class="card-count">
-            Prescriptions Today: @ViewBag.TodayPrescriptions
-        </p>
+        <div class="patient-info">
+            <p><strong>Name:</strong> <span id="popupPatientName"></span></p>
+            <p><strong>NIC:</strong> <span id="popupPatientNIC"></span></p>
+            <p><strong>Prescription ID:</strong> <span id="popupPrescriptionID"></span></p>
+        </div>
+
+        <div id="popupMessage" class="popup-message" style="display:none"></div>
+
+        <div id="medicineSection" style="display:none;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Dosage</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="medicineRows"></tbody>
+            </table>
+
+            <button id="confirmBtn" class="btn btn-success" onclick="confirmDispense()" style="display:none;">
+                Confirm
+            </button>
+        </div>
+
+        <div id="confirmPopup" class="confirm-popup" style="display:none;">
+            <div class="confirm-box">
+                <h4>Confirm Dispensing</h4>
+                <p>This action cannot be undone. Confirm dispensing?</p>
+                <button onclick="submitDispense()" class="btn btn-success">Confirm</button>
+                <button onclick="closeConfirm()" class="btn btn-danger">Cancel</button>
+            </div>
+        </div>
 
     </div>
-
-    <div class="dashboard-card">
-
-        <img src="~/pharmacistImages/MedicineGiven.png" />
-
-        <p class="card-count">
-            Medicines Given: @ViewBag.GivenMedicines
-        </p>
-
-    </div>
-
-    <div class="dashboard-card">
-
-        <img src="~/pharmacistImages/MedicinePending.png" />
-
-        <p class="card-count">
-            Pending Medicines: @ViewBag.PendingMedicines
-        </p>
-
-    </div>
-
 </div>

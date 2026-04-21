@@ -1,0 +1,87 @@
+﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientNoteViewModel>
+
+@{
+    Layout = "_PatientLayout";
+
+    int latestId = 0;
+
+    if (Model != null && Model.Any())
+    {
+        latestId = Model
+            .OrderByDescending(x => x.ProgressDate)
+            .ThenByDescending(x => x.ProgressID)
+            .First().ProgressID;
+    }
+}
+
+<link rel="stylesheet" href="~/css/patient/patientNotes.css" />
+
+<div class="report-wrapper">
+
+    <div class="header">
+        <h2>📝 Patient Progress Notes</h2>
+        <p>Doctor updates and health progress tracking</p>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty">
+            <img src="/patientImages/calendar-empty.png" />
+            <h3>No Notes Found</h3>
+            <p>No progress updates available.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Note</th>
+                        <th>Status</th>
+                        <th>Confirmed</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var n in Model)
+                    {
+                        var isLatest = n.ProgressID == latestId;
+
+                        <tr class="@(isLatest ? "latest" : "")">
+
+                            <td>#@n.ProgressID</td>
+
+                            <td>
+                                @n.DoctorNotes
+
+                                @if (isLatest)
+                                {
+                                    <span class="badge-new">NEW</span>
+                                }
+                            </td>
+
+                            <td>
+                                <span class="status @(n.ProgressStatus.ToLower())">
+                                    @n.ProgressStatus
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="confirm @(n.IsConfirmed ? "yes" : "no")">
+                                    @(n.IsConfirmed ? "Confirmed" : "Pending")
+                                </span>
+                            </td>
+
+                            <td>@n.ProgressDate.ToString("yyyy-MM-dd")</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+</div>

@@ -48,7 +48,7 @@ namespace ClinicOne.Data
         public DbSet<AccessLog> AccessLogs { get; set; }
         public DbSet<MedicineReminder> MedicineReminders { get; set; }
 
- 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Patient>().ToTable("Patient");
@@ -72,7 +72,7 @@ namespace ClinicOne.Data
             modelBuilder.Entity<DoctorDutySchedule>().ToTable("DoctorDutySchedule");
             modelBuilder.Entity<AccessLog>().ToTable("AccessLog");
             modelBuilder.Entity<UserAccount>().ToTable("UserAccount");
-            
+
 
 
 
@@ -101,7 +101,7 @@ namespace ClinicOne.Data
 
             // PATIENT
             modelBuilder.Entity<Patient>()
-        .       HasCheckConstraint("CK_Patient_Gender",
+        .HasCheckConstraint("CK_Patient_Gender",
                 "Gender IN ('M','F')");
 
             modelBuilder.Entity<Patient>()
@@ -254,7 +254,7 @@ namespace ClinicOne.Data
 
             //Clinic Session
             modelBuilder.Entity<ClinicSession>()
-                .HasCheckConstraint("CK_ClinicSession_ScheduleType","ScheduleType IN ('Weekly','Custom')");
+                .HasCheckConstraint("CK_ClinicSession_ScheduleType", "ScheduleType IN ('Weekly','Custom')");
 
             //ClinicSessionDate
 

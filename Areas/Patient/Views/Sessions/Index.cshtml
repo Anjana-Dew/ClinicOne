@@ -1,92 +1,158 @@
 ﻿@{
-    ViewData["Title"] = "Dashboard";
-    Layout = "~/Views/Shared/_PatientLayout.cshtml";
+    Layout = "_PatientLayout";
+    var upcoming = ViewBag.Upcoming as List<ClinicOne.Models.ViewModels.Patient.PatientSessionViewModel>;
+    var past = ViewBag.Past as List<ClinicOne.Models.ViewModels.Patient.PatientSessionViewModel>;
+    var next = ViewBag.NextSession;
 }
 
-<link rel="stylesheet" href="~/css/patient/patientDashboardStyles.css">
+<link rel="stylesheet" href="~/css/patient/patientSessions.css" />
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<div class="session-wrapper">
 
-<div class="container">
-
-    <!-- SECURITY ALERT -->
-    <div class="security-alert">
-        <div class="alert-content">
-            <span class="alert-icon">🔒</span>
-            <div>
-                <strong>Security Notice</strong>
-                <p>For your account safety, please update your password.</p>
-            </div>
-        </div>
-        <button class="btn-secondary">Update Password</button>
+    <div class="header">
+        <h2>📅 Clinic Sessions</h2>
+        <p>Track your appointments and upcoming visits</p>
     </div>
 
-    <!-- WELCOME -->
-    <div class="welcome fade-in">
-        <h2>Welcome back, Hiruni</h2>
-        <p>Your health summary has been updated.</p>
-    </div>
+    @if (next != null)
+    {
+        var statusClass = next.Status.ToLower();
 
-    <div class="dashboard-grid">
+        <div class="next-card @statusClass">
 
-        <!-- HEALTH SUMMARY -->
-        <div class="card health-card slide-up">
-            <h4>Health Summary</h4>
+            <div class="next-info">
+                <h3>@next.SessionName</h3>
 
-            <div class="health-stats">
+                <p class="date">
+                    @next.ClinicDate.ToString("yyyy-MM-dd")
+                </p>
 
-                <div class="health-stat">
-                    <p class="stat-label">Body Mass Index</p>
-                    <h3>22.4</h3>
-                    <span class="stat-status good">Normal</span>
-                </div>
-
-                <div class="health-stat">
-                    <p class="stat-label">Blood Pressure</p>
-                    <h3>120 / 80</h3>
-                    <span class="stat-status good">Stable</span>
-                </div>
-
+                <p class="time">
+                    @next.StartTime.ToString(@"hh\:mm") -
+                    @next.EndTime.ToString(@"hh\:mm")
+                </p>
             </div>
-        </div>
 
-        <!-- MEDICATIONS -->
-        <div class="card slide-up delay-1">
-            <h4>Current Medications</h4>
-
-            <div class="medicine-list">
-                <div class="medicine-item">
-                    <strong>Paracetamol</strong>
-                    <span>500mg – Twice Daily</span>
-                </div>
-
-                <div class="medicine-item">
-                    <strong>Vitamin D</strong>
-                    <span>Once Daily</span>
-                </div>
-
-                <div class="medicine-item">
-                    <strong>Metformin</strong>
-                    <span>After Meals</span>
-                </div>
+            <div class="countdown @(next.Status == "Today" ? "today-pulse" : "")"
+                 id="countdown"
+                 data-datetime="@next.ClinicDate.Date.Add(next.StartTime).ToString("yyyy-MM-ddTHH:mm:ss")">
+                ⏳ Loading...
             </div>
-        </div>
 
-        <!-- REPORT -->
-        <div class="card slide-up delay-2">
-            <h4>Latest Medical Report</h4>
-            <p>Blood Report - 15 Feb 2026</p>
-            <button class="btn-primary">View Report</button>
         </div>
+    }
 
-        <!-- APPOINTMENT -->
-        <div class="card slide-up delay-3">
-            <h4>Next Appointment</h4>
-            <p>25 Feb 2026 - 9:00 AM</p>
-            <button class="btn-primary">View Details</button>
+
+    @if ((upcoming == null || !upcoming.Any()) && (past == null || !past.Any()))
+    {
+        <div class="empty">
+            <img src="/images/session-empty.png" />
+            <h3>No clinic sessions yet</h3>
+            <p>Your appointments will appear here</p>
         </div>
+    }
+    else
+    {
+        @if (upcoming != null && upcoming.Any())
+        {
+            <h3 class="section-title">Upcoming Sessions</h3>
 
-    </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Session</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in upcoming)
+                        {
+                            <tr>
+                                <td>@s.ClinicDate.ToString("yyyy-MM-dd")</td>
+                                <td>@s.SessionName</td>
+                                <td>
+                                    @s.StartTime.ToString(@"hh\:mm") -
+                                    @s.EndTime.ToString(@"hh\:mm")
+                                </td>
+                                <td>
+                                    <span class="pill @s.Status.ToLower()">
+                                        @s.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (past != null && past.Any())
+        {
+            <h3 class="section-title">Past Sessions</h3>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Session</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in past)
+                        {
+                            <tr>
+                                <td>@s.ClinicDate.ToString("yyyy-MM-dd")</td>
+                                <td>@s.SessionName</td>
+                                <td>
+                                    @s.StartTime.ToString(@"hh\:mm") -
+                                    @s.EndTime.ToString(@"hh\:mm")
+                                </td>
+                                <td>
+                                    <span class="pill completed">Completed</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+
 </div>
 
-<script src="js/patient/patientDashboard.js"></script>
+@section Scripts {
+    <script>
+        const el = document.getElementById("countdown");
+
+        if (el) {
+            const target = new Date(el.dataset.datetime);
+
+            function updateCountdown() {
+                const now = new Date();
+                const diff = target - now;
+
+                if (diff <= 0) {
+                    el.innerText = "🟢 Ongoing / Today";
+                    el.classList.add("today-pulse");
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+                el.innerText = `${days}d ${hours}h ${minutes}m left`;
+            }
+
+            updateCountdown(); // run immediately
+            setInterval(updateCountdown, 60000); // update every minute
+        }
+    </script>
+}
