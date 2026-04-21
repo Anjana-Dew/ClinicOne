@@ -1,51 +1,158 @@
-﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientSessionViewModel>
-
-@{
-    ViewData["Title"] = "Dashboard";
-    Layout = "~/Views/Shared/_PatientLayout.cshtml";
+﻿@{
+    Layout = "_PatientLayout";
+    var upcoming = ViewBag.Upcoming as List<ClinicOne.Models.ViewModels.Patient.PatientSessionViewModel>;
+    var past = ViewBag.Past as List<ClinicOne.Models.ViewModels.Patient.PatientSessionViewModel>;
+    var next = ViewBag.NextSession;
 }
 
-<link rel="stylesheet" href="~/css/patient/patientSessions.css">
+<link rel="stylesheet" href="~/css/patient/patientSessions.css" />
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<div class="session-wrapper">
 
+    <div class="header">
+        <h2>📅 Clinic Sessions</h2>
+        <p>Track your appointments and upcoming visits</p>
+    </div>
 
-
-<div class="report-container">
-    <h2>Clinic Sessions</h2>
-
-    @if (!Model.Any())
+    @if (next != null)
     {
-        <div class="no-results">
-            <p>No sessions found.</p>
+        var statusClass = next.Status.ToLower();
+
+        <div class="next-card @statusClass">
+
+            <div class="next-info">
+                <h3>@next.SessionName</h3>
+
+                <p class="date">
+                    @next.ClinicDate.ToString("yyyy-MM-dd")
+                </p>
+
+                <p class="time">
+                    @next.StartTime.ToString(@"hh\:mm") -
+                    @next.EndTime.ToString(@"hh\:mm")
+                </p>
+            </div>
+
+            <div class="countdown @(next.Status == "Today" ? "today-pulse" : "")"
+                 id="countdown"
+                 data-datetime="@next.ClinicDate.Date.Add(next.StartTime).ToString("yyyy-MM-ddTHH:mm:ss")">
+                ⏳ Loading...
+            </div>
+
+        </div>
+    }
+
+
+    @if ((upcoming == null || !upcoming.Any()) && (past == null || !past.Any()))
+    {
+        <div class="empty">
+            <img src="/images/session-empty.png" />
+            <h3>No clinic sessions yet</h3>
+            <p>Your appointments will appear here</p>
         </div>
     }
     else
     {
-        <div class="session-history">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Session Name</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var session in Model)
-                    {
-                        <tr class="@((session.IsNextSession) ? "next-session" : "")">
-                            <td>@session.ClinicDate.ToString("yyyy-MM-dd")</td>
-                            <td>@session.SessionName</td>
-                            <td>@session.StartTime.ToString(@"hh\:mm")</td>
-                            <td>@session.EndTime.ToString(@"hh\:mm")</td>
+        @if (upcoming != null && upcoming.Any())
+        {
+            <h3 class="section-title">Upcoming Sessions</h3>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Session</th>
+                            <th>Time</th>
+                            <th>Status</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in upcoming)
+                        {
+                            <tr>
+                                <td>@s.ClinicDate.ToString("yyyy-MM-dd")</td>
+                                <td>@s.SessionName</td>
+                                <td>
+                                    @s.StartTime.ToString(@"hh\:mm") -
+                                    @s.EndTime.ToString(@"hh\:mm")
+                                </td>
+                                <td>
+                                    <span class="pill @s.Status.ToLower()">
+                                        @s.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        @if (past != null && past.Any())
+        {
+            <h3 class="section-title">Past Sessions</h3>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Session</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in past)
+                        {
+                            <tr>
+                                <td>@s.ClinicDate.ToString("yyyy-MM-dd")</td>
+                                <td>@s.SessionName</td>
+                                <td>
+                                    @s.StartTime.ToString(@"hh\:mm") -
+                                    @s.EndTime.ToString(@"hh\:mm")
+                                </td>
+                                <td>
+                                    <span class="pill completed">Completed</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
     }
+
 </div>
 
-<script src="js/patient/patientDashboard.js"></script>
+@section Scripts {
+    <script>
+        const el = document.getElementById("countdown");
+
+        if (el) {
+            const target = new Date(el.dataset.datetime);
+
+            function updateCountdown() {
+                const now = new Date();
+                const diff = target - now;
+
+                if (diff <= 0) {
+                    el.innerText = "🟢 Ongoing / Today";
+                    el.classList.add("today-pulse");
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+                el.innerText = `${days}d ${hours}h ${minutes}m left`;
+            }
+
+            updateCountdown(); // run immediately
+            setInterval(updateCountdown, 60000); // update every minute
+        }
+    </script>
+}

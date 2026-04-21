@@ -6,73 +6,147 @@
 
 <link rel="stylesheet" href="~/css/patient/patientReports.css" />
 
-<div class="report-container">
-    <h2>Laboratory Reports</h2>
+<div class="report-wrapper">
 
-    <div class="filters">
-        <input type="text" id="searchInput" placeholder="Search Test Name..." />
-        <input type="date" id="dateFilter" />
+    <div class="header">
+        <h2>🧪 Laboratory Reports</h2>
+        <p>View and download your medical test results</p>
     </div>
+
+    <form method="get" class="filter-bar">
+
+        <input type="text" name="search"
+               placeholder="Search test..."
+               value="@Context.Request.Query["search"]" />
+
+        <input type="date" name="date"
+               value="@Context.Request.Query["date"]" />
+
+        <select name="panelId">
+            <option value="">All Tests</option>
+            @foreach (var p in ViewBag.TestPanels)
+            {
+                <option value="@p.PanelID"
+                        selected="@(Context.Request.Query["panelId"] == p.PanelID.ToString())">
+                    @p.TestName
+                </option>
+            }
+        </select>
+
+        <select name="status">
+            <option value="">All Status</option>
+            <option value="Completed" selected="@(Context.Request.Query["status"] == "Completed")">Completed</option>
+            <option value="Pending" selected="@(Context.Request.Query["status"] == "Pending")">Pending</option>
+        </select>
+
+        <button type="submit" class="btn primary">Filter</button>
+        <button type="button" class="btn clear" onclick="clearFilters()">Clear</button>
+
+    </form>
 
     @if (ViewBag.NoResults == true)
     {
-        <div class="no-results">
-            <img src="/images/no-data.png" />
-            <h3>No Test Results Found</h3>
-            <p>You currently have no laboratory reports.</p>
+        <div class="no-data">
+            <img src="/patientImages/no-data.png" />
+            <h3>No Reports Found</h3>
+            <p>Try adjusting filters</p>
         </div>
     }
     else
     {
-        <table id="reportTable">
-            <thead>
-                <tr>
-                    <th>Report ID</th>
-                    <th>Test Name</th>
-                    <th>Parameters</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Download</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var r in Model)
-                {
-                    <tr class="@(r.ReportStatus == "Pending" ? "pending-row" : "")">
-                        <td>@r.ReportID</td>
-                        <td>@r.TestName</td>
-                        <td>
-                            @foreach(var p in r.Parameters)
-                            {
-                                <div>
-                                    <span>@p.ParameterName: @p.TestValue</span>
-                                    <span class="status @p.ResultStatus.ToLower()">@p.ResultStatus</span>
-                                </div>
-                            }
-                            @if (!r.Parameters.Any() && r.ReportStatus == "Pending")
-                            {
-                                <span class="pending-badge">Results Pending</span>
-                            }
-                        </td>
-                        <td>@r.ReportDate.ToShortDateString()</td>
-                        <td>@r.ReportStatus</td>
-                        <td>
-                            @if (r.ReportStatus == "Completed")
-                            {
-                                <a href="@r.ReportPath" class="download-btn" download>Download PDF</a>
-                            }
-                            else
-                            {
-                                
-                            }
-                        </td>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Test</th>
+                        <th>Results</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                    @{
+                        var latestDate = Model.Any() ? Model.Max(x => x.ReportDate) : DateTime.MinValue;
+                    }
+
+                    @foreach (var r in Model)
+                    {
+                        var isLatest = r.ReportDate == latestDate;
+
+                        <tr class="@(isLatest ? "latest" : (r.ReportStatus == "Pending" ? "pending" : ""))">
+
+                            <td>#@r.ReportID</td>
+
+                            <td>
+                                <div class="test-name">
+                                    @r.TestName
+
+                                    @if (isLatest)
+                                    {
+                                        <span class="badge-new">NEW</span>
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                @if (r.Parameters.Any())
+                                {
+                                    foreach (var p in r.Parameters)
+                                    {
+                                        <div class="param">
+                                            <span>@p.ParameterName: @p.TestValue</span>
+
+                                            <span class="pill @p.ResultStatus.ToLower()">
+                                                @p.ResultStatus
+                                            </span>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="pill pending-pill">Pending</span>
+                                }
+                            </td>
+
+                            <td>@r.ReportDate.ToString("yyyy-MM-dd")</td>
+
+                            <td>
+                                <span class="status @(r.ReportStatus == "Pending" ? "pending-status" : "ok")">
+                                    @r.ReportStatus
+                                </span>
+                            </td>
+
+                            <td>
+                                @if (r.ReportStatus == "Completed")
+                                {
+                                    <a href="@Url.Content(r.ReportPath)" download class="btn download">
+                                        ⬇ Download
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="disabled">-</span>
+                                }
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
+
 </div>
 
 @section Scripts {
-    <script src="~/js/patient/patientReports.js"></script>
+    <script>
+        function clearFilters() {
+            window.location.href = '/Patient/Reports';
+        }
+    </script>
 }
+

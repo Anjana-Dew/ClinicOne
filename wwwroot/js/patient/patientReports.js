@@ -13,7 +13,6 @@ function filterReports() {
         const testName = testNameCell ? testNameCell.innerText.toLowerCase() : "";
         const reportDate = dateCell ? dateCell.innerText : "";
 
-        // Convert reportDate to yyyy-mm-dd format for comparison
         const rowDate = new Date(reportDate);
         const formattedRowDate = rowDate.toISOString().split("T")[0];
 

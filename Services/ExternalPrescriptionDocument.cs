@@ -1,7 +1,6 @@
 ﻿using QuestPDF.Infrastructure;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
 using ClinicOne.Models.ViewModels.Pharmacist;
 
 namespace ClinicOne.Services
@@ -47,20 +46,32 @@ namespace ClinicOne.Services
                             columns.RelativeColumn();
                         });
 
+                        // Header
                         table.Header(header =>
                         {
-                            header.Cell().Text("Medicine");
-                            header.Cell().Text("Dosage");
-                            header.Cell().Text("Times/Day");
-                            header.Cell().Text("Duration");
+                            header.Cell().Element(CellStyle).Text("Medicine");
+                            header.Cell().Element(CellStyle).Text("Dosage");
+                            header.Cell().Element(CellStyle).Text("Times/Day");
+                            header.Cell().Element(CellStyle).Text("Duration");
+
+                            static IContainer CellStyle(IContainer container)
+                            {
+                                return container.DefaultTextStyle(x => x.SemiBold()).Padding(5);
+                            }
                         });
 
+                        // Rows
                         foreach (var med in _model.Medicines)
                         {
-                            table.Cell().Text(med.MedicineName);
-                            table.Cell().Text(med.Dosage);
-                            table.Cell().Text(med.TimesPerDay.ToString());
-                            table.Cell().Text(med.Duration);
+                            table.Cell().Element(CellStyle).Text(med.MedicineName);
+                            table.Cell().Element(CellStyle).Text(med.Dosage);
+                          
+                            table.Cell().Element(CellStyle).Text(med.Duration);
+                        }
+
+                        static IContainer CellStyle(IContainer container)
+                        {
+                            return container.Padding(5);
                         }
                     });
 

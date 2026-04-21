@@ -1,75 +1,238 @@
-﻿/* Container & heading - same as reports page */
-.report-container {
-    width: 95%;
-    max-width: 120rem;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: #fff;
-    box-shadow: 0 0.3rem 1.2rem rgba(0, 0, 0, 0.08);
-    border-radius: 0.6rem;
+﻿body {
+    background: #f5f7fb;
+    font-family: "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
-h2 {
-    margin-bottom: 2rem;
-    color: #2c3e50;
-    font-weight: 700;
+
+/* WRAPPER */
+.session-wrapper {
+    max-width: 1100px;
+    margin: 30px auto;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+.header {
     text-align: center;
-    font-size: 2rem;
+    margin-bottom: 20px;
 }
 
-/* Scrollable session history */
-.session-history {
-    max-height: 30rem;
-    overflow-y: auto;
-    border: 0.1rem solid #ddd;
-    border-radius: 0.6rem;
+    .header h2 {
+        color: #1e3a8a;
+        font-size: 22px;
+        margin-bottom: 5px;
+    }
+
+    .header p {
+        color: #666;
+        font-size: 14px;
+    }
+
+
+
+.next-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s ease;
 }
 
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+    /* Glow animation */
+    .next-card::after {
+        content: "";
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 10%, transparent 40%);
+        top: -50%;
+        left: -50%;
+        animation: moveGlow 6s linear infinite;
+    }
 
-th, td {
-    padding: 1rem 0.8rem;
-    text-align: left;
-    font-size: 1rem;
-}
+@keyframes moveGlow {
+    0% {
+        transform: translate(0,0);
+    }
 
-th {
-    background: #4a90e2;
-    color: #fff;
-    font-weight: 600;
-}
-
-td {
-    background: #fefefe;
-    color: #333;
-    vertical-align: middle;
-}
-
-tbody tr:hover td {
-    background: #e8f0fe;
-}
-
-/* Highlight next session */
-.next-session td {
-    background: #ffe4b3 !important;
-    font-weight: 700;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    th, td {
-        font-size: 0.9rem;
-        padding: 0.6rem 0.5rem;
+    100% {
+        transform: translate(50%,50%);
     }
 }
 
-@media (max-width: 480px) {
-    th, td {
-        font-size: 0.8rem;
-        padding: 0.5rem 0.3rem;
+/* STATUS COLORS */
+.next-card.upcoming {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.next-card.today {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.next-card.completed {
+    background: linear-gradient(135deg, #6b7280, #374151);
+}
+
+/* LEFT SIDE */
+.next-info h3 {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.next-info .date {
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+.next-info .time {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* RIGHT SIDE */
+.countdown {
+    font-size: 22px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.2);
+    padding: 10px 16px;
+    border-radius: 12px;
+}
+
+.section-title {
+    margin: 25px 0 12px;
+    color: #1e3a8a;
+    font-weight: 600;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 900px;
+}
+
+/* HEADER */
+th {
+    background: #2563eb;
+    color: white;
+    padding: 14px 12px;
+    text-align: left;
+    font-size: 14px;
+    position: sticky;
+    top: 0;
+}
+
+/* CELLS */
+td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+    font-size: 14px;
+}
+
+/* ROWS */
+tbody tr {
+    background: #fff;
+    transition: 0.2s;
+}
+
+    tbody tr:hover {
+        background: #f1f5ff;
+    }
+/* STATUS PILLS */
+.pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+    .pill.upcoming {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .pill.today {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .pill.completed {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+.empty {
+    text-align: center;
+    padding: 50px;
+}
+
+    .empty img {
+        width: 130px;
+        opacity: 0.6;
+    }
+
+    .empty h3 {
+        margin-top: 10px;
+    }
+
+@media (max-width: 768px) {
+
+    table {
+        display: none;
+    }
+
+    .table-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* MOBILE CARD */
+    .mobile-card {
+        background: white;
+        padding: 15px;
+        border-radius: 14px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    }
+
+        .mobile-card .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+            .mobile-card .row strong {
+                color: #1e3a8a;
+            }
+
+    /* NEXT CARD STACK */
+    .next-card {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .countdown {
+        font-size: 18px;
     }
 }

@@ -24,8 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Patient\Views\Prescriptions\" />
-    <Folder Include="Areas\Patient\Views\Profile\" />
     <Folder Include="wwwroot\uploads\reports\" />
   </ItemGroup>
 

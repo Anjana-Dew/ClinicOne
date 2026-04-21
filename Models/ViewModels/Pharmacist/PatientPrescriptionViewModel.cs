@@ -1,4 +1,6 @@
-﻿namespace ClinicOne.Models.ViewModels.Pharmacist
+﻿using ClinicOne.Models.Entities;
+
+namespace ClinicOne.Models.ViewModels.Pharmacist
 {
     public class PatientPrescriptionViewModel
     {
@@ -8,6 +10,8 @@
         public int PrescriptionID { get; set; }
 
         public List<MedicineItemViewModel> Medicines { get; set; } = new();
+
+        public ICollection<PrescriptionMedicine> PrescriptionMedicines { get; set; }
     }
 }
 

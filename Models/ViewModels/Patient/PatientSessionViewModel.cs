@@ -10,5 +10,7 @@ namespace ClinicOne.Models.ViewModels.Patient
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public bool IsNextSession { get; set; }
+
+        public string Status { get; set; }
     }
 }

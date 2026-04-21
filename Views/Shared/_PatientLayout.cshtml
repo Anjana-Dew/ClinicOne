@@ -54,26 +54,26 @@
             </a>
 
             <a asp-area="Patient"
-               asp-controller="Dashboard"
-               asp-action="Reports">
+               asp-controller="Reports"
+               asp-action="Index">
                 Reports
             </a>
 
             <a asp-area="Patient"
-               asp-controller="Dashboard"
-               asp-action="Sessions">
+               asp-controller="Sessions"
+               asp-action="Index">
                 Sessions
             </a>
 
             <a asp-area="Patient"
-               asp-controller="Dashboard"
-               asp-action="Prescriptions">
+               asp-controller="Prescriptions"
+               asp-action="Index">
                 Prescriptions
             </a>
 
             <a asp-area="Patient"
-               asp-controller="Dashboard"
-               asp-action="Notes">
+               asp-controller="Notes"
+               asp-action="Index">
                 Notes
             </a>
 
@@ -85,7 +85,9 @@
         <div class="nav-right">
 
             <!-- Date and Time -->
-            <span id="currentDateTime" class="datetime"></span>
+            <div class="date-pill">
+                <span id="currentDateTime"></span>
+            </div>
 
             <!-- Notification -->
             <div class="notification" aria-label="Notifications">
@@ -99,10 +101,7 @@
 
             </div>
 
-            <!-- Patient Name -->
-            <span class="patient-name">
-                 @patientName
-            </span>
+           
 
             <!-- Logout -->
 

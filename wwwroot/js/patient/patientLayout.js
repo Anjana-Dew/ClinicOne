@@ -1,25 +1,15 @@
-﻿function updateTime() {
-
+﻿function updateDateTime() {
     const now = new Date();
 
-    const formatted = now.toLocaleString('en-US', {
-        month: 'short',
+    const options = {
+        weekday: 'short',
         day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-    });
+        month: 'short'
+    };
 
-    const el = document.getElementById("currentDateTime");
-
-    if (el) {
-        el.textContent = formatted;
-    }
-
+    document.getElementById("currentDateTime")
+        .innerText = now.toLocaleDateString('en-US', options);
 }
 
-// Run once immediately
-updateTime();
-
-// Update every minute
-setInterval(updateTime, 60000);
+updateDateTime();
+setInterval(updateDateTime, 60000);

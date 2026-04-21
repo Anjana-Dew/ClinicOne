@@ -15,43 +15,57 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
             _context = context;
         }
 
-        public IActionResult GenerateExternalPrescription(string nic)
+
+
+        [HttpGet]
+        public IActionResult GetPrescriptionByNIC(string nic)
         {
+            if (string.IsNullOrWhiteSpace(nic))
+                return Json(new { success = false, message = "NIC is required" });
+
+            nic = nic.Trim();
+
             var patient = _context.Patients
-                .FirstOrDefault(p => p.PatientNIC == nic);
+                .Where(p => p.PatientNIC == nic)
+                .Select(p => new
+                {
+                    name = p.FullName,
+                    nic = p.PatientNIC
+                })
+                .FirstOrDefault();
+
+            if (patient == null)
+                return Json(new { success = false, message = "Patient not found" });
 
             var prescription = _context.Prescriptions
                 .Where(p => p.PatientNIC == nic)
-                .OrderByDescending(p => p.PrescriptionDate)
+                .OrderByDescending(p => p.PrescriptionID)
                 .FirstOrDefault();
 
-            if (patient == null || prescription == null)
-            {
-                return Content("No prescription found.");
-            }
+            if (prescription == null)
+                return Json(new { success = false, message = "No prescription found for this patient" });
 
             var medicines = _context.PrescriptionMedicines
-                .Where(m => m.PrescriptionID == prescription.PrescriptionID &&
-                            m.Status == "Not Given")
-                .Select(m => new MedicineItemViewModel
+                .Where(m => m.PrescriptionID == prescription.PrescriptionID)
+                .Select(m => new
                 {
-                    MedicineName = m.MedicineName ?? "",
-                    Dosage = m.Dosage ?? "",
-                    Duration = m.Duration ?? "",
-                    TimesPerDay = m.TimesPerDay
+                    medicineName = m.MedicineName ?? "-",
+                    dosage = m.Dosage ?? "-",
+                    status = m.Status ?? "-",
+                    reason = m.Reason ?? "-",
+                    duration = m.Duration ?? "-"
                 })
-
                 .ToList();
 
-            var model = new ExternalPrescriptionPdfModel
+            return Json(new
             {
-                PatientName = patient.FullName,
-                NIC = patient.PatientNIC,
-                Notes = prescription.Notes ?? " ",
-                Medicines = medicines
-            };
-
-            return View("ExternalPrescription", model);
+                success = true,
+                patientName = patient.name,
+                patientNIC = patient.nic,
+                prescriptionID = prescription.PrescriptionID,
+                medicines
+            });
         }
     }
-}
+    }
+    

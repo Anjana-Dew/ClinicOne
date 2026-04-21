@@ -35,7 +35,7 @@ namespace ClinicOne.Data
 
 
         // Progress Tracking
-        public DbSet<PatientProgress> PatientProgresses { get; set; }
+        public DbSet<PatientProgress> PatientProgress { get; set; }
 
         // Scheduling
         public DbSet<ClinicSession> ClinicSessions { get; set; }

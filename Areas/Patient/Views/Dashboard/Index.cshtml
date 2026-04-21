@@ -1,251 +1,241 @@
 ﻿@model ClinicOne.Models.ViewModels.Patient.PatientDashboardViewModel
 
 @{
-    ViewData["Title"] = "Dashboard";
-    Layout = "~/Views/Shared/_PatientLayout.cshtml";
+    Layout = "_PatientLayout";
 }
 
 <link rel="stylesheet" href="~/css/patient/patientDashboardStyles.css" />
+<script src="~/js/patient/patientDashboard.js"></script>
 
-<div class="dashboard-grid">
+<div class="dashboard-wrapper">
 
-    <!-- PROFILE -->
-    <div class="card profile-card">
-
-        <h3>Profile</h3>
-
-        <img src="~/patientImages/account.png" class="profile-img" />
-
-        <h4>@ViewBag.PatientName</h4>
-
-        <div class="profile-info">
-            <p>Gender: @Model.Gender</p>
-            <p>Age: @Model.Age</p>
-            <p>Blood: @Model.BloodType</p>
-        </div>
-
-        <button class="btn-modern" onclick="openEditProfile()">
-            Edit Profile
-        </button>
-
+    <div class="dashboard-header">
+        <h2>🏥 Patient Dashboard</h2>
+        <p>Overview of your health and medical activity</p>
     </div>
 
+    <div class="dashboard-grid">
 
+        <!-- PROFILE -->
+        <div class="card profile-card">
 
-    <!-- UPCOMING CLINIC -->
-    <div class="card">
-
-        <div class="card-header">
-            <img src="/icons/calendar.png" class="card-icon" />
-            <h3>Upcoming Clinic</h3>
-        </div>
-
-        <div class="calendar">
-
-            <div class="calendar-header">
-                <span>Clinic Dates</span>
+            <div class="profile-img">
+                <img src="/patientImages/defaultProfile.png" />
             </div>
 
-            <div class="calendar-days">
-                <div>Su</div><div>Mo</div><div>Tu</div>
-                <div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+            <h3>@Model.PatientName</h3>
+
+            <div class="profile-info">
+                <p><span class="label">NIC:</span> @ViewBag.NIC</p>
+                <p>
+                    <span class="label">Blood:</span>
+                    @(!string.IsNullOrEmpty(ViewBag.BloodType) ? ViewBag.BloodType : "⚠ Add Blood Type")
+                </p>
+                <p><span class="label">Phone:</span> @Model.PhoneNumber</p>
+                <p><span class="label">Address:</span> @Model.Address</p>
             </div>
 
-            <div class="calendar-dates">
+            <a href="/Patient/Profile/Edit" class="btn primary">
+                Edit Profile
+            </a>
 
-                <div>1</div>
-                <div>2</div>
-                <div class="clinic-date">3</div>
-                <div>4</div>
-                <div>5</div>
-                <div class="clinic-date">6</div>
-                <div>7</div>
+        </div>
 
-                <div>8</div>
-                <div>9</div>
-                <div>10</div>
-                <div class="clinic-date">11</div>
-                <div>12</div>
-                <div>13</div>
-                <div>14</div>
+        <!-- NEXT SESSION -->
+        <div class="card next-session">
 
-                <div>15</div>
-                <div>16</div>
-                <div>17</div>
-                <div>18</div>
-                <div class="clinic-date">19</div>
-                <div>20</div>
-                <div>21</div>
-
+            <div class="card-header">
+                <h3>📅 Next Session</h3>
             </div>
 
-        </div>
-
-        <p class="clinic-info">
-            Next Clinic : <strong>@Model.NextSessionDate</strong>
-        </p>
-
-    </div>
-
-
-
-    <!-- HEALTH PROGRESS -->
-    <div class="card">
-
-        <div class="card-header">
-            <img src="/icons/progress.png" class="card-icon" />
-            <h3>Health Progress</h3>
-        </div>
-
-        <div class="progress-highlight @Model.ProgressStatus.ToLower()">
-            @Model.ProgressStatus
-        </div>
-
-        <div class="notes-section">
-
-            <h4 class="notes-title">
-                <img src="/icons/notes.png" class="note-icon" />
-                Notes
-            </h4>
-
-            <p>@Model.DoctorNotes</p>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- HEALTH SUMMARY -->
-    <div class="card">
-
-        <div class="card-header">
-            <img src="/icons/health.png" class="card-icon" />
-            <h3>Health Summary</h3>
-        </div>
-
-        <div class="health-items">
-
-            <div class="health-box bmi">
-                <img src="/icons/bmi.png" />
-                <span>BMI</span>
-                <h4>@Model.BMI</h4>
-            </div>
-
-            <div class="health-box weight">
-                <img src="/icons/weight.png" />
-                <span>Weight</span>
-                <h4>@Model.Weight kg</h4>
-            </div>
-
-            <div class="health-box height">
-                <img src="/icons/height.png" />
-                <span>Height</span>
-                <h4>@Model.Height cm</h4>
-            </div>
-
-            <div class="health-box bp">
-                <img src="/icons/pressure.png" />
-                <span>Blood Pressure</span>
-                <h4>@Model.BloodPressure</h4>
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- TEST REPORT -->
-    <div class="card">
-
-        <div class="card-header">
-            <img src="/icons/report.png" class="card-icon" />
-            <h3>Latest Test Report</h3>
-        </div>
-
-        <p>@Model.LatestReportName</p>
-
-        <span class="report-status">
-            @Model.ReportStatus
-        </span>
-
-        <a class="btn-modern" href="@Model.ReportPath">
-            View Report
-        </a>
-
-    </div>
-
-
-
-    <!-- MEDICINES -->
-    <div class="card">
-
-        <div class="card-header">
-            <img src="/icons/medicine.png" class="card-icon" />
-            <h3>Current Medicines</h3>
-        </div>
-
-        <div class="medicine-list">
-
-            @foreach (var med in Model.Medicines)
+            @if (Model.NextSessionDate != null)
             {
-                <div class="medicine-item">
+                <div class="next-session-box">
 
-                    <span class="pill">💊</span>
+                    <h3>@ViewBag.NextSessionName</h3>
 
-                    <div>
-                        <strong>@med.Name</strong><br />
-                        <small>@med.Dosage</small>
+                    <div class="big-date">
+                        @Model.NextSessionDate.Value.ToString("dddd, dd MMM yyyy")
+                    </div>
+
+                    <div class="time">
+                        @Model.SessionTime
+                    </div>
+
+                    <div id="countdown"
+                         data-date="@Model.NextSessionDate.Value.ToString("yyyy-MM-dd")"
+                         data-time="@ViewBag.StartTime">
+                        ⏳ Calculating...
                     </div>
 
                 </div>
             }
+            else
+            {
+                <p class="muted">No upcoming session</p>
+            }
+
+        </div>
+
+        <!-- HEALTH PROGRESS -->
+        <div class="card">
+
+            <div class="card-header">
+                <h3>📈 Health Progress</h3>
+            </div>
+
+            <div class="progress-status @Model.ProgressStatus.ToLower()">
+                @Model.ProgressStatus
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill @Model.ProgressStatus.ToLower()"></div>
+            </div>
+
+            <p class="notes">
+                <strong>Doctor Notes:</strong><br />
+                @Model.DoctorNotes
+            </p>
+
+        </div>
+
+        <!-- HEALTH SUMMARY -->
+        <div class="card">
+
+            <div class="card-header">
+                <h3>🧬 Health Summary</h3>
+            </div>
+
+            <div class="health-grid">
+
+                <div class="health-box">
+                    <img src="/icons/bmi.png" />
+                    <div>BMI</div>
+                    <h4>@Model.BMI</h4>
+                </div>
+
+                <div class="health-box">
+                    <img src="/icons/weight.png" />
+                    <div>Weight</div>
+                    <h4>@Model.Weight kg</h4>
+                </div>
+
+                <div class="health-box">
+                    <img src="/icons/height.png" />
+                    <div>Height</div>
+                    <h4>@Model.Height cm</h4>
+                </div>
+
+                <div class="health-box">
+                    <img src="/icons/pressure.png" />
+                    <div>BP</div>
+                    <h4>@Model.BloodPressure</h4>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- REPORT -->
+        <div class="card">
+
+            <div class="card-header">
+                <h3>📄 Latest Report</h3>
+            </div>
+
+            <table class="mini-table">
+                <tr><td>ID</td><td>@ViewBag.ReportID</td></tr>
+                <tr><td>Test</td><td>@ViewBag.TestName</td></tr>
+                <tr><td>Results</td><td>@ViewBag.Result</td></tr>
+                <tr><td>Date</td><td>@ViewBag.ReportDate</td></tr>
+                <tr><td>Status</td><td>@Model.ReportStatus</td></tr>
+            </table>
+
+            <div class="report-actions">
+                <a href="@Model.ReportPath" class="btn success">Download</a>
+                <a href="/Patient/Reports" class="btn primary">View All</a>
+            </div>
+
+        </div>
+
+        <!-- MEDICINES -->
+        <div class="card">
+
+            <div class="card-header">
+                <h3>💊 Current Medicines</h3>
+            </div>
+
+            <div class="medicine-list scroll">
+
+                @foreach (var med in Model.Medicines.Take(3))
+                {
+                    <div class="medicine-item">
+                        <strong>@med.Name</strong>
+                        <span>@med.Dosage</span>
+                    </div>
+                }
+
+            </div>
+
+            <a href="/Patient/Prescriptions" class="btn primary">
+                View All
+            </a>
 
         </div>
 
     </div>
-
 </div>
 
-
-
-<!-- EDIT PROFILE MODAL -->
-
 <div id="editModal" class="modal">
-
     <div class="modal-content">
+
+        <span class="close" onclick="closeEditProfile()">&times;</span>
 
         <h3>Edit Profile</h3>
 
-        <label>Name</label>
-        <input type="text" value="@ViewBag.PatientName" />
+        <form method="post" action="/Patient/Profile/Update">
 
-        <label>Phone</label>
-        <input type="text" />
+            <label>Full Name</label>
+            <input type="text" name="FullName" value="@Model.PatientName" required />
 
-        <label>Address</label>
-        <input type="text" />
+            <label>Phone</label>
+            <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" required />
 
-        <label>Blood Type</label>
-        <input type="text" />
+            <label>Blood Type</label>
+            <input type="text" name="BloodType" value="@Model.BloodType" />
 
-        <p class="note">NIC cannot be changed</p>
+            <label>Address</label>
+            <input type="text" name="Address" value="@Model.Address" />
 
-        <button class="btn-modern">
-            Save
-        </button>
+            <button type="submit" class="btn success">Save</button>
 
-        <button class="btn-cancel" onclick="closeEditProfile()">
-            Cancel
-        </button>
+        </form>
 
     </div>
-
 </div>
 
-
-
 @section Scripts {
-    <script src="~/js/patient/patientDashboard.js"></script>
+    <script>
+        const el = document.getElementById("countdown");
+
+        if (el) {
+            const target = new Date(el.dataset.date + "T00:00:00");
+
+            setInterval(() => {
+                const now = new Date();
+                const diff = target - now;
+
+                if (diff <= 0) {
+                    el.innerHTML = "Session Started";
+                    return;
+                }
+
+                const d = Math.floor(diff / (1000*60*60*24));
+                const h = Math.floor((diff/(1000*60*60))%24);
+                const m = Math.floor((diff/(1000*60))%60);
+
+                el.innerHTML = d + "d " + h + "h " + m + "m";
+            }, 1000);
+        }
+    </script>
 }
