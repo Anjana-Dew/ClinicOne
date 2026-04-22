@@ -6,7 +6,7 @@
 
 	<div class="header-bar">
 
-		<a href="javascript:history.back()" class="back-btn">
+		<a asp-area="Doctor" asp-controller="PatientMedicalProfile" asp-action="Index" asp-route-id="@Model.PatientNIC" class="back-btn">
 			<img src="~/adminImages/ic_back.png" />
 		</a>
 
@@ -15,18 +15,17 @@
 		<img src="~/images/ClinicOneLogoMain.png" class="logo" />
 
 	</div>
-	<div class="temp-message" id="tempMessage" style="display:none;">
+	<div id="tempMessage" class="temp-message" style="@(TempData["Success"] != null || TempData["Error"] != null ? "display:block;" : "display:none;")">
 		@if (TempData["Success"] != null)
 		{
-			@TempData["Success"]
+			<span class="success">@TempData["Success"]</span>
+		}
+		else if (TempData["Error"] != null)
+		{
+			<span class="error">@TempData["Error"]</span>
 		}
 	</div>
-	@if (TempData["Error"] != null)
-	{
-		<div class="temp-message error">
-			@TempData["Error"]
-		</div>
-	}
+
 
 	<form method="post" asp-action="SavePrescription">
 
@@ -41,6 +40,7 @@
 					<th>Medicine Name</th>
 					<th>Dosage</th>
 					<th>Times / Day</th>
+					<th>Duration</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -50,7 +50,17 @@
 				<tr>
 					<td><input name="Medicines[0].MedicineName"/></td>
 					<td><input name="Medicines[0].Dosage"/></td>
-					<td><input type="number" name="Medicines[0].TimesPerDay" /></td>
+					<td><input type="number" name="Medicines[0].TimesPerDay" placeholder="e.g 2" /></td>
+					<td>
+						<div class="duration-group">
+							<input type="number" name="Medicines[0].DurationValue" placeholder="e.g 2" />
+							<select name="Medicines[0].DurationUnit">
+								<option value="Days">Days</option>
+								<option value="Weeks">Weeks</option>
+							</select>
+						</div>
+					</td>
+
 					<td><button type="button" onclick="removeMedicineRow(this)">X</button></td>
 				</tr>
 
