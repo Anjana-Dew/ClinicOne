@@ -136,6 +136,22 @@ textarea:focus {
      box-shadow: inset 0 0 0 2px #1e337a;
 }
 
+.duration-group {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+
+.duration-group input[type="number"] {
+    width: 80px; 
+    padding: 10px; 
+}
+
+.duration-group select {
+    width: 100px; 
+    padding: 10px;
+}
+
 button {
     margin-top: 20px;
     background: #1e337a;
@@ -208,11 +224,19 @@ button:active {
     border-left: 4px solid #1e3fae;
     font-family: Poppins;
     transition: opacity 0.5s ease;
+
 }
 .temp-message.error{
     color: #a52a1d;
     border-left: 4px solid #a52a1d;
 }
+.temp-message .success {
+    background: #d3dcf8;
+    color: #1e3fae;
+    border-left: 4px solid #1e3fae;
+    padding: 8px 12px;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
