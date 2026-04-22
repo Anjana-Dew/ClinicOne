@@ -1,4 +1,5 @@
 ﻿using ClinicOne.Data;
+using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Patient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace ClinicOne.Areas.Patient.Controllers
         {
             var nic = HttpContext.Session.GetString("PatientNIC");
 
+<<<<<<< HEAD
             if (string.IsNullOrEmpty(nic))
             {
                 var username = User.Identity?.Name;
@@ -43,26 +45,56 @@ namespace ClinicOne.Areas.Patient.Controllers
             var patientEntity = await _context.Patients
                 .FirstOrDefaultAsync(p => p.PatientNIC == nic);
 
-            var progress = await _context.PatientProgresses
-                .Where(p => p.PatientNIC == nic)
-                .OrderByDescending(p => p.ProgressDate)
+=======
+            if (string.IsNullOrEmpty(nic))
+                return RedirectToAction("Login", "Account");
+
+            // PATIENT
+            var patient = await _context.Patients
+                .FirstOrDefaultAsync(p => p.PatientNIC == nic);
+
+            // VITALS
+            var vitals = await _context.PatientVitals
+                .Where(v => v.PatientNIC == nic)
+                .OrderByDescending(v => v.RecordedDate)
                 .FirstOrDefaultAsync();
 
+            decimal bmi = 0;
+            if (vitals?.Height > 0 && vitals?.Weight > 0)
+            {
+                var h = vitals.Height.Value / 100;
+                bmi = vitals.Weight.Value / (h * h);
+            }
+
+            // ✅ PROGRESS + NOTES
+>>>>>>> main
+            var progress = await _context.PatientProgresses
+                .Where(p => p.PatientNIC == nic)
+                .OrderByDescending(p => p.RecordedDate)
+                .FirstOrDefaultAsync();
+
+<<<<<<< HEAD
             var report = await _context.MedicalReports
                 .Where(r => r.PatientNIC == nic)
                 .OrderByDescending(r => r.UploadedDate)
                 .FirstOrDefaultAsync();
 
+=======
+            // ✅ NEXT SESSION
+>>>>>>> main
             var session = await _context.ClinicSchedules
-                .Where(s => s.PatientNIC == nic && s.ClinicDate >= DateTime.Today)
                 .Include(s => s.ClinicSession)
+                .Where(s => s.PatientNIC == nic)
                 .OrderBy(s => s.ClinicDate)
                 .FirstOrDefaultAsync();
 
+<<<<<<< HEAD
+=======
+            // ✅ MEDICINES (FIXED)
+>>>>>>> main
             var medicines = await _context.PrescriptionMedicines
-                .Where(m => m.Prescription.PatientNIC == nic && m.Status != "Not Given")
-                .OrderByDescending(m => m.PrescMedID)
-                .Take(3)
+                .Include(m => m.Prescription)
+                .Where(m => m.Prescription.PatientNIC == nic)
                 .Select(m => new MedicineDto
                 {
                     Name = m.MedicineName,
@@ -70,28 +102,54 @@ namespace ClinicOne.Areas.Patient.Controllers
                 })
                 .ToListAsync();
 
-            var vm = new PatientDashboardViewModel
-            {
-                PatientName = patientEntity?.FullName ?? "Patient",
-                NIC = patientEntity?.PatientNIC ?? "-",
-                BloodType = string.IsNullOrEmpty(patientEntity?.BloodType) ? "Not Added" : patientEntity.BloodType,
-                Address = patientEntity?.Address ?? "-",
-                PhoneNumber = patientEntity?.PhoneNumber ?? "-",
+            // ✅ REPORTS (CORRECT RELATIONS)
+            var reports = await _context.ReportTestResults
+                .Include(r => r.TestParameter)
+                    .ThenInclude(p => p.TestPanel)
+                .Include(r => r.MedicalReport)
+                .Where(r => r.MedicalReport.PatientNIC == nic)
+                .Select(r => new ReportResultDto
+                {
+                    TestName = r.TestParameter.TestPanel.TestName,
+                    Parameter = r.TestParameter.ParameterName,
+                    Value = r.TestValue,
+                    Status = r.ResultStatus
+                })
+                .ToListAsync();
 
+            return View(new PatientDashboardViewModel
+            {
+                PatientName = patient?.FullName ?? "",
+                NIC = patient?.PatientNIC ?? "",
+                BloodType = patient?.BloodType,
+                PhoneNumber = patient?.PhoneNumber,
+                Address = patient?.Address,
+
+<<<<<<< HEAD
                 Height = 0,
                 Weight = 0,
                 BMI = 0,
                 BloodPressure = "N/A",
+=======
+                Height = vitals?.Height ?? 0,
+                Weight = vitals?.Weight ?? 0,
+                BMI = Math.Round(bmi, 2),
+                BloodPressure = vitals != null
+                    ? $"{vitals.Systolic}/{vitals.Diastolic}"
+                    : "N/A",
+>>>>>>> main
 
-                ProgressStatus = progress?.ProgressStatus ?? "Stable",
-                DoctorNotes = progress?.DoctorNotes ?? "-",
+                // ✅ FIXED DATA
+                ProgressStatus = progress?.ProgressStatus ?? "No Data",
+                DoctorNotes = progress?.DoctorNotes ?? "",
 
                 NextSessionDate = session?.ClinicDate,
-                NextSessionName = session?.ClinicSession?.SessionName ?? "-",
+                NextSessionName = session?.ClinicSession?.SessionName ?? "",
                 SessionTime = session != null
-                ? $"{DateTime.Today.Add(session.ClinicSession.StartTime):hh:mm tt} - {DateTime.Today.Add(session.ClinicSession.EndTime):hh:mm tt}"
-                : "-",
+                    ? $"{session.ClinicSession.StartTime} - {session.ClinicSession.EndTime}"
+                    : "",
 
+<<<<<<< HEAD
                 ReportID = report?.ReportID,
                 ReportDate = report?.UploadedDate,
                 ReportStatus = report != null ? "Completed" : "Pending",
@@ -101,6 +159,11 @@ namespace ClinicOne.Areas.Patient.Controllers
             };
 
             return View(vm);
+=======
+                Medicines = medicines,
+                ReportResults = reports
+            });
+>>>>>>> main
         }
     }
-}
+    }

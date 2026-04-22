@@ -1,14 +1,13 @@
-﻿function openEditProfile() {
-    document.getElementById("editModal").style.display = "block";
+﻿function openModal() {
+    document.getElementById("profileModal").style.display = "flex";
 }
 
-function closeEditProfile() {
-    document.getElementById("editModal").style.display = "none";
+function closeModal() {
+    document.getElementById("profileModal").style.display = "none";
 }
 
-// CLOSE IF CLICK OUTSIDE
 window.onclick = function (event) {
-    const modal = document.getElementById("editModal");
+    const modal = document.getElementById("profileModal");
     if (event.target === modal) {
         modal.style.display = "none";
     }

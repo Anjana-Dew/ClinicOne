@@ -1,9 +1,66 @@
+<<<<<<< HEAD
 ﻿window.searchPatient = function () {
+=======
+﻿function generateExternal() {
+
+    let medicines = [];
+
+    document.querySelectorAll("#table tr").forEach(row => {
+
+        let status = row.querySelector(".status")?.value;
+        let reason = row.querySelector(".reason")?.value;
+
+        if (status === "Not Given" || status === "Partially Given") {
+
+            medicines.push({
+                medicineName: row.cells[0].innerText,
+                dosage: row.cells[1].innerText,
+                duration: row.cells[2].innerText,
+                timesPerDay: parseInt(row.cells[3].innerText || "0"),
+                status: status,
+                reason: reason || ""
+            });
+        }
+    });
+
+    if (medicines.length === 0) {
+        alert("No medicines selected for external prescription!");
+        return;
+    }
+
+    fetch('/Pharmacist/Prescription/GenerateExternal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(medicines)
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Server rejected request");
+            return res.blob();
+        })
+        .then(blob => {
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "ExternalPrescription.pdf";
+            a.click();
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error generating PDF");
+        });
+}
+
+window.searchPatient = function () {
+>>>>>>> main
 
     let nic = document.getElementById("nicInput").value;
 
     fetch(`/Pharmacist/Prescription/Search?nic=${nic}`)
+<<<<<<< HEAD
         .then(r => r.json())
+=======
+        .then(res => res.json())
+>>>>>>> main
         .then(data => {
 
             if (!data.success) {
@@ -20,6 +77,7 @@
 
             data.medicines.forEach(m => {
                 table.innerHTML += `
+<<<<<<< HEAD
                     <tr data-id="${m.prescMedID}">
                         <td>${m.medicineName}</td>
                         <td>${m.dosage}</td>
@@ -37,6 +95,26 @@
                 `;
             });
         });
+=======
+<tr data-id="${m.prescMedID}">
+    <td>${m.medicineName}</td>
+    <td>${m.dosage}</td>
+    <td>${m.duration}</td>
+    <td>${m.timesPerDay}</td>
+    <td>
+        <select class="status">
+            <option ${m.status === "Given" ? "selected" : ""}>Given</option>
+            <option ${m.status === "Not Given" ? "selected" : ""}>Not Given</option>
+            <option ${m.status === "Partially Given" ? "selected" : ""}>Partially Given</option>
+        </select>
+    </td>
+    <td><input class="reason" value="${m.reason || ""}" /></td>
+</tr>
+`;
+            });
+        })
+        .catch(err => console.error(err));
+>>>>>>> main
 };
 
 function saveData() {
@@ -45,6 +123,7 @@ function saveData() {
 
     document.querySelectorAll("#table tr").forEach(row => {
 
+<<<<<<< HEAD
         data.push({
             prescMedID: parseInt(row.getAttribute("data-id")),
             status: row.querySelector(".status").value,
@@ -52,11 +131,33 @@ function saveData() {
         });
     });
 
+=======
+        let id = row.getAttribute("data-id");
+
+        let status = row.querySelector(".status")?.value;
+        let reason = row.querySelector(".reason")?.value;
+
+        if (!id) return;
+
+        data.push({
+            prescMedID: parseInt(id),
+            status: status,
+            reason: reason || ""
+        });
+    });
+
+    if (data.length === 0) {
+        alert("Nothing to save");
+        return;
+    }
+
+>>>>>>> main
     fetch('/Pharmacist/Prescription/Confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     })
+<<<<<<< HEAD
         .then(r => r.json())
         .then(r => alert(r.success ? "Saved" : "Failed"));
 }
@@ -99,5 +200,18 @@ function generateExternal() {
             a.href = url;
             a.download = "External.pdf";
             a.click();
+=======
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                alert("Saved successfully");
+            } else {
+                alert("Save failed");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error saving");
+>>>>>>> main
         });
 }

@@ -1,12 +1,17 @@
 ﻿@{
     Layout = "_PharmacistLayout";
 }
+<<<<<<< HEAD
 
 <h2>Pharmacist Dashboard</h2>
+=======
+<script src="@Url.Content("~/js/pharmacist/pharmacist.js")"></script>
+>>>>>>> main
 
 <input id="nicInput" placeholder="Enter NIC" />
 <button onclick="searchPatient()">Search</button>
 
+<<<<<<< HEAD
 <p id="msg" style="color:red"></p>
 
 <div id="popup" style="display:none;">
@@ -26,11 +31,39 @@
             </tr>
         </thead>
 
+=======
+<h2>Pharmacist Dashboard</h2>
+
+<input id="nicInput" placeholder="Enter NIC" />
+<button onclick="searchPatient()">Search</button>
+
+<div id="popup" style="display:none;">
+
+    <h3 id="name"></h3>
+    <p id="nic"></p>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Medicine</th>
+                <th>Dosage</th>
+                <th>Duration</th>
+                <th>Times</th>
+                <th>Status</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+
+>>>>>>> main
         <tbody id="table"></tbody>
     </table>
 
     <button onclick="saveData()">Confirm</button>
     <button onclick="generateExternal()">External PDF</button>
+<<<<<<< HEAD
 </div>
 
 <script src="~/js/pharmacist/pharmacist.js"></script>
+=======
+</div>
+>>>>>>> main

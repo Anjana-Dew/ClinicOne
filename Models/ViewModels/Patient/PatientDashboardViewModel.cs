@@ -28,6 +28,9 @@ public class PatientDashboardViewModel
     public string ReportPath { get; set; } = "";
 
     public List<MedicineDto> Medicines { get; set; } = new();
+
+    public List<ReportResultDto> ReportResults { get; set; } = new();
+
 }
 
 public class MedicineDto
