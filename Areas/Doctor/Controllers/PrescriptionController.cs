@@ -50,17 +50,42 @@ namespace ClinicOne.Areas.Doctor.Controllers
         [HttpPost]
         public IActionResult SavePrescription(CreatePrescriptionViewModel model)
         {
-            model.Medicines = model.Medicines
-                .Where(m => !string.IsNullOrEmpty(m.MedicineName) &&
-                !string.IsNullOrEmpty(m.Dosage)&&
-                m.TimesPerDay > 0)
-                .ToList();
+            //model.Medicines = model.Medicines
+            //    .Where(m => !string.IsNullOrEmpty(m.MedicineName) &&
+            //    !string.IsNullOrEmpty(m.Dosage)&&
+            //    m.TimesPerDay > 0 && (m.DurationValue.HasValue && m.DurationValue > 0 && !string.IsNullOrEmpty(m.DurationUnit)))
+            //    .ToList();
+            foreach (var med in model.Medicines)
+            {
+                if (!string.IsNullOrEmpty(med.MedicineName))
+                {
+                    if (string.IsNullOrEmpty(med.Dosage) || med.TimesPerDay <= 0)
+                    {
+                        TempData["Error"] = "Dosage and Times/Day are required.";
+                        return RedirectToAction("Create", new { nic = model.PatientNIC });
+                    }
 
-            if (!model.Medicines.Any() && (model.Tests == null || !model.Tests.Any(t => t.PanelID > 0)))
+                    if (!med.DurationValue.HasValue || med.DurationValue <= 0 || string.IsNullOrEmpty(med.DurationUnit))
+                    {
+                        TempData["Error"] = "Duration is required.";
+                        return RedirectToAction("Create", new { nic = model.PatientNIC });
+                    }
+                }
+            }
+            bool hasValidMedicine = model.Medicines.Any(m => !string.IsNullOrEmpty(m.MedicineName));
+            bool hasValidTest = model.Tests != null && model.Tests.Any(t => t.PanelID > 0);
+
+            if (!hasValidMedicine && !hasValidTest)
             {
                 TempData["Error"] = "Prescription must contain at least a medicine or a test.";
                 return RedirectToAction("Create", new { nic = model.PatientNIC });
             }
+
+            //if (!model.Medicines.Any() && (model.Tests == null || !model.Tests.Any(t => t.PanelID > 0)))
+            //{
+            //    TempData["Error"] = "Prescription must contain at least a medicine or a test.";
+            //    return RedirectToAction("Create", new { nic = model.PatientNIC });
+            //}
 
             var prescription = new Prescription
             {
@@ -74,12 +99,19 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             foreach(var med in model.Medicines)
             {
+                string duration = null;
+
+                if(med.DurationValue.HasValue && !string.IsNullOrEmpty(med.DurationUnit))
+                {
+                    duration = $"{med.DurationValue} {med.DurationUnit}";
+                }
                 var medicine = new PrescriptionMedicine
                 {
                     PrescriptionID = prescription.PrescriptionID,
                     MedicineName = med.MedicineName,
                     Dosage = med.Dosage,
                     TimesPerDay = med.TimesPerDay,
+                    Duration = duration,
                     Status = "Not Given"
                 };
 

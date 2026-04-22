@@ -11,6 +11,19 @@ function addMedicineRow() {
         <td><input name="Medicines[${medicineIndex}].MedicineName"/></td>
         <td><input name="Medicines[${medicineIndex}].Dosage"/></td>
         <td><input type="number" name="Medicines[${medicineIndex}].TimesPerDay" min="1"/></td>
+
+        <td>
+            <div style="display:flex; gap:5px;">
+                <input type="number" name="Medicines[${medicineIndex}].DurationValue" style="width:60px;" />
+
+                <select name="Medicines[${medicineIndex}].DurationUnit">
+                    <option value="Days">Days</option>
+                    <option value="Weeks">Weeks</option>
+                </select>
+            </div>
+
+        </td>
+
         <td><button type="button" onclick="removeMedicineRow(this)">X</button></td>
     `;
 
@@ -27,6 +40,13 @@ function validateMedicines() {
         let name = row.querySelector("[name*='MedicineName']").value.trim();
         let dosage = row.querySelector("[name*='Dosage']").value.trim();
         let times = row.querySelector("[name*='TimesPerDay']").value.trim();
+        let durationValue = row.querySelector("[name*='DurationValue']").value.trim();
+        let durationUnit = row.querySelector("[name*='DurationUnit']").value.trim();
+
+        if (name && (!durationValue || durationValue <= 0 || !durationUnit)) {
+            showTempMessage("Duration is required for each medicine.");
+            return false;
+        }
 
         if (name && (!dosage || !times)) {
             showTempMessage("Dosage and Times/Day required.");
@@ -82,6 +102,9 @@ function submitPrescription() {
         row.querySelector("[name*='MedicineName']").name = `Medicines[${index}].MedicineName`;
         row.querySelector("[name*='Dosage']").name = `Medicines[${index}].Dosage`;
         row.querySelector("[name*='TimesPerDay']").name = `Medicines[${index}].TimesPerDay`;
+        row.querySelector("[name*='DurationValue']").name = `Medicines[${index}].DurationValue`;
+        row.querySelector("[name*='DurationUnit']").name = `Medicines[${index}].DurationUnit`;
+
 
     });
 
@@ -182,6 +205,8 @@ function showTempMessage(message) {
 
     msg.innerHTML = message;
     msg.style.display = "block";
+
+    msg.scrollIntoView({ behavior: "smooth", block: "start" });
 
     setTimeout(() => {
         msg.style.display = "none";
