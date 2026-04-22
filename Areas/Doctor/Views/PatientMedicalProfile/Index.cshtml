@@ -187,7 +187,6 @@
 
 							<div class="medicine-dates">
 								<p><strong>Prescribed:</strong> @card.PrescriptionDate.ToString("dd MMM yyyy")</p>
-								<p><strong>Until:</strong> @card.UntilDate?.ToString("dd MMM yyyy")</p>
 							</div>
 
 							<div class="medicine-body">
@@ -195,6 +194,7 @@
 									<span><strong>Medicine Name</strong></span>
 									<span><strong>Dosage</strong></span>
 									<span><strong>Times Per Day</strong></span>
+									<span><strong>Duration</strong></span>
 								</div>
 
 								@foreach(var med in card.Medicines)
@@ -203,6 +203,8 @@
 										<span>@med.MedicineName</span>
 										<span>@med.Dosage</span>
 										<span>@med.TimesPerDay</span>
+
+										<span>@(string.IsNullOrEmpty(med.Duration)? "-" : med.Duration)</span>
 									</div>
 								}
 							</div>

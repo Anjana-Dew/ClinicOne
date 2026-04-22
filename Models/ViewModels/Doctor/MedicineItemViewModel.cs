@@ -5,5 +5,6 @@
         public string MedicineName { get; set; }
         public string Dosage {  get; set; }
         public int TimesPerDay { get; set; }
+        public string Duration { get; set; }
     }
 }
