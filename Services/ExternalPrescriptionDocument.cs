@@ -1,6 +1,5 @@
-﻿using QuestPDF.Infrastructure;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
+﻿using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 using ClinicOne.Models.ViewModels.Pharmacist;
 
 namespace ClinicOne.Services
@@ -22,8 +21,9 @@ namespace ClinicOne.Services
             {
                 page.Margin(40);
 
-                page.Header().Text("ClinicOne - External Prescription")
-                    .FontSize(20)
+                page.Header()
+                    .Text("ClinicOne Pharmacy - External Prescription")
+                    .FontSize(18)
                     .Bold()
                     .AlignCenter();
 
@@ -31,10 +31,9 @@ namespace ClinicOne.Services
                 {
                     col.Spacing(10);
 
-                    col.Item().Text($"Patient Name: {_model.PatientName}");
+                    col.Item().Text($"Patient: {_model.PatientName}");
                     col.Item().Text($"NIC: {_model.NIC}");
-
-                    col.Item().PaddingTop(10).Text("Medicines").Bold();
+                    col.Item().Text($"Date: {System.DateTime.Now:yyyy-MM-dd HH:mm}");
 
                     col.Item().Table(table =>
                     {
@@ -46,42 +45,22 @@ namespace ClinicOne.Services
                             columns.RelativeColumn();
                         });
 
-                        // Header
                         table.Header(header =>
                         {
-                            header.Cell().Element(CellStyle).Text("Medicine");
-                            header.Cell().Element(CellStyle).Text("Dosage");
-                            header.Cell().Element(CellStyle).Text("Times/Day");
-                            header.Cell().Element(CellStyle).Text("Duration");
-
-                            static IContainer CellStyle(IContainer container)
-                            {
-                                return container.DefaultTextStyle(x => x.SemiBold()).Padding(5);
-                            }
+                            header.Cell().Text("Medicine").Bold();
+                            header.Cell().Text("Dosage").Bold();
+                            header.Cell().Text("Times/Day").Bold();
+                            header.Cell().Text("Reason").Bold();
                         });
 
-                        // Rows
                         foreach (var med in _model.Medicines)
                         {
-                            table.Cell().Element(CellStyle).Text(med.MedicineName);
-                            table.Cell().Element(CellStyle).Text(med.Dosage);
-                          
-                            table.Cell().Element(CellStyle).Text(med.Duration);
-                        }
-
-                        static IContainer CellStyle(IContainer container)
-                        {
-                            return container.Padding(5);
+                            table.Cell().Text(med.MedicineName ?? "-");
+                            table.Cell().Text(med.Dosage ?? "-");
+                            table.Cell().Text(med.TimesPerDay.ToString());
+                            table.Cell().Text(med.Reason ?? "-");
                         }
                     });
-
-                    col.Item().PaddingTop(15).Text($"Notes: {_model.Notes}");
-                });
-
-                page.Footer().AlignCenter().Text(text =>
-                {
-                    text.Span("ClinicOne Pharmacy System | Generated ");
-                    text.Span(DateTime.Now.ToString("yyyy-MM-dd")).Bold();
                 });
             });
         }

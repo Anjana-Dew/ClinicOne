@@ -1,8 +1,5 @@
 ﻿using ClinicOne.Data;
-using ClinicOne.Models.ViewModels.Pharmacist;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 
 namespace ClinicOne.Areas.Pharmacist.Controllers
 {
@@ -18,22 +15,11 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
 
         public IActionResult Index()
         {
-            var today = DateTime.Today;
-
-            ViewBag.TodayPrescriptions = _context.Prescriptions
-                .Count(p => p.PrescriptionDate == today);
-
-            ViewBag.GivenMedicines = _context.PrescriptionMedicines
-                .Count(m => m.Status == "Given");
-
-            ViewBag.PendingMedicines = _context.PrescriptionMedicines
-                .Count(m => m.Status != "Given");
+            ViewBag.Today = _context.Prescriptions.Count();
+            ViewBag.Given = _context.PrescriptionMedicines.Count(m => m.Status == "Given");
+            ViewBag.Pending = _context.PrescriptionMedicines.Count(m => m.Status != "Given");
 
             return View();
         }
-
-        
-        
-        
     }
 }
