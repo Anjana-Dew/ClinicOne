@@ -98,7 +98,7 @@
 .medicine-row {
     border-bottom: 1px solid #6684e5;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     padding: 6px 0;
 }
 
