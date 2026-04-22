@@ -2,6 +2,7 @@ using ClinicOne.Data;
 using ClinicOne.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,10 @@ builder.Services.AddSession();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AccessLogService>();
+
+QuestPDF.Settings.License = LicenseType.Community;
+builder.Services.AddScoped<ExternalPrescriptionService>();
+
 
 // Add DB Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
