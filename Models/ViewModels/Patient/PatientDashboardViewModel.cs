@@ -29,7 +29,14 @@ public class PatientDashboardViewModel
 
     public List<MedicineDto> Medicines { get; set; } = new();
 
-    public List<ReportResultDto> ReportResults { get; set; } = new();
+    public List<ReportGroupDto> ReportGroups { get; set; } = new();
+    public string SessionInfo { get; set; } = "";
+    public int ProgressValue { get; set; }
+
+    public string SessionCountdown { get; set; } = "";
+
+    public string SessionStartTime { get; set; } // 18:00
+    public string SessionEndTime { get; set; }   // 22:00
 
 }
 
@@ -37,4 +44,10 @@ public class MedicineDto
 {
     public string Name { get; set; } = "";
     public string Dosage { get; set; } = "";
+}
+public class ReportGroupDto
+{
+    public string TestName { get; set; }
+    public DateTime ReportDate { get; set; }
+    public List<ReportResultDto> Results { get; set; }
 }

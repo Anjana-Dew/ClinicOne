@@ -1,9 +1,6 @@
 ﻿using ClinicOne.Data;
+using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Pharmacist;
-<<<<<<< HEAD
-=======
-using ClinicOne.Models.ViewModels.Pharmacist;
->>>>>>> main
 using ClinicOne.Services;
 using Microsoft.AspNetCore.Mvc;
 using QuestPDF.Fluent;
@@ -14,74 +11,53 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
     public class PrescriptionController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly ExternalPrescriptionService _externalService;
 
-        public PrescriptionController(
-            ApplicationDbContext context,
-            ExternalPrescriptionService externalService)
+        public PrescriptionController(ApplicationDbContext context)
         {
             _context = context;
-<<<<<<< HEAD
-            _externalService = externalService;
-        }       
-
-        // 🔍 SEARCH
-=======
         }
 
-        // 🔍 SEARCH NIC
->>>>>>> main
+        // SEARCH
         [HttpGet]
         public IActionResult Search(string nic)
         {
             if (string.IsNullOrWhiteSpace(nic))
-<<<<<<< HEAD
                 return Json(new { success = false, message = "NIC required" });
-=======
-            {
-                return Json(new { success = false, message = "NIC is required" });
-            }
->>>>>>> main
 
-            var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == nic);
+            var patient = _context.Patients
+                .FirstOrDefault(p => p.PatientNIC == nic);
 
             if (patient == null)
-            {
-                return Json(new { success = false, message = "Patient not found for this NIC" });
-            }
+                return Json(new { success = false, message = "Patient not found" });
 
             var prescription = _context.Prescriptions
-                .Where(p => p.PatientNIC == nic)
-                .OrderByDescending(p => p.PrescriptionDate)
-                .FirstOrDefault();
+    .Where(p => p.PatientNIC == nic)
+    .Where(p => _context.PrescriptionMedicines
+        .Any(m => m.PrescriptionID == p.PrescriptionID && !m.PatientConfirmed))
+    .OrderByDescending(p => p.PrescriptionDate)
+    .FirstOrDefault();
 
             if (prescription == null)
                 return Json(new { success = false, message = "No prescription found" });
 
-<<<<<<< HEAD
-            var meds = _context.PrescriptionMedicines
-                .Where(m => m.PrescriptionID == prescription.PrescriptionID)
-                .ToList();
-=======
-            // 🔥 STEP 1: LOAD DATA FROM DB FIRST (NO SELECT)
-            var rawMeds = _context.PrescriptionMedicines
-                .Where(m => m.PrescriptionID == prescription.PrescriptionID)
-                .ToList();   // 🔥 THIS LINE FIXES YOUR ERROR
+            var medsRaw = _context.PrescriptionMedicines
+    .Where(m => m.PrescriptionID == prescription.PrescriptionID)
+    .Select(m => new
+    {
+        m.PrescMedID,
 
-            // 🔥 STEP 2: SAFE MAPPING (AFTER DB LOAD)
-            var medicines = rawMeds.Select(m => new MedicineVM
-            {
-                PrescMedID = m.PrescMedID,
-                MedicineName = m.MedicineName ?? "-",
-                Dosage = m.Dosage ?? "-",
-                Duration = m.Duration ?? "-",
-                TimesPerDay = m.TimesPerDay,
-                Status = m.Status ?? "Not Given",
-                Reason = m.Reason ?? ""
-            }).ToList();
->>>>>>> main
+        MedicineName = m.MedicineName == null ? "-" : m.MedicineName,
+        Dosage = m.Dosage == null ? "-" : m.Dosage,
+        Duration = m.Duration == null ? "-" : m.Duration,
 
-            var result = meds.Select(m => new MedicineVM
+        TimesPerDay = m.TimesPerDay,
+
+        Status = m.Status == null ? "Not Given" : m.Status,
+        Reason = m.Reason == null ? "" : m.Reason
+    })
+    .ToList();
+
+            var meds = medsRaw.Select(m => new MedicineVM
             {
                 PrescMedID = m.PrescMedID,
                 MedicineName = m.MedicineName,
@@ -95,134 +71,87 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
             return Json(new
             {
                 success = true,
-<<<<<<< HEAD
-                patientName = patient.FullName,
-                patientNIC = patient.PatientNIC,
-                medicines = result
-            });
-        }
-
-        // 💾 CONFIRM
-=======
                 patientName = patient.FullName ?? "",
                 patientNIC = patient.PatientNIC,
-                prescriptionID = prescription.PrescriptionID,
-                medicines
+                prescriptionId = prescription.PrescriptionID,
+
+                medicines = meds.Select(m => new
+                {
+                    prescMedID = m.PrescMedID,
+                    medicineName = m.MedicineName,
+                    dosage = m.Dosage,
+                    duration = m.Duration,
+                    timesPerDay = m.TimesPerDay,
+                    status = m.Status,
+                    reason = m.Reason
+                })
             });
         }
 
-        // 💾 SAVE STATUS
->>>>>>> main
+
+        //SAVE
         [HttpPost]
         public IActionResult Confirm([FromBody] List<ConfirmMedicineVM> data)
         {
             if (data == null || !data.Any())
-<<<<<<< HEAD
-                return Json(new { success = false });
+                return BadRequest("No data");
 
-            foreach (var item in data)
+            var ids = data.Select(x => x.PrescMedID).ToList();
+
+            var meds = _context.PrescriptionMedicines
+                .Where(m => ids.Contains(m.PrescMedID))
+                .Select(m => new { m.PrescMedID })
+                .ToList();
+
+            foreach (var med in meds)
             {
-                var med = _context.PrescriptionMedicines
-                    .FirstOrDefault(x => x.PrescMedID == item.PrescMedID);
-=======
-                return BadRequest("No data received");
+                var item = data.FirstOrDefault(x => x.PrescMedID == med.PrescMedID);
+                if (item == null) continue;
 
-            foreach (var item in data)
-            {
-                if (item.PrescMedID == 0) continue;
-
-                var med = _context.PrescriptionMedicines
-                    .FirstOrDefault(m => m.PrescMedID == item.PrescMedID);
->>>>>>> main
-
-                if (med != null)
+                var entity = new PrescriptionMedicine
                 {
-                    med.Status = item.Status;
-<<<<<<< HEAD
-                    med.Reason = item.Reason;
-=======
-                    med.Reason = item.Status == "Not Given" ? item.Reason : null;
->>>>>>> main
-                    med.PatientConfirmed = true;
-                }
+                    PrescMedID = med.PrescMedID
+                };
+
+                _context.PrescriptionMedicines.Attach(entity);
+
+                entity.Status = string.IsNullOrEmpty(item.Status)
+                    ? "Not Given"
+                    : item.Status;
+
+                entity.Reason = entity.Status == "Given"
+                    ? null
+                    : (string.IsNullOrWhiteSpace(item.Reason)
+                        ? "Not specified"
+                        : item.Reason);
+
+                entity.PatientConfirmed = true;
+
+                _context.Entry(entity).Property(x => x.Status).IsModified = true;
+                _context.Entry(entity).Property(x => x.Reason).IsModified = true;
+                _context.Entry(entity).Property(x => x.PatientConfirmed).IsModified = true;
             }
 
             _context.SaveChanges();
-<<<<<<< HEAD
+
             return Json(new { success = true });
         }
 
-        // 📄 PDF
+        //PDF
         [HttpPost]
         public IActionResult GenerateExternal([FromBody] ExternalPrescriptionRequest request)
         {
-            if (request == null || request.Medicines == null || !request.Medicines.Any())
-                return BadRequest("No medicines");
+            if (request == null || request.Medicines.Count == 0)
+                return BadRequest();
 
-            var model = new ExternalPrescriptionPdfModel
+            var doc = new ExternalPrescriptionDocument(new ExternalPrescriptionPdfModel
             {
                 PatientName = request.PatientName,
                 NIC = request.NIC,
                 Medicines = request.Medicines
-            };
+            });
 
-            var pdf = _externalService.GeneratePdf(model.Medicines);
-
-            return File(pdf, "application/pdf", "External.pdf");
+            return File(doc.GeneratePdf(), "application/pdf", "External.pdf");
         }
     }
 }
-=======
-
-            return Json(new { success = true });
-        }
-
-        // 📄 EXTERNAL PDF
-        [HttpPost]
-        public IActionResult GenerateExternal([FromBody] List<MedicineVM> medicines)
-        {
-            if (medicines == null || medicines.Count == 0)
-                return BadRequest("No medicines selected");
-
-            var model = new ExternalPrescriptionPdfModel
-            {
-                PatientName = "External Patient",
-                NIC = "N/A",
-                Medicines = medicines.Select(m => new MedicineVM
-                {
-                    MedicineName = m.MedicineName ?? "-",
-                    Dosage = m.Dosage ?? "-",
-                    Duration = m.Duration ?? "-",
-                    TimesPerDay = m.TimesPerDay,
-                    Reason = m.Reason ?? "-"
-                }).ToList()
-            };
-
-            var doc = new ExternalPrescriptionDocument(model);
-            var pdf = doc.GeneratePdf();
-
-            return File(pdf, "application/pdf", "ExternalPrescription.pdf");
-        }
-
-        [HttpPost]
-        public IActionResult SaveStatus(List<MedicineVM> medicines)
-        {
-            foreach (var m in medicines)
-            {
-                var dbMed = _context.PrescriptionMedicines
-                    .FirstOrDefault(x => x.PrescMedID == m.PrescMedID);
-
-                if (dbMed != null)
-                {
-                    dbMed.Status = m.Status;
-                    dbMed.Reason = m.Status == "Given" ? null : m.Reason;
-                }
-            }
-
-            _context.SaveChanges();
-
-            return Json(new { success = true });
-        }
-    }
-}
->>>>>>> main

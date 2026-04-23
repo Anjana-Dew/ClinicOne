@@ -1,5 +1,4 @@
 ﻿using ClinicOne.Data;
-using ClinicOne.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,30 +15,69 @@ namespace ClinicOne.Areas.Patient.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(ClinicOne.Models.Entities.Patient model)
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> Update(
+            string PatientNIC,
+            string FullName,
+            string PhoneNumber,
+            string BloodType,
+            string Address)
         {
-            var nic = HttpContext.Session.GetString("PatientNIC");
-
-            if (string.IsNullOrEmpty(nic))
-                return RedirectToAction("Login", "Account");
+            // ================= VALIDATION =================
+            if (string.IsNullOrEmpty(PatientNIC))
+                return Json(new { success = false, message = "Invalid request" });
 
             var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.PatientNIC == nic);
+                .FirstOrDefaultAsync(p => p.PatientNIC == PatientNIC);
 
             if (patient == null)
-                return NotFound();
+                return Json(new { success = false, message = "Patient not found" });
 
-            // UPDATE ONLY FIELDS YOU NEED
-            patient.FullName = model.FullName?.Trim();
-            patient.PhoneNumber = model.PhoneNumber?.Trim();
-            patient.BloodType = model.BloodType;
-            patient.Address = model.Address;
+            
+            // ================= UPDATE LOGIC =================
+            bool updated = false;
+
+            if (!string.IsNullOrEmpty(FullName) && patient.FullName != FullName)
+            {
+                patient.FullName = FullName;
+                updated = true;
+            }
+
+            if (!string.IsNullOrEmpty(PhoneNumber) && patient.PhoneNumber != PhoneNumber)
+            {
+                patient.PhoneNumber = PhoneNumber;
+                updated = true;
+            }
+
+
+            if (!string.IsNullOrEmpty(Address) && patient.Address != Address)
+            {
+                patient.Address = Address;
+                updated = true;
+            }
+
+            if (!updated)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "No changes detected"
+                });
+            }
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Profile updated successfully";
-
-            return RedirectToAction("Index", "Dashboard");
+            return Json(new
+            {
+                success = true,
+                message = "Profile updated successfully",
+                data = new
+                {
+                    fullName = patient.FullName,
+                    phoneNumber = patient.PhoneNumber,
+                    address = patient.Address
+                }
+            });
         }
     }
 }

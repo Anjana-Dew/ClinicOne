@@ -3,102 +3,157 @@
 @{
     Layout = "_PatientLayout";
 
-    var activeList = Model.Where(p => !p.IsConfirmed).ToList();
-    var history = Model.Where(p => p.IsConfirmed).ToList();
+    // CURRENT PRESCRIPTION (first active one)
+    var current = Model
+        .FirstOrDefault(p => p.Medicines.Any(m => !m.PatientConfirmed));
+
+    // PAST PRESCRIPTIONS (fully completed)
+    var past = Model
+        .Where(p => p.Medicines.All(m => m.PatientConfirmed))
+        .ToList();
 }
 
 <link rel="stylesheet" href="~/css/patient/patientPrescriptions.css" />
 
 <div class="wrapper">
 
+    <!-- ================= HEADER ================= -->
     <div class="header">
-        <h2>💊 Prescriptions</h2>
+        <h2>Prescriptions</h2>
         <p>Track your medicines and progress</p>
     </div>
 
-    @if (activeList.Any())
+    <!-- ================= MESSAGE BOX ================= -->
+    <div id="prescriptionMessage" class="form-message"></div>
+
+    <!-- ================= CURRENT PRESCRIPTION ================= -->
+    @if (current != null)
     {
-        foreach (var active in activeList)
-        {
-            var percent = active.TotalMedicines == 0 ? 0 :
-            (active.TakenMedicines * 100 / active.TotalMedicines);
+        var percent = current.Medicines.Count == 0 ? 0 :
+        (current.Medicines.Count(m => m.PatientConfirmed) * 100 / current.Medicines.Count);
 
-            <div class="card active">
-
-                <div class="card-header">
-                    <div>
-                        <h3>🟢 Active Prescription</h3>
-                        <span>@active.PrescriptionDate.ToString("yyyy-MM-dd")</span>
-                    </div>
-                </div>
-
-                <div class="progress">
-                    <div class="progress-fill" style="width:@percent%"></div>
-                </div>
-
-                <p class="progress-text">
-                    ✔ @active.TakenMedicines / @active.TotalMedicines Medicines Taken
-                </p>
-
-                <div class="medicine-list">
-                    @foreach (var m in active.Medicines)
-                    {
-                        <div class="medicine-item">
-                            <div>
-                                <strong>@m.MedicineName</strong>
-                                <small>@m.Dosage • @m.TimesPerDay x/day</small>
-                            </div>
-
-                            <span class="pill @(m.PatientConfirmed ? "done" : "pending")">
-                                @(m.PatientConfirmed ? "Taken" : "Pending")
-                            </span>
-                        </div>
-                    }
-                </div>
-
-                <div class="actions">
-                    @if (!active.IsConfirmed)
-                    {
-                        <form method="post" asp-action="Confirm">
-                            <input type="hidden" name="id" value="@active.PrescriptionID" />
-                            <button class="btn confirm">✔ Confirm All Taken</button>
-                        </form>
-                    }
-
-                    @if (!string.IsNullOrEmpty(active.PDFPath))
-                    {
-                        <a href="@active.PDFPath" class="btn download">📄 Download</a>
-                    }
-                </div>
-
-            </div>
-        }
-    }
-
-    <h3 class="section-title">Past Prescriptions</h3>
-
-    @foreach (var p in history)
-    {
-        <div class="card history">
+        <div class="card active">
 
             <div class="card-header">
-                <div>
-                    <h4>Prescription #@p.PrescriptionID</h4>
-                    <span>@p.PrescriptionDate.ToString("yyyy-MM-dd")</span>
-                </div>
+                <h3>🟢 Current Prescription</h3>
+                <span>@current.PrescriptionDate.ToString("yyyy-MM-dd")</span>
             </div>
 
-            <div class="medicine-list compact">
-                @foreach (var m in p.Medicines)
+            <!-- PROGRESS -->
+            <div class="progress">
+                <div class="progress-fill" style="width:@percent%"></div>
+            </div>
+
+            <p class="progress-text">
+                ✔ @current.Medicines.Count(m => m.PatientConfirmed)
+                / @current.Medicines.Count Medicines Taken
+            </p>
+
+            <!-- MEDICINES -->
+            <div class="medicine-list">
+
+                @foreach (var m in current.Medicines)
                 {
                     <div class="medicine-item">
-                        <span>@m.MedicineName</span>
-                        <small>@m.Dosage • @m.TimesPerDay x/day</small>
+                        <div>
+                            <strong>@m.MedicineName</strong>
+                            <small>@m.Dosage • @m.TimesPerDay x/day</small>
+                        </div>
+
+                        <span class="pill @(m.PatientConfirmed ? "done" : "pending")">
+                            @(m.PatientConfirmed ? "Taken" : "Pending")
+                        </span>
                     </div>
                 }
+
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="actions">
+
+                <button type="button"
+                        class="btn confirm"
+                        onclick="confirmPrescription(@current.PrescriptionID)">
+                    ✔ Confirm All Taken
+                </button>
+
+                @if (!string.IsNullOrEmpty(current.PDFPath))
+                {
+                    <a href="@current.PDFPath" class="btn download">
+                        📄 Download
+                    </a>
+                }
+
             </div>
 
         </div>
     }
 
+    <h3 class="section-title">Past Prescriptions</h3>
+
+    @if (past.Any())
+    {
+        foreach (var p in past)
+        {
+            <div class="card history">
+
+                <div class="card-header">
+                    <h4>Prescription #@p.PrescriptionID</h4>
+                    <span>@p.PrescriptionDate.ToString("yyyy-MM-dd")</span>
+                </div>
+
+                <div class="medicine-list">
+
+                    @foreach (var m in p.Medicines)
+                    {
+                        <div class="medicine-item">
+                            <span>@m.MedicineName</span>
+                            <small>@m.Dosage • @m.TimesPerDay x/day</small>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        }
+    }
+    else
+    {
+        <p style="text-align:center;color:#777;">No past prescriptions</p>
+    }
+
 </div>
+
+<script>
+    async function confirmPrescription(id) {
+
+        const msgBox = document.getElementById("prescriptionMessage");
+
+        msgBox.style.display = "block";
+        msgBox.className = "form-message";
+        msgBox.innerHTML = "Processing...";
+
+        const response = await fetch('/Patient/Prescriptions/Confirm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            msgBox.classList.add("success");
+            msgBox.innerHTML = result.message;
+
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+
+        } else {
+            msgBox.classList.add("error");
+            msgBox.innerHTML = result.message;
+        }
+    }
+</script>

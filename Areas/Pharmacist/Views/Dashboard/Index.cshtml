@@ -1,69 +1,105 @@
 ﻿@{
     Layout = "_PharmacistLayout";
 }
-<<<<<<< HEAD
 
-<h2>Pharmacist Dashboard</h2>
-=======
-<script src="@Url.Content("~/js/pharmacist/pharmacist.js")"></script>
->>>>>>> main
+<link rel="stylesheet" href="~/css/pharmacist/pharmacistDashboardStyles.css" />
+<script src="~/js/pharmacist/pharmacist.js" defer></script>
 
-<input id="nicInput" placeholder="Enter NIC" />
-<button onclick="searchPatient()">Search</button>
+<div class="dashboard-container">
 
-<<<<<<< HEAD
-<p id="msg" style="color:red"></p>
+    <div class="search-container">
 
-<div id="popup" style="display:none;">
+        <h2 class="search-title">Find Patient Prescription</h2>
+        <p class="search-subtitle">
+            Enter NIC to retrieve and manage prescriptions quickly
+        </p>
 
-    <h3 id="name"></h3>
-    <p id="nic"></p>
+        <form onsubmit="event.preventDefault(); searchPatient();">
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Medicine</th>
-                <th>Dosage</th>
-                <th>Duration</th>
-                <th>Times</th>
-                <th>Status</th>
-                <th>Reason</th>
-            </tr>
-        </thead>
+            <div class="input-group">
+                <input id="nicInput" placeholder="Enter Patient NIC" />              
+            </div>
 
-=======
-<h2>Pharmacist Dashboard</h2>
+            <div id="msg" class="form-message"></div>
 
-<input id="nicInput" placeholder="Enter NIC" />
-<button onclick="searchPatient()">Search</button>
+            <button id="searchBtn" type="submit">Search</button>
 
-<div id="popup" style="display:none;">
+        </form>
+    </div>
 
-    <h3 id="name"></h3>
-    <p id="nic"></p>
-
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Medicine</th>
-                <th>Dosage</th>
-                <th>Duration</th>
-                <th>Times</th>
-                <th>Status</th>
-                <th>Reason</th>
-            </tr>
-        </thead>
-
->>>>>>> main
-        <tbody id="table"></tbody>
-    </table>
-
-    <button onclick="saveData()">Confirm</button>
-    <button onclick="generateExternal()">External PDF</button>
-<<<<<<< HEAD
 </div>
 
-<script src="~/js/pharmacist/pharmacist.js"></script>
-=======
+<div class="popup-overlay" id="popup">
+
+    <div class="popup-container">
+
+        <div class="popup-header">
+            <h3>Prescription Details</h3>
+            <span class="close-btn" onclick="closePopup()">✖</span>
+        </div>
+
+        <div id="popupMsg" class="popup-message"></div>
+
+        <div class="patient-info">
+            <div class="patient-row">
+                <label>Name  : </label>
+                <span id="name"></span>
+            </div>
+
+            <div class="patient-row">
+                <label>NIC : </label>
+                <span id="nic"></span>
+            </div>
+
+            <div class="patient-row">
+                <label>Prescription ID : </label>
+                <span id="prescriptionId"></span>
+            </div>
+        </div>
+
+        <table class="medicine-table">
+            <thead>
+                <tr>
+                    <th>Medicine</th>
+                    <th>Dosage</th>
+                    <th>Duration</th>
+                    <th>Times</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="table"></tbody>
+        </table>
+
+        <div class="popup-buttons">
+            <button class="btn-primary" onclick="saveData()">Confirm</button>
+            <button id="externalBtn" class="btn-warning" onclick="generateExternal()">External PDF</button>
+        </div>
+
+    </div>
 </div>
->>>>>>> main
+
+<div id="reasonModal" class="modal-overlay">
+    <div class="modal-box">
+        <h4 class="modal-title">Enter Reason</h4>
+
+        <div class="modal-field">
+            <label>Reason</label>
+            <input id="reasonInput" placeholder="Type reason..." />
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-primary" onclick="submitReason()">OK</button>
+            <button class="btn-secondary" onclick="closeReason()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="confirmModal" class="modal-overlay">
+    <div class="modal-box confirm-box">
+        <p>Confirm changes? This cannot be undone.</p>
+        <div class="modal-actions">
+            <button class="btn-primary" onclick="confirmSave()">Yes</button>
+            <button class="btn-secondary" onclick="closeConfirm()">Cancel</button>
+        </div>
+    </div>
+</div>

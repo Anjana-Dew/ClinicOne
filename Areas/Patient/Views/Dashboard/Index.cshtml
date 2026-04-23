@@ -4,161 +4,228 @@
 }
 
 <link rel="stylesheet" href="~/css/patient/patientDashboardStyles.css" />
-<script src="~/js/patient/dashboard.js"></script>
+<script src="/js/patient/patientDashboard.js"></script>
 
-<div class="dashboard">
+<div class="dashboard-wrapper">
 
-    <!-- HEADER -->
     <div class="header">
         <h2>Patient Dashboard</h2>
-        <p>Overview of your health information</p>
+        <p>Your medical overview</p>
     </div>
 
     <div class="grid">
 
-        <!-- PROFILE -->
-        <div class="card profile">
+        <div class="card profile profile-hero">
+
             <img src="/patientImages/defaultProfile.png" class="profile-img" />
 
-            <h3>@Model.PatientName</h3>
+            <h3 id="profileName">@Model.PatientName</h3>
+
+            <p class="profile-sub">Patient Profile</p>
 
             <div class="info">
-                <p><b>NIC:</b> @Model.NIC</p>
-                <p><b>Blood Type:</b> @(string.IsNullOrEmpty(Model.BloodType) ? "Not Added" : Model.BloodType)</p>
-                <p><b>Phone:</b> @Model.PhoneNumber</p>
-                <p><b>Address:</b> @Model.Address</p>
+                <div><span>NIC</span><b>@Model.NIC</b></div>
+                <div><span>Phone</span><b id="profilePhone">@Model.PhoneNumber</b></div>
+                <div><span>Address</span><b id="profileAddress">@Model.Address</b></div>
+                <div><span>Blood</span><b id="profileBlood">@Model.BloodType</b></div>
             </div>
 
-            <button class="btn primary" onclick="openModal()">Edit Profile</button>
+            <button type="button" class="btn primary full" onclick="openModal()">
+                Edit Profile
+            </button>
+
         </div>
 
-        <!-- SESSION -->
-        <div class="card">
-            <h3 class="title"><img src="/icons/calendar.png" class="icon" /> Next Session</h3>
+        <!-- NEXT SESSION -->
+        <div class="card next-session">
+
+            <h3>Next Session</h3>
 
             @if (Model.NextSessionDate != null)
             {
-                <div class="session-box">
-                    <h4>@Model.NextSessionName</h4>
-                    <p>@Model.NextSessionDate.Value.ToString("dddd, dd MMM yyyy")</p>
-                    <p>@Model.SessionTime</p>
-                    <div id="countdown"></div>
+                <div class="next-session-box">
+
+                    <h3>@Model.NextSessionName</h3>
+
+                    <div class="big-date">
+                        @Model.NextSessionDate.Value.ToString("yyyy-MM-dd")
+                    </div>
+
+                    <div class="time">
+                        @Model.SessionStartTime - @Model.SessionEndTime
+                    </div>
+
+                    <div id="countdown"
+                         data-date="@Model.NextSessionDate.Value.ToString("yyyy-MM-dd")"
+                         data-start="@Model.SessionStartTime">
+                        Loading countdown...
+                    </div>
+
                 </div>
             }
             else
             {
-                <p class="muted">No upcoming session</p>
+                <p>No upcoming session</p>
             }
+
         </div>
 
-        <!-- PROGRESS -->
+        <!-- HEALTH PROGRESS -->
         <div class="card">
-            <h3 class="title"><img src="/icons/progress.png" class="icon" /> Health Progress</h3>
 
-            <div class="status @Model.ProgressStatus.ToLower()">
+            <h3>Health Progress</h3>
+
+            <div class="progress-status @Model.ProgressStatus.ToLower()">
                 @Model.ProgressStatus
             </div>
 
-            @if (string.IsNullOrEmpty(Model.DoctorNotes))
-            {
-                <p class="muted">No notes currently</p>
-            }
-            else
-            {
-                <p>@Model.DoctorNotes</p>
-            }
-        </div>
-
-        <!-- VITALS -->
-        <div class="card">
-            <h3 class="title"><img src="/icons/health.png" class="icon" /> Health Summary</h3>
-
-            <div class="vitals">
-                <div><span>BMI</span><h4>@Model.BMI</h4></div>
-                <div><span>Weight</span><h4>@Model.Weight kg</h4></div>
-                <div><span>Height</span><h4>@Model.Height cm</h4></div>
-                <div><span>BP</span><h4>@Model.BloodPressure</h4></div>
+            <div class="progress-bar">
+                <div class="progress-fill @Model.ProgressStatus.ToLower()"></div>
             </div>
-        </div>
 
-        <!-- REPORT -->
-        <div class="card">
-            <h3 class="title"><img src="/icons/report.png" class="icon" /> Latest Report</h3>
+            <p>
+                <strong>Doctor Notes:</strong><br />
+                @Model.DoctorNotes
+            </p>
 
-            @if (Model.ReportResults.Any())
-            {
-                <table>
-                    <tr>
-                        <th>Test</th>
-                        <th>Parameter</th>
-                        <th>Value</th>
-                        <th>Status</th>
-                    </tr>
-
-                    @foreach (var r in Model.ReportResults)
-                    {
-                        <tr>
-                            <td>@r.TestName</td>
-                            <td>@r.Parameter</td>
-                            <td>@r.Value</td>
-                            <td class="status @r.Status.ToLower()">@r.Status</td>
-                        </tr>
-                    }
-                </table>
-            }
-            else
-            {
-                <p class="muted">No reports available</p>
-            }
-        </div>
-
-        <!-- MEDICINES -->
-        <div class="card">
-            <h3 class="title"><img src="/icons/medicine.png" class="icon" /> Current Medicines</h3>
-
-            @if (Model.Medicines.Any())
-            {
-                @foreach (var med in Model.Medicines)
-                {
-                    <div class="medicine">
-                        <strong>@med.Name</strong>
-                        <span>@med.Dosage</span>
-                    </div>
-                }
-            }
-            else
-            {
-                <p class="muted">No medicines assigned</p>
-            }
         </div>
 
     </div>
+
+    <div class="grid">
+
+        <!-- HEALTH SUMMARY -->
+        <div class="card">
+
+            <h3>Health Summary</h3>
+
+            <div class="summary-grid">
+                <div class="box bmi">
+                    <span>BMI</span>
+                    <h2>@Model.BMI</h2>
+                </div>
+
+                <div class="box weight">
+                    <span>Weight</span>
+                    <h2>@Model.Weight kg</h2>
+                </div>
+
+                <div class="box height">
+                    <span>Height</span>
+                    <h2>@Model.Height cm</h2>
+                </div>
+
+                <div class="box pressure">
+                    <span>BP</span>
+                    <h2>@Model.BloodPressure</h2>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- LATEST REPORT -->
+        <div class="card">
+
+            <h3>Latest Report</h3>
+
+            @{
+                var latestReport = Model.ReportGroups?
+                .OrderByDescending(r => r.ReportDate)
+                .FirstOrDefault();
+            }
+
+            @if (latestReport != null)
+            {
+                <div class="report-box">
+
+                    <h4>@latestReport.TestName</h4>
+
+                    <div class="report-list">
+                        @foreach (var r in latestReport.Results)
+                        {
+                            <div class="report-row">
+                                <span>@r.Parameter</span>
+                                <span>@r.Value</span>
+                                <span class="pill @r.Status.ToLower()">@r.Status</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="actions">
+                        <a href="@Model.ReportPath" class="btn success">View Report</a>
+                        <a href="/Patient/Reports" class="btn primary">View All</a>
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <p>No reports available</p>
+            }
+
+        </div>
+
+        <!-- PRESCRIPTION -->
+        <div class="card">
+
+            <h3>Prescription</h3>
+
+            <div class="medicine-list">
+
+                @if (Model.Medicines.Any())
+                {
+                    @foreach (var med in Model.Medicines)
+                    {
+                        <div class="medicine">
+                            <strong>@med.Name</strong>
+                            <span>@med.Dosage</span>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No medicines assigned</p>
+                }
+
+            </div>
+
+            <a href="/Patient/Prescriptions" class="btn primary">
+                View All
+            </a>
+
+        </div>
+
+    </div>
+
 </div>
 
-<!-- MODAL -->
+
+
 <div id="profileModal" class="modal">
-    <div class="modal-box">
+    <div class="modal-box" onclick="event.stopPropagation()">
 
         <span class="close" onclick="closeModal()">&times;</span>
 
         <h3>Edit Profile</h3>
 
-        <form method="post" action="/Patient/Profile/Update">
+        <form id="profileForm"
+              action="/Patient/Profile/Update"
+              method="post">
 
-            <label>Full Name</label>
-            <input name="FullName" value="@Model.PatientName" required />
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="PatientNIC" value="@Model.NIC" />
+            <input id="fullName" name="FullName" value="@Model.PatientName" required />
+            <input id="phoneNumber" name="PhoneNumber" value="@Model.PhoneNumber" required />
+           
+            <input id="address" name="Address" value="@Model.Address" />
 
-            <label>Phone</label>
-            <input name="PhoneNumber" value="@Model.PhoneNumber" required />
+            <div id="formMessage" class="form-message"></div>
 
-            <label>Blood Type</label>
-            <input name="BloodType" value="@Model.BloodType" />
-
-            <label>Address</label>
-            <input name="Address" value="@Model.Address" />
-
-            <button class="btn success">Save Changes</button>
-
+            <div class="modal-actions">
+                <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn success">Save</button>
+            </div>
         </form>
 
     </div>
+</div>
