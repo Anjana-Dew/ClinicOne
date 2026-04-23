@@ -284,7 +284,8 @@ namespace ClinicOne.Areas.Doctor.Controllers
                     {
                         MedicineName = m.MedicineName,
                         Dosage = m.Dosage,
-                        TimesPerDay = m.TimesPerDay
+                        TimesPerDay = m.TimesPerDay,
+                        Duration = m.Duration
                     }).ToList();
 
                 var nextClinic = _context.ClinicSchedules
@@ -468,12 +469,14 @@ namespace ClinicOne.Areas.Doctor.Controllers
             var patient = _context.Patients.FirstOrDefault(p => p.PatientNIC == request.Nic && p.IsActive);
 
             if (patient == null)
-                return NotFound();
+            {
 
+                return Ok(new { success = false, message = "Patient not found." });
+            }
             if (patient.BloodType != null)
-                TempData["Error"] = "An error occurred.";
-            return Ok();
-
+            {
+                return Ok(new { success = false, message = "Blood type already exists." });
+            }
 
             patient.BloodType = request.BloodType;
 
@@ -481,7 +484,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
 
             _accessLogService.Log(request.Nic, "Update");
 
-            return Ok();
+            return Json(new {success = true});
         }
 
         [HttpPost]

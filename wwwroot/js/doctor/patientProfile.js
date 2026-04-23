@@ -110,12 +110,27 @@ async function saveBloodType() {
         })
     });
 
-    if (response.ok) {
+    const result = await response.json();
+
+    if (result.success) {
         closePopup("bloodTypeConfirmPopup");
         location.reload();
+    } else {
+        showTempMessage(result.message);
     }
 }
+function showTempMessage(message) {
+    let msg = document.getElementById("tempMessage");
 
+    if (!msg) return;
+
+    msg.innerText = message;
+    msg.style.display = "block";
+
+    setTimeout(() => {
+        msg.style.display = "none";
+    }, 3000);
+}
 function confirmBloodType() {
 
     closePopup("bloodTypePopup");

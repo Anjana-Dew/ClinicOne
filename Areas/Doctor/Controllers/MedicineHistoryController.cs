@@ -46,6 +46,7 @@ namespace ClinicOne.Areas.Doctor.Controllers
                         MedicineName = m.MedicineName,
                         Dosage = m.Dosage,
                         TimesPerDay = m.TimesPerDay,
+                        Duration = m.Duration
                     }).ToList();
                 if (!meds.Any())
                 {

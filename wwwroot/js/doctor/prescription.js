@@ -13,8 +13,8 @@ function addMedicineRow() {
         <td><input type="number" name="Medicines[${medicineIndex}].TimesPerDay" min="1"/></td>
 
         <td>
-            <div style="display:flex; gap:5px;">
-                <input type="number" name="Medicines[${medicineIndex}].DurationValue" style="width:60px;" />
+            <div class="duration-group">
+                <input type="number" name="Medicines[${medicineIndex}].DurationValue" />
 
                 <select name="Medicines[${medicineIndex}].DurationUnit">
                     <option value="Days">Days</option>
