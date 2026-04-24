@@ -22,13 +22,13 @@ namespace ClinicOne.Areas.Patient.Controllers
             if (string.IsNullOrEmpty(nic))
                 return RedirectToAction("Login", "Account");
 
-            var data = await _context.Prescriptions
+            var prescriptions = await _context.Prescriptions
                 .Where(p => p.PatientNIC == nic)
                 .Include(p => p.PrescriptionMedicines)
                 .OrderByDescending(p => p.PrescriptionDate)
                 .ToListAsync();
 
-            var list = data.Select(p => new PatientPrescriptionViewModel
+            var model = prescriptions.Select(p => new PatientPrescriptionViewModel
             {
                 PrescriptionID = p.PrescriptionID,
                 PrescriptionDate = p.PrescriptionDate,
@@ -38,38 +38,41 @@ namespace ClinicOne.Areas.Patient.Controllers
                     .Select(e => e.PDFPath)
                     .FirstOrDefault(),
 
-                IsConfirmed = p.PrescriptionMedicines.All(m =>
-                    m.Status == "Given" || m.Status == "Partially Given"),
-
-                TotalMedicines = p.PrescriptionMedicines.Count,
-                TakenMedicines = p.PrescriptionMedicines.Count(m => m.PatientConfirmed),
-
                 Medicines = p.PrescriptionMedicines.Select(m => new PatientPrescriptionMedicine
                 {
                     MedicineName = m.MedicineName,
                     Status = m.Status,
-                    Dosage = m.Dosage ?? "-",
+                    Dosage = m.Dosage,
                     TimesPerDay = m.TimesPerDay,
                     PatientConfirmed = m.PatientConfirmed
                 }).ToList()
             }).ToList();
 
-            return View(list);
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Confirm(int id)
         {
-            var meds = await _context.PrescriptionMedicines
-                .Where(m => m.PrescriptionID == id)
-                .ToListAsync();
+            var prescription = await _context.Prescriptions
+                .Include(p => p.PrescriptionMedicines)
+                .FirstOrDefaultAsync(p => p.PrescriptionID == id);
 
-            foreach (var m in meds)
-                m.PatientConfirmed = true;
+            if (prescription == null)
+                return Json(new { success = false, message = "Prescription not found" });
+
+            foreach (var med in prescription.PrescriptionMedicines)
+            {
+                med.PatientConfirmed = true;
+            }
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return Json(new
+            {
+                success = true,
+                message = "All medicines confirmed successfully"
+            });
         }
     }
 }

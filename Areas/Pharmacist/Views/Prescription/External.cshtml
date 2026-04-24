@@ -1,0 +1,23 @@
+﻿<h2 style="text-align:center;">ClinicOne Pharmacy</h2>
+<p style="text-align:center;">External Prescription</p>
+
+<p><b>Date:</b> @DateTime.Now.ToString("yyyy-MM-dd HH:mm")</p>
+
+<table border="1" width="100%">
+    <tr>
+        <th>Medicine</th>
+        <th>Dosage</th>
+        <th>Duration</th>
+        <th>Times Per Day</th>
+    </tr>
+
+    foreach (var med in _model.Medicines)
+    {
+    table.Cell().Text(med.MedicineName ?? "-");
+    table.Cell().Text(med.Dosage ?? "-");
+    table.Cell().Text(med.TimesPerDay.ToString());
+    table.Cell().Text(med.Duration ?? "-");
+    }
+</table>
+
+<script src="~/js/pharmacist/pharmacist.js"></script>

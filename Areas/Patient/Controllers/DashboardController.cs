@@ -2,6 +2,7 @@
 using ClinicOne.Models.ViewModels.Patient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static System.Collections.Specialized.BitVector32;
 
 namespace ClinicOne.Areas.Patient.Controllers
 {
@@ -19,7 +20,6 @@ namespace ClinicOne.Areas.Patient.Controllers
         {
             var nic = HttpContext.Session.GetString("PatientNIC");
 
-            // 🔥 Recover session
             if (string.IsNullOrEmpty(nic))
             {
                 var username = User.Identity?.Name;
@@ -41,30 +41,60 @@ namespace ClinicOne.Areas.Patient.Controllers
             if (string.IsNullOrEmpty(nic))
                 return RedirectToAction("Login", "Account");
 
-            // ✅ GET PATIENT
-            var patientEntity = await _context.Patients
+            var patient = await _context.Patients
                 .FirstOrDefaultAsync(p => p.PatientNIC == nic);
 
-            // ✅ PROGRESS
+            var vitals = await _context.PatientVitals
+                .Where(v => v.PatientNIC == nic)
+                .OrderByDescending(v => v.RecordedDate)
+                .FirstOrDefaultAsync();
+
+            decimal bmi = 0;
+            if (vitals != null && vitals.Height > 0)
+            {
+                var h = vitals.Height.Value / 100;
+                bmi = vitals.Weight.Value / (h * h);
+            }
+
+            var session = await _context.ClinicSchedules
+               .Where(s => s.PatientNIC == nic && s.ClinicDate >= DateTime.Today)
+               .Include(s => s.ClinicSession)
+               .OrderBy(s => s.ClinicDate)
+               .FirstOrDefaultAsync();
+
             var progress = await _context.PatientProgresses
                 .Where(p => p.PatientNIC == nic)
                 .OrderByDescending(p => p.ProgressDate)
                 .FirstOrDefaultAsync();
 
-            // ✅ REPORT (ONLY FIELDS THAT EXIST)
-            var report = await _context.MedicalReports
+            var latestReport = await _context.MedicalReports
                 .Where(r => r.PatientNIC == nic)
-                .OrderByDescending(r => r.UploadedDate)
+                .OrderByDescending(r => r.ReportDate)
                 .FirstOrDefaultAsync();
 
-            // ✅ SESSION
-            var session = await _context.ClinicSchedules
-                .Where(s => s.PatientNIC == nic && s.ClinicDate >= DateTime.Today)
-                .Include(s => s.ClinicSession)
-                .OrderBy(s => s.ClinicDate)
-                .FirstOrDefaultAsync();
+            ReportGroupDto latestReportGroup = null;
 
-            // ✅ MEDICINES (LATEST ONLY)
+            if (latestReport != null)
+            {
+                var results = await _context.ReportTestResults
+                    .Include(r => r.TestParameter)
+                        .ThenInclude(p => p.TestPanel)
+                    .Where(r => r.ReportID == latestReport.ReportID)
+                    .ToListAsync();
+
+                latestReportGroup = new ReportGroupDto
+                {
+                    TestName = results.FirstOrDefault()?.TestParameter.TestPanel.TestName,
+                    ReportDate = latestReport.ReportDate,
+                    Results = results.Select(x => new ReportResultDto
+                    {
+                        Parameter = x.TestParameter.ParameterName,
+                        Value = x.TestValue,
+                        Status = x.ResultStatus
+                    }).ToList()
+                };
+            }
+
             var medicines = await _context.PrescriptionMedicines
                 .Where(m => m.Prescription.PatientNIC == nic && m.Status != "Not Given")
                 .OrderByDescending(m => m.PrescMedID)
@@ -76,39 +106,48 @@ namespace ClinicOne.Areas.Patient.Controllers
                 })
                 .ToListAsync();
 
-            var vm = new PatientDashboardViewModel
+            var model = new PatientDashboardViewModel
             {
-                PatientName = patientEntity?.FullName ?? "Patient",
-                NIC = patientEntity?.PatientNIC ?? "-",
-                BloodType = string.IsNullOrEmpty(patientEntity?.BloodType) ? "Not Added" : patientEntity.BloodType,
-                Address = patientEntity?.Address ?? "-",
-                PhoneNumber = patientEntity?.PhoneNumber ?? "-",
+                PatientName = patient?.FullName ?? "",
+                NIC = patient?.PatientNIC ?? "",
+                BloodType = patient?.BloodType ?? "Not Added",
+                PhoneNumber = patient?.PhoneNumber ?? "-",
+                Address = patient?.Address ?? "-",
 
-                // ❗ YOUR DB DOES NOT HAVE THESE → KEEP SAFE
-                Height = 0,
-                Weight = 0,
-                BMI = 0,
-                BloodPressure = "N/A",
+                Height = vitals?.Height ?? 0,
+                Weight = vitals?.Weight ?? 0,
+                BMI = Math.Round(bmi, 2),
+                BloodPressure = vitals != null
+                    ? $"{vitals.Systolic}/{vitals.Diastolic}"
+                    : "N/A",
+
+                ReportGroups = latestReportGroup != null
+                    ? new List<ReportGroupDto> { latestReportGroup }
+                    : new List<ReportGroupDto>(),
+
+                NextSessionDate = session?.ClinicDate,
+                NextSessionName = session?.ClinicSession?.SessionName ?? "-",
+                SessionStartTime = session?.ClinicSession?.StartTime != null
+    ? session.ClinicSession.StartTime.ToString()
+    : "",
+
+                SessionEndTime = session?.ClinicSession?.EndTime != null
+    ? session.ClinicSession.EndTime.ToString()
+    : "",
 
                 ProgressStatus = progress?.ProgressStatus ?? "Stable",
                 DoctorNotes = progress?.DoctorNotes ?? "-",
 
-                NextSessionDate = session?.ClinicDate,
-                NextSessionName = session?.ClinicSession?.SessionName ?? "-",
-                SessionTime = session != null
-                ? $"{DateTime.Today.Add(session.ClinicSession.StartTime):hh:mm tt} - {DateTime.Today.Add(session.ClinicSession.EndTime):hh:mm tt}"
-                : "-",
 
-                // ✅ ONLY USE EXISTING FIELDS
-                ReportID = report?.ReportID,
-                ReportDate = report?.UploadedDate,
-                ReportStatus = report != null ? "Completed" : "Pending",
-                ReportPath = report?.ReportPath ?? "#",
+                ReportID = latestReport?.ReportID,
+                ReportDate = latestReport?.ReportDate,
+                ReportStatus = latestReport != null ? "Completed" : "Pending",
+                ReportPath = latestReport?.ReportPath ?? "#",
 
                 Medicines = medicines
             };
 
-            return View(vm);
+            return View(model);
         }
     }
 }
