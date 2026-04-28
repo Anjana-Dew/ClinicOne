@@ -139,7 +139,7 @@
                 const diff = target - now;
 
                 if (diff <= 0) {
-                    el.innerText = "🟢 Ongoing / Today";
+                    el.innerText = "Ongoing / Today";
                     el.classList.add("today-pulse");
                     return;
                 }
@@ -151,8 +151,8 @@
                 el.innerText = `${days}d ${hours}h ${minutes}m left`;
             }
 
-            updateCountdown(); // run immediately
-            setInterval(updateCountdown, 60000); // update every minute
+            updateCountdown(); 
+            setInterval(updateCountdown, 60000);
         }
     </script>
 }

@@ -55,12 +55,6 @@
                         @Model.SessionStartTime - @Model.SessionEndTime
                     </div>
 
-                    <div id="countdown"
-                         data-date="@Model.NextSessionDate.Value.ToString("yyyy-MM-dd")"
-                         data-start="@Model.SessionStartTime">
-                        Loading countdown...
-                    </div>
-
                 </div>
             }
             else
@@ -71,22 +65,30 @@
         </div>
 
         <!-- HEALTH PROGRESS -->
+        <!-- HEALTH PROGRESS -->
         <div class="card">
 
             <h3>Health Progress</h3>
 
-            <div class="progress-status @Model.ProgressStatus.ToLower()">
-                @Model.ProgressStatus
-            </div>
+            @if (string.IsNullOrEmpty(Model.ProgressStatus))
+            {
+                <p>Not enough data to calculate health progress</p>
+            }
+            else
+            {
+                <div class="progress-status @Model.ProgressStatus.ToLower()">
+                    @Model.ProgressStatus
+                </div>
 
-            <div class="progress-bar">
-                <div class="progress-fill @Model.ProgressStatus.ToLower()"></div>
-            </div>
+                <div class="progress-bar">
+                    <div class="progress-fill @Model.ProgressStatus.ToLower()"></div>
+                </div>
 
-            <p>
-                <strong>Doctor Notes:</strong><br />
-                @Model.DoctorNotes
-            </p>
+                <p>
+                    <strong>Doctor Notes:</strong><br />
+                    @Model.DoctorNotes
+                </p>
+            }
 
         </div>
 
@@ -99,27 +101,34 @@
 
             <h3>Health Summary</h3>
 
-            <div class="summary-grid">
-                <div class="box bmi">
-                    <span>BMI</span>
-                    <h2>@Model.BMI</h2>
-                </div>
+            @if (Model.Height == null && Model.Weight == null && Model.BMI == null)
+            {
+                <p>No data avaiable</p>
+            }
+            else
+            {
+                <div class="summary-grid">
+                    <div class="box bmi">
+                        <span>BMI</span>
+                        <h2>@Model.BMI</h2>
+                    </div>
 
-                <div class="box weight">
-                    <span>Weight</span>
-                    <h2>@Model.Weight kg</h2>
-                </div>
+                    <div class="box weight">
+                        <span>Weight</span>
+                        <h2>@Model.Weight kg</h2>
+                    </div>
 
-                <div class="box height">
-                    <span>Height</span>
-                    <h2>@Model.Height cm</h2>
-                </div>
+                    <div class="box height">
+                        <span>Height</span>
+                        <h2>@Model.Height cm</h2>
+                    </div>
 
-                <div class="box pressure">
-                    <span>BP</span>
-                    <h2>@Model.BloodPressure</h2>
+                    <div class="box pressure">
+                        <span>BP</span>
+                        <h2>@Model.BloodPressure</h2>
+                    </div>
                 </div>
-            </div>
+            }
 
         </div>
 
@@ -216,7 +225,7 @@
             <input type="hidden" name="PatientNIC" value="@Model.NIC" />
             <input id="fullName" name="FullName" value="@Model.PatientName" required />
             <input id="phoneNumber" name="PhoneNumber" value="@Model.PhoneNumber" required />
-           
+
             <input id="address" name="Address" value="@Model.Address" />
 
             <div id="formMessage" class="form-message"></div>

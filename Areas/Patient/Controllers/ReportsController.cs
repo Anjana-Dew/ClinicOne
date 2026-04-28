@@ -1,4 +1,4 @@
-﻿using ClinicOne.Data; 
+﻿using ClinicOne.Data;
 using ClinicOne.Models.ViewModels.Patient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,14 +7,11 @@ namespace ClinicOne.Areas.Patient.Controllers
 {
     [Area("Patient")]
     [Route("Patient/Reports")]
-    public class ReportsController : Controller
+    public class ReportsController : BaseController
     {
-        private readonly ApplicationDbContext _context;
-
-
-        public ReportsController(ApplicationDbContext context)
+        public ReportsController(ApplicationDbContext context) : base(context)
         {
-            _context = context;
+
         }
 
         [Route("")]
@@ -25,7 +22,7 @@ namespace ClinicOne.Areas.Patient.Controllers
             if (string.IsNullOrEmpty(nic))
             {
                 ViewBag.NoSessionWarning = true;
-                nic = ""; 
+                nic = "";
             }
 
             var reportsData = await _context.MedicalReports
@@ -60,12 +57,14 @@ namespace ClinicOne.Areas.Patient.Controllers
                         TestValue = x.TestValue.ToString(),
                         ResultStatus = x.ResultStatus
                     })
+
                     .ToList(),
 
                 ReportStatus = r.ReportTestResults.Any()
-                    ? "Completed"
-                    : "Pending"
-            }).ToList();
+                ? GetOverallStatus(r.ReportTestResults.Select(x => x.ResultStatus))
+               : "Normal"
+               }).ToList();
+
 
             //SEARCH FILTER
             if (!string.IsNullOrWhiteSpace(search))
@@ -110,5 +109,16 @@ namespace ClinicOne.Areas.Patient.Controllers
 
             return View(reports);
         }
+        private string GetOverallStatus(IEnumerable<string> statuses)
+        {
+            if (statuses.Contains("Risk"))
+                return "Risk";
+
+            if (statuses.Contains("High"))
+                return "High";
+
+            return "Normal";
+        }
+
     }
 }

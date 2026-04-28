@@ -2,23 +2,28 @@
 using ClinicOne.Models.ViewModels.Patient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace ClinicOne.Areas.Patient.Controllers
 {
     [Area("Patient")]
-    public class PrescriptionsController : Controller
+    public class PrescriptionsController : BaseController
     {
-        private readonly ApplicationDbContext _context;
 
-        public PrescriptionsController(ApplicationDbContext context)
+        private static readonly Regex DurationRegex =
+            new(@"(\d+)\s*(week|day)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        public PrescriptionsController(ApplicationDbContext context) : base(context)
         {
-            _context = context;
+
         }
+
+        private string? GetPatientNic() =>
+            HttpContext.Session.GetString("PatientNIC");
 
         public async Task<IActionResult> Index()
         {
-            var nic = HttpContext.Session.GetString("PatientNIC");
-
+            var nic = GetPatientNic();
             if (string.IsNullOrEmpty(nic))
                 return RedirectToAction("Login", "Account");
 
@@ -28,40 +33,100 @@ namespace ClinicOne.Areas.Patient.Controllers
                 .OrderByDescending(p => p.PrescriptionDate)
                 .ToListAsync();
 
-            var model = prescriptions.Select(p => new PatientPrescriptionViewModel
+            var ids = prescriptions.Select(p => p.PrescriptionID).ToList();
+
+            var pdfMap = await _context.ExternalPrescriptions
+                .Where(x => ids.Contains(x.PrescriptionID))
+                .GroupBy(x => x.PrescriptionID)
+                .ToDictionaryAsync(
+                    g => g.Key,
+                    g => g.OrderByDescending(x => x.GeneratedDate)
+                           .Select(x => x.PDFPath)
+                           .FirstOrDefault());
+
+            var model = new List<PatientPrescriptionViewModel>();
+
+            foreach (var p in prescriptions)
             {
-                PrescriptionID = p.PrescriptionID,
-                PrescriptionDate = p.PrescriptionDate,
+                pdfMap.TryGetValue(p.PrescriptionID, out var pdf);
+                bool hasExternal = !string.IsNullOrEmpty(pdf);
 
-                PDFPath = _context.ExternalPrescriptions
-                    .Where(e => e.PrescriptionID == p.PrescriptionID)
-                    .Select(e => e.PDFPath)
-                    .FirstOrDefault(),
+                var medicines = p.PrescriptionMedicines.ToList();
 
-                Medicines = p.PrescriptionMedicines.Select(m => new PatientPrescriptionMedicine
+                var maxDays = medicines.Any()
+                    ? medicines.Max(m => ParseDurationToDays(m.Duration))
+                    : 0;
+
+                bool isPast = DateTime.Today > p.PrescriptionDate.AddDays(maxDays);
+
+                bool pharmacyActed = medicines.Any(m =>
+                    m.Status == "Given" ||
+                    m.Status == "Not Given" ||
+                    m.Status == "Partially Given");
+
+                bool needsExternal = medicines.Any(m =>
+                    m.Status == "Not Given" || m.Status == "Partially Given");
+
+                bool allConfirmed = needsExternal &&
+                    medicines
+                        .Where(m => m.Status == "Not Given" || m.Status == "Partially Given")
+                        .All(m => m.PatientConfirmed);
+
+                bool allGiven = pharmacyActed &&
+                                medicines.All(m => m.Status == "Given");
+
+                model.Add(new PatientPrescriptionViewModel
                 {
-                    MedicineName = m.MedicineName,
-                    Status = m.Status,
-                    Dosage = m.Dosage,
-                    TimesPerDay = m.TimesPerDay,
-                    PatientConfirmed = m.PatientConfirmed
-                }).ToList()
-            }).ToList();
+                    PrescriptionID = p.PrescriptionID,
+                    PrescriptionDate = p.PrescriptionDate,
+                    Notes = p.Notes,
+
+                    PDFPath = pdf,
+                    HasExternalPrescription = hasExternal,
+
+                    PharmacyPending = !pharmacyActed,
+                    AllGiven = allGiven,
+
+                    ShowConfirmButton = hasExternal && needsExternal && !allConfirmed,
+
+                    ShowCompleted = allGiven || (needsExternal && allConfirmed && hasExternal),
+
+                    IsPast = isPast,
+                    IsActive = !isPast,
+
+                    Medicines = medicines.Select(m => new PatientPrescriptionMedicine
+                    {
+                        MedicineName = m.MedicineName,
+                        Dosage = m.Dosage,
+                        TimesPerDay = m.TimesPerDay,
+                        Duration = m.Duration,
+                        Status = m.Status,
+                        Reason = m.Reason,
+                        PatientConfirmed = m.PatientConfirmed
+                    }).ToList()
+                });
+            }
 
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Confirm(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmExternal(int id)
         {
+            var nic = GetPatientNic();
+            if (string.IsNullOrEmpty(nic))
+                return Json(new { success = false, message = "Not logged in." });
+
             var prescription = await _context.Prescriptions
                 .Include(p => p.PrescriptionMedicines)
                 .FirstOrDefaultAsync(p => p.PrescriptionID == id);
 
-            if (prescription == null)
-                return Json(new { success = false, message = "Prescription not found" });
+            if (prescription == null || prescription.PatientNIC != nic)
+                return Json(new { success = false, message = "Prescription not found." });
 
-            foreach (var med in prescription.PrescriptionMedicines)
+            foreach (var med in prescription.PrescriptionMedicines
+                .Where(m => m.Status == "Not Given" || m.Status == "Partially Given"))
             {
                 med.PatientConfirmed = true;
             }
@@ -71,8 +136,22 @@ namespace ClinicOne.Areas.Patient.Controllers
             return Json(new
             {
                 success = true,
-                message = "All medicines confirmed successfully"
+                message = "Confirmed: you took the external prescription."
             });
+        }
+
+        private int ParseDurationToDays(string? duration)
+        {
+            if (string.IsNullOrWhiteSpace(duration)) return 0;
+
+            var match = DurationRegex.Match(duration);
+            if (!match.Success) return 0;
+
+            int n = int.Parse(match.Groups[1].Value);
+
+            return match.Groups[2].Value.StartsWith("week", StringComparison.OrdinalIgnoreCase)
+                ? n * 7
+                : n;
         }
     }
 }

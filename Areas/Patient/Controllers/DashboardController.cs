@@ -1,19 +1,20 @@
 ﻿using ClinicOne.Data;
+using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Patient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static System.Collections.Specialized.BitVector32;
+using ClinicOne.Services;
+using ClinicOne.Models.Entities;
 
 namespace ClinicOne.Areas.Patient.Controllers
 {
     [Area("Patient")]
-    public class DashboardController : Controller
+    public class DashboardController : BaseController
     {
-        private readonly ApplicationDbContext _context;
-
         public DashboardController(ApplicationDbContext context)
+            : base(context)
         {
-            _context = context;
         }
 
         public async Task<IActionResult> Index()
@@ -40,6 +41,7 @@ namespace ClinicOne.Areas.Patient.Controllers
 
             if (string.IsNullOrEmpty(nic))
                 return RedirectToAction("Login", "Account");
+
 
             var patient = await _context.Patients
                 .FirstOrDefaultAsync(p => p.PatientNIC == nic);
@@ -72,6 +74,13 @@ namespace ClinicOne.Areas.Patient.Controllers
                 .OrderByDescending(r => r.ReportDate)
                 .FirstOrDefaultAsync();
 
+
+            var latestPrescription = await _context.Prescriptions
+                .Where(p => p.PatientNIC == nic)
+                .OrderByDescending(p => p.PrescriptionDate)
+                .FirstOrDefaultAsync();
+
+
             ReportGroupDto latestReportGroup = null;
 
             if (latestReport != null)
@@ -95,16 +104,20 @@ namespace ClinicOne.Areas.Patient.Controllers
                 };
             }
 
-            var medicines = await _context.PrescriptionMedicines
-                .Where(m => m.Prescription.PatientNIC == nic && m.Status != "Not Given")
-                .OrderByDescending(m => m.PrescMedID)
-                .Take(3)
-                .Select(m => new MedicineDto
-                {
-                    Name = m.MedicineName,
-                    Dosage = m.Dosage + " (" + m.TimesPerDay + "x/day)"
-                })
-                .ToListAsync();
+            var medicines = new List<MedicineDto>();
+
+            if (latestPrescription != null)
+            {
+                medicines = await _context.PrescriptionMedicines
+                    .Where(m => m.PrescriptionID == latestPrescription.PrescriptionID)
+                    .OrderByDescending(m => m.PrescMedID)
+                    .Select(m => new MedicineDto
+                    {
+                        Name = m.MedicineName,
+                        Dosage = m.Dosage + " (" + m.TimesPerDay + "x/day)"
+                    })
+                    .ToListAsync();
+            }
 
             var model = new PatientDashboardViewModel
             {
@@ -114,12 +127,14 @@ namespace ClinicOne.Areas.Patient.Controllers
                 PhoneNumber = patient?.PhoneNumber ?? "-",
                 Address = patient?.Address ?? "-",
 
-                Height = vitals?.Height ?? 0,
-                Weight = vitals?.Weight ?? 0,
-                BMI = Math.Round(bmi, 2),
+                Height = vitals?.Height,
+                Weight = vitals?.Weight,
+                BMI = vitals != null && vitals.Height > 0
+                ? Math.Round(bmi, 2)
+                : null,
                 BloodPressure = vitals != null
-                    ? $"{vitals.Systolic}/{vitals.Diastolic}"
-                    : "N/A",
+                ? $"{vitals.Systolic}/{vitals.Diastolic}"
+                : null,
 
                 ReportGroups = latestReportGroup != null
                     ? new List<ReportGroupDto> { latestReportGroup }
@@ -135,19 +150,22 @@ namespace ClinicOne.Areas.Patient.Controllers
     ? session.ClinicSession.EndTime.ToString()
     : "",
 
-                ProgressStatus = progress?.ProgressStatus ?? "Stable",
-                DoctorNotes = progress?.DoctorNotes ?? "-",
+                ProgressStatus = progress?.ProgressStatus,
+                DoctorNotes = progress?.DoctorNotes,
 
 
                 ReportID = latestReport?.ReportID,
                 ReportDate = latestReport?.ReportDate,
                 ReportStatus = latestReport != null ? "Completed" : "Pending",
                 ReportPath = latestReport?.ReportPath ?? "#",
+                
+                Medicines = medicines,
 
-                Medicines = medicines
+                PrescriptionStatus = latestPrescription != null ? "Available" : "None"
             };
 
             return View(model);
         }
+
     }
 }

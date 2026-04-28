@@ -14,7 +14,6 @@
     font-size: 16px;
 }
 
-
 .header {
     text-align: center;
     margin-bottom: 20px;
@@ -22,15 +21,14 @@
 
     .header h2 {
         color: #1e3a8a;
-        font-size: 22px;
+        font-size: 24px;
+        margin-bottom: 5px;
     }
 
     .header p {
         color: #666;
         font-size: 14px;
     }
-
-
 
 .form-message {
     margin: 15px auto;
@@ -54,19 +52,18 @@
         color: #991b1b;
     }
 
-
 .card {
     background: #fff;
     border-radius: 14px;
     padding: 20px;
     margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-    transition: 0.2s;
-    font-size: 16px;
+    transition: all 0.25s ease;
 }
 
     .card:hover {
-        transform: translateY(-2px);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.08);
     }
 
     .card.active {
@@ -76,27 +73,36 @@
 
     .card.history {
         border-left: 5px solid #2563eb;
+        background: #f8fafc;
     }
 
-
-.card-header h3,
-.card-header h4 {
-    font-size: 18px;
-    margin: 0;
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
-.card-header span {
-    font-size: 14px;
-    color: #666;
-}
+    .card-header h3,
+    .card-header h4 {
+        font-size: 18px;
+        margin: 0;
+    }
 
+    .card-header span {
+        font-size: 13px;
+        color: #666;
+    }
+
+.medicine-list {
+    margin-top: 10px;
+}
 
 .medicine-item {
     display: grid;
     grid-template-columns: 1fr auto;
     padding: 14px;
     border-bottom: 1px solid #eee;
-    font-size: 15px;
     align-items: center;
 }
 
@@ -105,20 +111,23 @@
     }
 
     .medicine-item strong {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .medicine-item small {
+        display: block;
         font-size: 13px;
         color: #666;
+        margin-top: 2px;
     }
 
-
 .pill {
-    padding: 5px 12px;
+    padding: 6px 12px;
     border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
+    min-width: 90px;
+    text-align: center;
 }
 
     .pill.done {
@@ -131,6 +140,61 @@
         color: #991b1b;
     }
 
+.actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+
+.btn {
+    padding: 11px 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    
+    .btn.confirm {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+
+  
+    .btn.download {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+    }
+
+.info-text {
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.success-text {
+    background: #d1fae5;
+    color: #065f46;
+    font-weight: 600;
+}
+
+.section-title {
+    margin: 25px 0 10px;
+    font-size: 20px;
+    color: #1e3a8a;
+}
 
 .progress {
     height: 8px;
@@ -145,71 +209,134 @@
     background: #10b981;
 }
 
-.progress-text {
-    font-size: 15px;
-    margin-top: 10px;
-}
-
-
-.btn {
-    padding: 12px 16px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
-    transition: 0.2s;
-}
-
-    .btn:hover {
-        transform: translateY(-2px);
-    }
-
-    .btn.confirm {
-        background: #10b981;
-        color: white;
-    }
-
-    .btn.download {
-        background: #2563eb;
-        color: white;
-    }
-
-
-.actions {
-    margin-top: 15px;
-    display: flex;
-    gap: 10px;
-}
-
-
-.section-title {
-    margin: 25px 0 10px;
-    font-size: 20px;
-    color: #1e3a8a;
-}
-
-
 @media (max-width: 768px) {
+
     .wrapper {
         margin: 15px;
         padding: 15px;
     }
 
     .header h2 {
-        font-size: 24px;
+        font-size: 20px;
     }
 
     .card {
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .btn {
         width: 100%;
-        font-size: 15px;
+        text-align: center;
     }
 
     .actions {
         flex-direction: column;
     }
 }
+.pill.not-given {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.pill.partial {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.reason {
+    display: block;
+    font-size: 12px;
+    color: #b45309;
+    margin-top: 3px;
+}
+
+.notes {
+    font-size: 13px;
+    color: #555;
+    margin: -8px 0 14px;
+    padding: 8px 12px;
+    background: #f1f5f9;
+    border-radius: 8px;
+}
+
+.expired-note {
+    padding: 10px 0 4px;
+    color: #888;
+    font-size: 13px;
+    margin: 0;
+}
+
+.latest-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: #10b981;
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+    .accordion-header h4 {
+        margin: 0;
+        font-size: 16px;
+        color: #1e3a8a;
+    }
+
+.accordion-toggle {
+    font-size: 13px;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.accordion-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease;
+}
+
+    .accordion-body.open {
+        max-height: 800px;
+    }
+
+.empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+    .empty img {
+        width: 120px;
+        opacity: 0.6;
+        margin-bottom: 16px;
+    }
+
+    .empty h3 {
+        font-size: 20px;
+        color: #1e3a8a;
+        margin-bottom: 8px;
+    }
+
+    .empty p {
+        font-size: 14px;
+        color: #888;
+    }
+
+    .empty h3 {
+        font-size: 20px;
+        color: #000; 
+        margin-bottom: 8px;
+    }
+
+    .empty p {
+        font-size: 14px;
+        color: #000;
+    }

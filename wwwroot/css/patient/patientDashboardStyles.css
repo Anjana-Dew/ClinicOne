@@ -458,3 +458,11 @@
     background: #f8fafc;
     font-size: 14px;
 }
+
+.card h3 {
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 12px;
+    position: relative;
+}

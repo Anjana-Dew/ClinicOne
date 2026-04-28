@@ -11,10 +11,14 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
     public class PrescriptionController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly NotificationService _notificationService;
 
-        public PrescriptionController(ApplicationDbContext context)
+        public PrescriptionController(
+            ApplicationDbContext context,
+            NotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         // SEARCH
@@ -41,9 +45,9 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
                 return Json(new { success = false, message = "No prescription found" });
 
             var medsRaw = _context.PrescriptionMedicines
-    .Where(m => m.PrescriptionID == prescription.PrescriptionID)
-    .Select(m => new
-    {
+            .Where(m => m.PrescriptionID == prescription.PrescriptionID)
+            .Select(m => new
+            {
         m.PrescMedID,
 
         MedicineName = m.MedicineName == null ? "-" : m.MedicineName,
@@ -125,7 +129,7 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
                         ? "Not specified"
                         : item.Reason);
 
-                entity.PatientConfirmed = true;
+                entity.PatientConfirmed = entity.Status == "Given";
 
                 _context.Entry(entity).Property(x => x.Status).IsModified = true;
                 _context.Entry(entity).Property(x => x.Reason).IsModified = true;
@@ -141,8 +145,16 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
         [HttpPost]
         public IActionResult GenerateExternal([FromBody] ExternalPrescriptionRequest request)
         {
-            if (request == null || request.Medicines.Count == 0)
-                return BadRequest();
+            if (request == null || request.Medicines == null || !request.Medicines.Any())
+                return BadRequest("Invalid request");
+
+            var prescription = _context.Prescriptions
+                .Where(p => p.PatientNIC == request.NIC)
+                .OrderByDescending(p => p.PrescriptionDate)
+                .FirstOrDefault();
+
+            if (prescription == null)
+                return BadRequest("No valid prescription found");
 
             var doc = new ExternalPrescriptionDocument(new ExternalPrescriptionPdfModel
             {
@@ -151,7 +163,33 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
                 Medicines = request.Medicines
             });
 
-            return File(doc.GeneratePdf(), "application/pdf", "External.pdf");
+            byte[] pdfBytes = doc.GeneratePdf();
+
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "external-prescriptions");
+
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            string fileName = $"External_{DateTime.Now.Ticks}.pdf";
+            string fullPath = Path.Combine(folderPath, fileName);
+
+            System.IO.File.WriteAllBytes(fullPath, pdfBytes);
+
+            var external = new ExternalPrescription
+            {
+                PrescriptionID = prescription.PrescriptionID,
+                PDFPath = "/external-prescriptions/" + fileName,
+                GeneratedDate = DateTime.Now
+            };
+
+            _context.ExternalPrescriptions.Add(external);
+            _context.SaveChanges();
+
+            // Notify the patient
+            _notificationService.NotifyExternalPdfReady(request.NIC);
+
+            return File(pdfBytes, "application/pdf", fileName);
         }
+
     }
 }

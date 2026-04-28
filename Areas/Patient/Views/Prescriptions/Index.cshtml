@@ -2,158 +2,223 @@
 
 @{
     Layout = "_PatientLayout";
-
-    // CURRENT PRESCRIPTION (first active one)
-    var current = Model
-        .FirstOrDefault(p => p.Medicines.Any(m => !m.PatientConfirmed));
-
-    // PAST PRESCRIPTIONS (fully completed)
-    var past = Model
-        .Where(p => p.Medicines.All(m => m.PatientConfirmed))
-        .ToList();
+    var active = Model?.Where(x => x.IsActive).OrderByDescending(x => x.PrescriptionDate).ToList() ?? new();
+    var past = Model?.Where(x => x.IsPast).OrderByDescending(x => x.PrescriptionDate).ToList() ?? new();
 }
+
+@Html.AntiForgeryToken()
 
 <link rel="stylesheet" href="~/css/patient/patientPrescriptions.css" />
 
 <div class="wrapper">
 
-    <!-- ================= HEADER ================= -->
     <div class="header">
-        <h2>Prescriptions</h2>
-        <p>Track your medicines and progress</p>
+        <h2>My Prescriptions</h2>
+        <p>Check your medicines, pharmacy status, and external prescriptions</p>
     </div>
 
-    <!-- ================= MESSAGE BOX ================= -->
-    <div id="prescriptionMessage" class="form-message"></div>
-
-    <!-- ================= CURRENT PRESCRIPTION ================= -->
-    @if (current != null)
+    @if (Model == null || !Model.Any())
     {
-        var percent = current.Medicines.Count == 0 ? 0 :
-        (current.Medicines.Count(m => m.PatientConfirmed) * 100 / current.Medicines.Count);
-
-        <div class="card active">
-
-            <div class="card-header">
-                <h3>🟢 Current Prescription</h3>
-                <span>@current.PrescriptionDate.ToString("yyyy-MM-dd")</span>
-            </div>
-
-            <!-- PROGRESS -->
-            <div class="progress">
-                <div class="progress-fill" style="width:@percent%"></div>
-            </div>
-
-            <p class="progress-text">
-                ✔ @current.Medicines.Count(m => m.PatientConfirmed)
-                / @current.Medicines.Count Medicines Taken
-            </p>
-
-            <!-- MEDICINES -->
-            <div class="medicine-list">
-
-                @foreach (var m in current.Medicines)
-                {
-                    <div class="medicine-item">
-                        <div>
-                            <strong>@m.MedicineName</strong>
-                            <small>@m.Dosage • @m.TimesPerDay x/day</small>
-                        </div>
-
-                        <span class="pill @(m.PatientConfirmed ? "done" : "pending")">
-                            @(m.PatientConfirmed ? "Taken" : "Pending")
-                        </span>
-                    </div>
-                }
-
-            </div>
-
-            <!-- ACTIONS -->
-            <div class="actions">
-
-                <button type="button"
-                        class="btn confirm"
-                        onclick="confirmPrescription(@current.PrescriptionID)">
-                    ✔ Confirm All Taken
-                </button>
-
-                @if (!string.IsNullOrEmpty(current.PDFPath))
-                {
-                    <a href="@current.PDFPath" class="btn download">
-                        📄 Download
-                    </a>
-                }
-
-            </div>
-
+        <div class="empty">
+            <img src="/patientImages/calendar-empty.png" />
+            <h3>No Prescriptions Found</h3>
+            <p>No prescriptions have been issued yet.</p>
         </div>
-    }
-
-    <h3 class="section-title">Past Prescriptions</h3>
-
-    @if (past.Any())
-    {
-        foreach (var p in past)
-        {
-            <div class="card history">
-
-                <div class="card-header">
-                    <h4>Prescription #@p.PrescriptionID</h4>
-                    <span>@p.PrescriptionDate.ToString("yyyy-MM-dd")</span>
-                </div>
-
-                <div class="medicine-list">
-
-                    @foreach (var m in p.Medicines)
-                    {
-                        <div class="medicine-item">
-                            <span>@m.MedicineName</span>
-                            <small>@m.Dosage • @m.TimesPerDay x/day</small>
-                        </div>
-                    }
-
-                </div>
-
-            </div>
-        }
     }
     else
     {
-        <p style="text-align:center;color:#777;">No past prescriptions</p>
+        <div id="msgBox" class="form-message"></div>
+
+        @for (int i = 0; i < active.Count; i++)
+        {
+            var p = active[i];
+            <div class="card active">
+
+                <div class="card-header">
+                    <h3>
+                        Prescription #@p.PrescriptionID
+                        @if (i == 0)
+                        {
+                            <span class="latest-badge">Latest</span>
+                        }
+                    </h3>
+                    <span>@p.PrescriptionDate.ToString("yyyy-MM-dd")</span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(p.Notes))
+                {
+                    <p class="notes">@p.Notes</p>
+                }
+
+                <div class="medicine-list">
+                    @foreach (var m in p.Medicines)
+                    {
+                        <div class="medicine-item">
+                            <div class="medicine-info">
+                                <strong>@m.MedicineName</strong>
+                                <small>@m.Dosage • @m.TimesPerDay x/day • @m.Duration</small>
+                                @if (m.Status == "Not Given" && !string.IsNullOrEmpty(m.Reason))
+                                {
+                                    <small class="reason">Reason: @m.Reason</small>
+                                }
+                            </div>
+                            @{
+                                var statusLabel = m.Status switch
+                                {
+                                                        "Given" => "Given",
+                                                        "Not Given" => "Not Given",
+                                                        "Partially Given" => "Partial",
+                                    _ => "Pending Pharmacy"
+                                };
+                                var statusClass = m.Status switch
+                                {
+                                                        "Given" => "pill done",
+                                                        "Not Given" => "pill not-given",
+                                                        "Partially Given" => "pill partial",
+                                    _ => "pill pending"
+                                };
+                            }
+                            <span class="@statusClass">@statusLabel</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="actions">
+
+                    @if (p.PharmacyPending)
+                    {
+                        <span class="info-text">Pending pharmacy processing</span>
+                    }
+
+                    @if (p.AllGiven && !p.ShowCompleted)
+                    {
+                        <span class="info-text success-text">All medicines dispensed</span>
+                    }
+
+                    @if (p.ShowConfirmButton)
+                    {
+                        <button class="btn confirm"
+                                onclick="confirmExternalPrescription(@p.PrescriptionID, this)">
+                            Confirm You Took External Prescription
+                        </button>
+                    }
+
+                    @if (p.HasExternalPrescription)
+                    {
+                        <a href="@p.PDFPath" target="_blank" class="btn download">
+                            View External Prescription PDF
+                        </a>
+                    }
+
+                    @if (p.ShowCompleted)
+                    {
+                        <span class="info-text success-text">Completed</span>
+                    }
+
+                </div>
+            </div>
+        }
+
+        @if (past.Any())
+        {
+            <h3 class="section-title">Past Prescriptions</h3>
+
+            @for (int i = 0; i < past.Count; i++)
+            {
+                var p = past[i];
+                <div class="card history">
+
+                    <div class="accordion-header" onclick="toggleAccordion(@i)">
+                        <h4>
+                            Prescription #@p.PrescriptionID
+                            <span style="font-size:13px; color:#666; font-weight:400; margin-left:8px;">
+                                @p.PrescriptionDate.ToString("yyyy-MM-dd")
+                            </span>
+                        </h4>
+                        <span class="accordion-toggle" id="toggle-icon-@i">Show</span>
+                    </div>
+
+                    <div class="accordion-body" id="accordion-body-@i">
+                        <div class="medicine-list" style="margin-top:12px;">
+                            @foreach (var m in p.Medicines)
+                            {
+                                <div class="medicine-item">
+                                    <div>
+                                        <strong>@m.MedicineName</strong>
+                                        <small>@m.Dosage • @m.TimesPerDay x/day • @m.Duration</small>
+                                    </div>
+                                    @{
+                                        var sl = m.Status switch
+                                        {
+                                                                    "Given" => "Given",
+                                                                    "Not Given" => "Not Given",
+                                                                    "Partially Given" => "Partial",
+                                            _ => "Pending"
+                                        };
+                                        var sc = m.Status switch
+                                        {
+                                                                    "Given" => "pill done",
+                                                                    "Not Given" => "pill not-given",
+                                                                    "Partially Given" => "pill partial",
+                                            _ => "pill pending"
+                                        };
+                                    }
+                                    <span class="@sc">@sl</span>
+                                </div>
+                            }
+                        </div>
+                        <p class="expired-note">This prescription has expired.</p>
+                    </div>
+
+                </div>
+            }
+        }
     }
 
 </div>
 
 <script>
-    async function confirmPrescription(id) {
+    function toggleAccordion(index) {
+        const body = document.getElementById(`accordion-body-${index}`);
+        const icon = document.getElementById(`toggle-icon-${index}`);
+        const isOpen = body.classList.contains("open");
+        body.classList.toggle("open", !isOpen);
+        icon.textContent = isOpen ? "▾ Show" : "▴ Hide";
+    }
 
-        const msgBox = document.getElementById("prescriptionMessage");
-
-        msgBox.style.display = "block";
+    async function confirmExternalPrescription(prescriptionId, btn) {
+        const msgBox = document.getElementById("msgBox");
         msgBox.className = "form-message";
         msgBox.innerHTML = "Processing...";
 
-        const response = await fetch('/Patient/Prescriptions/Confirm', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id })
-        });
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
 
-        const result = await response.json();
+        try {
+            const res = await fetch(`/Patient/Prescriptions/ConfirmExternal?id=${prescriptionId}`, {
+                method: "POST",
+                headers: { "RequestVerificationToken": token }
+            });
 
-        if (result.success) {
-            msgBox.classList.add("success");
-            msgBox.innerHTML = result.message;
+            const data = await res.json();
 
-            setTimeout(() => {
-                location.reload();
-            }, 1000);
+            if (data.success) {
+                msgBox.className = "form-message success";
+                msgBox.innerHTML = data.message;
 
-        } else {
-            msgBox.classList.add("error");
-            msgBox.innerHTML = result.message;
+                btn.style.display = "none";
+
+                const done = document.createElement("span");
+                done.className = "info-text success-text";
+                done.innerHTML = "Completed";
+                btn.parentElement.appendChild(done);
+            } else {
+                msgBox.className = "form-message error";
+                msgBox.innerHTML = data.message || "Failed to confirm.";
+            }
+        } catch (err) {
+            console.error(err);
+            msgBox.className = "form-message error";
+            msgBox.innerHTML = "Server error.Try again.";
         }
     }
 </script>

@@ -17,6 +17,7 @@ namespace ClinicOne.Models.ViewModels.Patient
         public string? ReportPath { get; set; }
         public string? ReportStatus { get; set; }
 
+
         public List<PatientReportParameter> Parameters { get; set; } = new();
     }
 }

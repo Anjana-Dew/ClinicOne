@@ -1,6 +1,7 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.ViewModels;
 using ClinicOne.Models.ViewModels.Admin;
+using ClinicOne.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

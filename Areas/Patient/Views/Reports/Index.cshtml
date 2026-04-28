@@ -35,8 +35,9 @@
 
         <select name="status">
             <option value="">All Status</option>
-            <option value="Completed" selected="@(Context.Request.Query["status"] == "Completed")">Completed</option>
-            <option value="Pending" selected="@(Context.Request.Query["status"] == "Pending")">Pending</option>
+            <option value="Normal">Normal</option>
+            <option value="High">High</option>
+            <option value="Risk">Risk</option>
         </select>
 
         <button type="submit" class="btn primary">Filter</button>
@@ -100,8 +101,8 @@
                                         <div class="param">
                                             <span>@p.ParameterName: @p.TestValue</span>
 
-                                            <span class="pill @p.ResultStatus.ToLower()">
-                                                @p.ResultStatus
+                                            <span class="status @r.ReportStatus.ToLower()">
+                                                @r.ReportStatus
                                             </span>
                                         </div>
                                     }
@@ -121,7 +122,7 @@
                             </td>
 
                             <td>
-                                @if (r.ReportStatus == "Completed")
+                                @if (r.Parameters.Any())
                                 {
                                     <a href="@Url.Content(r.ReportPath)" download class="btn download">
                                         ⬇ Download
@@ -142,11 +143,47 @@
 
 </div>
 
-@section Scripts {
-    <script>
-        function clearFilters() {
-            window.location.href = '/Patient/Reports';
-        }
-    </script>
-}
+<script>
+    function clearFilters() {
+        const form = document.querySelector(".filter-bar");
+        form.reset();
+        form.submit();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        document.addEventListener("click", async function (e) {
+
+            const btn = e.target.closest(".confirm-btn");
+            if (!btn) return;
+
+            const id = btn.getAttribute("data-id");
+
+            console.log("clicked:", id);
+
+            try {
+                const res = await fetch('/Patient/Prescriptions/Confirm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+
+                const data = await res.json();
+                console.log("response:", data);
+
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert("Failed");
+                }
+            }
+            catch (err) {
+                console.error(err);
+                alert("Server error");
+            }
+        });
+
+    });
+
+</script>
 
