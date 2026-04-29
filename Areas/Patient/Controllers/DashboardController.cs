@@ -46,16 +46,21 @@ namespace ClinicOne.Areas.Patient.Controllers
             var patient = await _context.Patients
                 .FirstOrDefaultAsync(p => p.PatientNIC == nic);
 
-            var vitals = await _context.PatientVitals
-                .Where(v => v.PatientNIC == nic)
-                .OrderByDescending(v => v.RecordedDate)
-                .FirstOrDefaultAsync();
+            var physicalVitals = await _context.PatientVitals
+            .Where(v => v.PatientNIC == nic && v.Height != null && v.Weight != null)
+            .OrderByDescending(v => v.RecordedDate)
+            .FirstOrDefaultAsync();
 
-            decimal bmi = 0;
-            if (vitals != null && vitals.Height > 0)
+            var bpVitals = await _context.PatientVitals
+            .Where(v => v.PatientNIC == nic && v.Systolic != null && v.Diastolic != null)
+            .OrderByDescending(v => v.RecordedDate)
+            .FirstOrDefaultAsync();
+
+            decimal? bmi = null;
+            if (physicalVitals?.Height > 0 && physicalVitals?.Weight > 0)
             {
-                var h = vitals.Height.Value / 100;
-                bmi = vitals.Weight.Value / (h * h);
+                decimal heightMeters = physicalVitals.Height.Value / 100m;
+                bmi = physicalVitals.Weight.Value / (heightMeters * heightMeters);
             }
 
             var session = await _context.ClinicSchedules
@@ -127,13 +132,12 @@ namespace ClinicOne.Areas.Patient.Controllers
                 PhoneNumber = patient?.PhoneNumber ?? "-",
                 Address = patient?.Address ?? "-",
 
-                Height = vitals?.Height,
-                Weight = vitals?.Weight,
-                BMI = vitals != null && vitals.Height > 0
-                ? Math.Round(bmi, 2)
-                : null,
-                BloodPressure = vitals != null
-                ? $"{vitals.Systolic}/{vitals.Diastolic}"
+                Height = physicalVitals?.Height,
+                Weight = physicalVitals?.Weight,
+
+                BMI = bmi.HasValue ? Math.Round(bmi.Value, 2) : null,
+                BloodPressure = (bpVitals?.Systolic != null && bpVitals?.Diastolic != null)
+                ? $"{bpVitals.Systolic}/{bpVitals.Diastolic}"
                 : null,
 
                 ReportGroups = latestReportGroup != null
