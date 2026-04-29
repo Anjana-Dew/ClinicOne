@@ -65,7 +65,6 @@
         </div>
 
         <!-- HEALTH PROGRESS -->
-        <!-- HEALTH PROGRESS -->
         <div class="card">
 
             <h3>Health Progress</h3>
@@ -98,38 +97,42 @@
 
         <!-- HEALTH SUMMARY -->
         <div class="card">
-
             <h3>Health Summary</h3>
 
-            @if (Model.Height == null && Model.Weight == null && Model.BMI == null)
+            @if (Model.Height == null && Model.Weight == null && Model.BMI == null && string.IsNullOrEmpty(Model.BloodPressure))
             {
-                <p>No data avaiable</p>
+                <p>No data available</p>
             }
             else
             {
                 <div class="summary-grid">
+
                     <div class="box bmi">
                         <span>BMI</span>
-                        <h2>@Model.BMI</h2>
+                        <h2>@(Model.BMI?.ToString() ?? "-")</h2>
                     </div>
 
                     <div class="box weight">
                         <span>Weight</span>
-                        <h2>@Model.Weight kg</h2>
+                        <h2>@(Model.Weight != null ? Model.Weight + " kg" : "-")</h2>
                     </div>
 
                     <div class="box height">
                         <span>Height</span>
-                        <h2>@Model.Height cm</h2>
+                        <h2>@(Model.Height != null ? Model.Height + " cm" : "-")</h2>
                     </div>
 
                     <div class="box pressure">
                         <span>BP</span>
-                        <h2>@Model.BloodPressure</h2>
+                        <h2>
+                            @(!string.IsNullOrWhiteSpace(Model.BloodPressure) && Model.BloodPressure != "/"
+                                                    ? Model.BloodPressure
+                                                    : "-")
+                        </h2>
                     </div>
+
                 </div>
             }
-
         </div>
 
         <!-- LATEST REPORT -->
