@@ -1,4 +1,6 @@
-﻿@{
+﻿@using ClinicOne.Models.Entities
+
+@{
     var patientName = ViewBag.PatientName ?? "Patient";
     var hasNotifications = ViewBag.HasNotifications ?? false;
 }
@@ -10,16 +12,14 @@
 
     <meta charset="UTF-8">
 
-    <!-- RESPONSIVE VIEWPORT -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>ClinicOne</title>
 
-    <!-- GOOGLE FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS -->
     <link rel="stylesheet" href="~/css/patient/patientLayout.css" asp-append-version="true" />
+    <script src="/js/patient/notifications.js"></script>
 
 </head>
 
@@ -27,7 +27,6 @@
 
     <header class="navbar">
 
-        <!-- LEFT SIDE -->
         <div class="nav-left">
 
             <a asp-area="Patient"
@@ -42,8 +41,6 @@
 
         </div>
 
-
-        <!-- CENTER NAVIGATION -->
 
         <nav class="nav-center">
 
@@ -80,31 +77,27 @@
         </nav>
 
 
-        <!-- RIGHT SIDE -->
-
         <div class="nav-right">
 
-            <!-- Date and Time -->
+
             <div class="date-pill">
                 <span id="currentDateTime"></span>
             </div>
 
-            <!-- Notification -->
-            <div class="notification" aria-label="Notifications">
+          <div class="notification">
+    <a asp-area="Patient"
+       asp-controller="Notification"
+       asp-action="Index">
 
-                <span class="bell">🔔</span>
+        <img src="~/patientImages/bell.png" class="bell-icon" />
 
-                @if (hasNotifications)
-                {
-                    <span class="badge"></span>
-                }
+        @if (ViewBag.UnreadCount != null && (int)ViewBag.UnreadCount > 0)
+        {
+            <span class="badge"></span>
+        }
 
-            </div>
-
-           
-
-            <!-- Logout -->
-
+    </a>
+</div>
             <a asp-controller="Account"
                asp-action="Logout"
                asp-area=""
@@ -116,9 +109,6 @@
 
     </header>
 
-
-    <!-- PAGE CONTENT -->
-
     <main class="main-content">
 
         @RenderBody()
@@ -126,16 +116,12 @@
     </main>
 
 
-    <!-- FOOTER -->
-
     <footer class="footer">
 
         <p>© 2026 ClinicOne. All Rights Reserved.</p>
 
     </footer>
 
-
-    <!-- JS -->
 
     <script src="~/js/patient/patientLayout.js"></script>
 

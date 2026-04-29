@@ -1,9 +1,20 @@
 ﻿function openModal() {
     document.getElementById("profileModal").style.display = "flex";
-}
 
+    const messageBox = document.getElementById("formMessage");
+    messageBox.innerHTML = "";
+    messageBox.className = "form-message";
+}
 function closeModal() {
     document.getElementById("profileModal").style.display = "none";
+
+    const form = document.getElementById("profileForm");
+
+    form.reset();
+
+    const messageBox = document.getElementById("formMessage");
+    messageBox.innerHTML = "";
+    messageBox.className = "form-message";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -46,9 +57,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("profilePhone").innerText = result.data.phoneNumber;
                 document.getElementById("profileAddress").innerText = result.data.address;
 
+                document.getElementById("fullName").value = result.data.fullName;
+                document.getElementById("phoneNumber").value = result.data.phoneNumber;
+                document.getElementById("address").value = result.data.address;
+
                 setTimeout(() => {
                     closeModal();
-                }, 1000);           
+                }, 1000);                    
 
             } else {
                 messageBox.innerHTML = result.message;
@@ -91,6 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-        countdown.innerHTML = `⏳ ${h}h ${m}m ${s}s`;
+        countdown.innerHTML = ` ${h}h ${m}m ${s}s`;
     }, 1000);
 });

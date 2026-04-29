@@ -128,9 +128,15 @@ function openPopup(data) {
         select.addEventListener("change", function () {
 
             const value = this.value;
+            const row = this.closest("tr");
 
             if (value === "Given") {
                 this.removeAttribute("data-reason");
+
+                const reasonCell = row.querySelector(".reason-text");
+                if (reasonCell) {
+                    reasonCell.remove();
+                }
             }
             else {
                 currentSelect = this;
@@ -280,17 +286,25 @@ function generateExternal() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             patientName: document.getElementById("name").innerText,
-            nic: document.getElementById("nic").innerText,
+            NIC: document.getElementById("nic").innerText,
             medicines: meds
         })
     })
-        .then(res => res.blob())
+        .then(res => {
+            if (!res.ok) {
+                return res.text().then(err => { throw new Error(err); });
+            }
+            return res.blob();
+        })
         .then(blob => {
             let url = URL.createObjectURL(blob);
             let a = document.createElement("a");
             a.href = url;
             a.download = "External.pdf";
             a.click();
+        })
+        .catch(err => {
+            showPopupError(err.message);
         });
 }
 

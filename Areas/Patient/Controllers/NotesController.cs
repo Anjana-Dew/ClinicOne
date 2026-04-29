@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore;
 namespace ClinicOne.Areas.Patient.Controllers
 {
     [Area("Patient")]
-    public class NotesController : Controller
+    public class NotesController : BaseController
     {
-        private readonly ApplicationDbContext _context;
 
-        public NotesController(ApplicationDbContext context)
+
+        public NotesController(ApplicationDbContext context) : base(context)
         {
-            _context = context;
+
         }
 
         public async Task<IActionResult> Index()

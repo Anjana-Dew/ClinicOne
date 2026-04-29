@@ -1,0 +1,112 @@
+﻿@model List<ClinicOne.Models.ViewModels.Patient.NotificationViewModel>
+
+@{
+    Layout = "_PatientLayout";
+}
+
+<link rel="stylesheet" href="~/css/patient/patientNotification.css" />
+
+<div class="notif-wrapper">
+
+    <div class="header">
+        <h2>Notifications</h2>
+        <p>Your recent updates and alerts</p>
+    </div>
+
+    @if (Model.Any(n => !n.IsRead))
+    {
+        <button class="mark-all-btn" onclick="markAllAsRead()">Mark all as read</button>
+    }
+
+    <div class="filter-bar" id="filterBar">
+        <button class="active" onclick="filterNotifications('all', this)">All</button>
+        <button onclick="filterNotifications('Prescription', this)">Prescriptions</button>
+        <button onclick="filterNotifications('Appointment', this)">Appointments</button>
+        <button onclick="filterNotifications('Report', this)">Reports</button>
+        <button onclick="filterNotifications('Note', this)">Notes</button>
+        <button onclick="filterNotifications('Pharmacy', this)">Pharmacy</button>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty">No notifications yet</div>
+    }
+    else
+    {
+        <div class="notif-list" id="notifList">
+
+            @foreach (var n in Model)
+            {
+                var cardClass = n.IsRead ? "read" : "unread";
+
+                var typeClass = n.Type?.ToLower() switch
+                {
+                                "prescription" => "prescription",
+                                "appointment" => "appointment",
+                                "report" => "report",
+                                "note" => "note",
+                                "pharmacy" => "pharmacy",
+                    _ => "general"
+                };
+
+                var typeLabel = n.Type switch
+                {
+                                "Prescription" => "Prescription",
+                                "Appointment" => "Appointment",
+                                "Report" => "Report",
+                                "Note" => "Doctor Note",
+                                "Pharmacy" => "Pharmacy",
+                    _ => "Notification"
+                };
+
+                <div class="notif-card @cardClass"
+                     data-type="@n.Type"
+                     onclick="onCardClick(@n.NotificationID, this)">
+
+                    @if (!n.IsRead)
+                    {
+                        <div class="unread-dot"></div>
+                    }
+
+                    <div class="notif-header">
+                        <span class="notif-type @typeClass">@typeLabel</span>
+                        <span class="notif-time">@n.RelativeTime</span>
+                    </div>
+
+                    <div class="notif-body">@n.Message</div>
+
+                    @if (n.DaysRemaining.HasValue)
+                    {
+                        if (n.DaysRemaining == 0)
+                        {
+                            <span class="notif-countdown today">
+                                @(n.Type == "Appointment" ? "Today" : "Last day of medication")
+                            </span>
+                        }
+                        else if (n.DaysRemaining > 0)
+                        {
+                            <span class="notif-countdown upcoming">
+                                @(n.Type == "Appointment"
+                                                ? $"{n.DaysRemaining} day{(n.DaysRemaining == 1 ? "" : "s")} away"
+                                                : $"{n.DaysRemaining} day{(n.DaysRemaining == 1 ? "" : "s")} of medication remaining")
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="notif-countdown past">
+                                @(n.Type == "Appointment" ? "Passed" : "Course completed")
+                            </span>
+                        }
+                    }
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <script src="~/js/patient/patientNotifications.js"></script>
+}

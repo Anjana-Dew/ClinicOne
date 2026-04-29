@@ -10,13 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
-
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AccessLogService>();
-
+builder.Services.AddScoped<NotificationService>();
 QuestPDF.Settings.License = LicenseType.Community;
 builder.Services.AddScoped<ExternalPrescriptionService>();
-
 
 // Add DB Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

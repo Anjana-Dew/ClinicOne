@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 namespace ClinicOne.Areas.Patient.Controllers
 {
     [Area("Patient")]
-    public class ProfileController : Controller
+    public class ProfileController : BaseController
     {
-        private readonly ApplicationDbContext _context;
 
-        public ProfileController(ApplicationDbContext context)
+
+        public ProfileController(ApplicationDbContext context) : base(context)
         {
-            _context = context;
+
         }
 
         [HttpPost]
@@ -23,7 +23,6 @@ namespace ClinicOne.Areas.Patient.Controllers
             string BloodType,
             string Address)
         {
-            // ================= VALIDATION =================
             if (string.IsNullOrEmpty(PatientNIC))
                 return Json(new { success = false, message = "Invalid request" });
 
@@ -33,8 +32,7 @@ namespace ClinicOne.Areas.Patient.Controllers
             if (patient == null)
                 return Json(new { success = false, message = "Patient not found" });
 
-            
-            // ================= UPDATE LOGIC =================
+
             bool updated = false;
 
             if (!string.IsNullOrEmpty(FullName) && patient.FullName != FullName)

@@ -360,5 +360,9 @@ namespace ClinicOne.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
         }
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return await base.SaveChangesAsync(cancellationToken);
+        }
     }
 }

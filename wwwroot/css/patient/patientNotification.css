@@ -1,0 +1,214 @@
+﻿body {
+    background: #f5f7fb;
+    font-family: "Segoe UI", sans-serif;
+    margin: 0;
+}
+
+.notif-wrapper {
+    max-width: 1100px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+    .header h2 {
+        color: #1e3a8a;
+        font-size: 22px;
+        margin-bottom: 4px;
+    }
+
+    .header p {
+        color: #666;
+        font-size: 14px;
+        margin: 0;
+    }
+
+.filter-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+    .filter-bar button {
+        padding: 8px 18px;
+        border-radius: 6px;
+        border: 1.5px solid #d1d5db;
+        background: #fff;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.15s;
+    }
+
+        .filter-bar button:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            background: #f0f4ff;
+        }
+
+        .filter-bar button.active {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+            font-weight: 600;
+        }
+
+.mark-all-btn {
+    margin-bottom: 20px;
+    padding: 8px 18px;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+    .mark-all-btn:hover {
+        background: #059669;
+    }
+
+.notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.notif-card {
+    padding: 18px 20px;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid #e5e7eb;
+    position: relative;
+}
+
+    .notif-card:last-child {
+        border-bottom: none;
+    }
+
+    .notif-card:hover {
+        background: #f8faff;
+    }
+
+    .notif-card.unread {
+        background: #f4f7ff;
+        border-left: 4px solid #2563eb;
+    }
+
+    .notif-card.read {
+        background: #fff;
+        border-left: 4px solid transparent;
+    }
+
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.notif-type {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    .notif-type.prescription {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .notif-type.appointment {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .notif-type.report {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+
+    .notif-type.note {
+        background: #f3e8ff;
+        color: #6b21a8;
+    }
+
+    .notif-type.pharmacy {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .notif-type.general {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+.notif-time {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.notif-body {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.6;
+}
+
+.notif-countdown {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+}
+
+    .notif-countdown.upcoming {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .notif-countdown.today {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+
+    .notif-countdown.past {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+.unread-dot {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 8px;
+    height: 8px;
+    background: #2563eb;
+    border-radius: 50%;
+}
+
+.empty {
+    text-align: center;
+    padding: 60px;
+    color: #9ca3af;
+    font-size: 14px;
+}

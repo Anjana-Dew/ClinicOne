@@ -10,13 +10,12 @@ using System.Threading.Tasks;
 namespace ClinicOne.Areas.Patient.Controllers
 {
     [Area("Patient")]
-    public class SessionsController : Controller
+    public class SessionsController : BaseController
     {
-        private readonly ApplicationDbContext _context;
 
-        public SessionsController(ApplicationDbContext context)
+        public SessionsController(ApplicationDbContext context) : base(context)
         {
-            _context = context;
+
         }
 
         public async Task<IActionResult> Index()

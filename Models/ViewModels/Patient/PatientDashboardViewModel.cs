@@ -8,9 +8,9 @@ public class PatientDashboardViewModel
     public string Address { get; set; } = "";
     public string PhoneNumber { get; set; } = "";
 
-    public decimal Height { get; set; }
-    public decimal Weight { get; set; }
-    public decimal BMI { get; set; }
+    public decimal? Height { get; set; }
+    public decimal? Weight { get; set; }
+    public decimal? BMI { get; set; }
     public string BloodPressure { get; set; } = "";
 
     public string ProgressStatus { get; set; } = "";
@@ -35,8 +35,10 @@ public class PatientDashboardViewModel
 
     public string SessionCountdown { get; set; } = "";
 
-    public string SessionStartTime { get; set; } // 18:00
-    public string SessionEndTime { get; set; }   // 22:00
+    public string SessionStartTime { get; set; } 
+    public string SessionEndTime { get; set; }
+
+    public string PrescriptionStatus { get; set; } = "";
 
 }
 
