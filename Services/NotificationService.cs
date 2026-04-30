@@ -82,16 +82,43 @@ namespace ClinicOne.Services
 
         public void SaveDirectWithSchedule(string patientNIC, int scheduleID, string message)
         {
+            if (scheduleID <= 0)
+            {
+                SaveDirect(patientNIC, message);
+                return;
+            }
+
             SaveWithSchedule(patientNIC, scheduleID, message);
         }
 
 
         private void SaveWithSchedule(string patientNIC, int scheduleID, string message)
         {
+            var validSchedule = _context.ClinicSchedules
+                .Any(s => s.ScheduleID == scheduleID);
+
+            int safeScheduleId;
+
+            if (validSchedule)
+            {
+                safeScheduleId = scheduleID;
+            }
+            else
+            {
+                safeScheduleId = _context.ClinicSchedules
+                    .Where(s => s.PatientNIC == patientNIC)
+                    .OrderByDescending(s => s.AssignedDate)
+                    .Select(s => s.ScheduleID)
+                    .FirstOrDefault();
+            }
+
+            if (safeScheduleId == 0)
+                return;
+
             _context.Notifications.Add(new Notification
             {
                 PatientNIC = patientNIC,
-                ScheduleID = scheduleID,
+                ScheduleID = safeScheduleId,
                 Message = message,
                 SentDate = DateTime.Now,
                 IsRead = false

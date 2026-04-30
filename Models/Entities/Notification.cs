@@ -9,7 +9,7 @@ namespace ClinicOne.Models.Entities
         public int NotificationID { get; set; }
 
         [Required]
-        public int ScheduleID { get; set; }
+        public int? ScheduleID { get; set; }
 
         [Required]
         [MaxLength(20)]

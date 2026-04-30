@@ -1,4 +1,5 @@
 ﻿using ClinicOne.Data;
+using ClinicOne.Models.Entities;
 using ClinicOne.Models.ViewModels.Patient;
 using ClinicOne.Services;
 using Microsoft.AspNetCore.Mvc;

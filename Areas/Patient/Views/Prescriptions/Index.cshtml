@@ -1,9 +1,13 @@
-﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
+@model IEnumerable<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
 
 @{
+    var modelList = Model as List<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
+        ?? new List<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>();
+
+    var active = modelList.Where(x => x.IsActive).ToList();
+    var past = modelList.Where(x => x.IsPast).ToList();
+
     Layout = "_PatientLayout";
-    var active = Model?.Where(x => x.IsActive).OrderByDescending(x => x.PrescriptionDate).ToList() ?? new();
-    var past = Model?.Where(x => x.IsPast).OrderByDescending(x => x.PrescriptionDate).ToList() ?? new();
 }
 @Html.AntiForgeryToken()
 
