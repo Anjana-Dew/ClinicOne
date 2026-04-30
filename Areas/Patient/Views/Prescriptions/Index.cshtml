@@ -1,11 +1,10 @@
-﻿﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
+﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
 
 @{
     Layout = "_PatientLayout";
     var active = Model?.Where(x => x.IsActive).OrderByDescending(x => x.PrescriptionDate).ToList() ?? new();
     var past = Model?.Where(x => x.IsPast).OrderByDescending(x => x.PrescriptionDate).ToList() ?? new();
 }
-
 @Html.AntiForgeryToken()
 
 <link rel="stylesheet" href="~/css/patient/patientPrescriptions.css" />
