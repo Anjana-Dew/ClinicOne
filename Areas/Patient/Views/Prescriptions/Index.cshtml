@@ -103,12 +103,12 @@
                         </button>
                     }
 
-                    @if (p.HasExternalPrescription)
-                    {
-                        <a href="@p.PDFPath" target="_blank" class="btn download">
-                            View External Prescription PDF
-                        </a>
-                    }
+                    @if (!string.IsNullOrEmpty(p.PDFPath))
+{
+                <a href="@Url.Content("~" + p.PDFPath)" target="_blank" class="btn download">
+                View External Prescription PDF
+                 </a>
+}
 
                     @if (p.ShowCompleted)
                     {

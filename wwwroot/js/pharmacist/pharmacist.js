@@ -68,6 +68,10 @@ window.searchPatient = function (event) {
     let nicInput = document.getElementById("nicInput");
     let nic = nicInput.value.trim();
 
+
+    document.getElementById("table").innerHTML = "";
+
+
     if (!nic) {
         showError(nicInput, "Enter NIC");
         return;
@@ -114,7 +118,7 @@ function openPopup(data) {
     if (!data || !data.medicines) return;
 
     if (!data || !data.medicines || data.medicines.length === 0) {
-        showError(document.getElementById("nicInput"), "No medicines found in this prescription");
+        showError(document.getElementById("nicInput"), data.message || "No pending prescriptions");
         return;
     }
 
