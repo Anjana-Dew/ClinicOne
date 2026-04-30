@@ -35,35 +35,23 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
                                      p.PatientNIC.Trim() == nic);
 
             if (patient == null)
-                return Json(new { success = false, message = "Patient not found" });
+                return Json(new { success = false, message = "Patient not found" }); 
+
 
             var prescription = _context.Prescriptions
-    .AsEnumerable()
-    .Where(p => p.PatientNIC != null &&
-                p.PatientNIC.Trim().Equals(nic, StringComparison.OrdinalIgnoreCase))
-    .OrderByDescending(p => p.PrescriptionDate)
-    .FirstOrDefault();
+                .Where(p => p.PatientNIC == nic && p.IsCompleted == false)
+                .OrderByDescending(p => p.PrescriptionDate)
+                .FirstOrDefault();
 
             if (prescription == null)
                 return Json(new { success = false, message = "No prescription found" });
 
             var medicines = _context.PrescriptionMedicines
-     .Where(m => m.PrescriptionID == prescription.PrescriptionID)
-     .AsEnumerable()
-     .Where(m =>
-     {
-         var status = m.Status?.Trim();
-         var hasReason = !string.IsNullOrWhiteSpace(m.Reason);
-
-         if (status == "Given")
-             return false; // hide
-
-         if (status == "Not Given" && hasReason)
-             return false; // hide
-
-         return true; // show
-     })
-     .ToList();
+               .Where(m =>
+                   m.PrescriptionID == prescription.PrescriptionID &&
+                   !(m.Status == "Given" && m.PatientConfirmed == true)
+               )
+               .ToList();
 
 
             if (!medicines.Any())
@@ -111,13 +99,17 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
 
             var meds = _context.PrescriptionMedicines
                 .Where(m => ids.Contains(m.PrescMedID))
-                .Select(m => new { m.PrescMedID })
+                .Select(m => new { m.PrescMedID, m.PrescriptionID })
                 .ToList();
+
+            int prescriptionId = 0;
 
             foreach (var med in meds)
             {
                 var item = data.FirstOrDefault(x => x.PrescMedID == med.PrescMedID);
                 if (item == null) continue;
+
+                prescriptionId = med.PrescriptionID;
 
                 var entity = new PrescriptionMedicine
                 {
@@ -138,13 +130,67 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
 
                 entity.PatientConfirmed = true;
 
-
                 _context.Entry(entity).Property(x => x.Status).IsModified = true;
                 _context.Entry(entity).Property(x => x.Reason).IsModified = true;
                 _context.Entry(entity).Property(x => x.PatientConfirmed).IsModified = true;
             }
 
             _context.SaveChanges();
+
+            var patientNIC = _context.Prescriptions
+                .Where(p => p.PrescriptionID == prescriptionId)
+                .Select(p => p.PatientNIC)
+                .FirstOrDefault();
+
+            var confirmedMeds = _context.PrescriptionMedicines
+            .Where(m => ids.Contains(m.PrescMedID))
+            .ToList();
+
+            foreach (var med in confirmedMeds)
+            {
+                if (med.Status == "Given")
+                {
+                    int days = ParseDurationToDays(med.Duration);
+
+                    var reminder = new MedicineReminder
+                    {
+                        PatientNIC = patientNIC,  
+                        PrescMedID = med.PrescMedID,
+                        StartDate = DateTime.Today,
+                        EndDate = DateTime.Today.AddDays(days),
+                        IsActive = true
+                    };
+
+                    _context.MedicineReminders.Add(reminder);
+                }
+            }
+
+            _context.SaveChanges();
+
+
+            if (prescriptionId != 0)
+            {
+                var prescription = new Prescription
+                {
+                    PrescriptionID = prescriptionId
+                };
+
+                _context.Prescriptions.Attach(prescription);
+                prescription.IsCompleted = true;
+
+                _context.Entry(prescription)
+                    .Property(p => p.IsCompleted)
+                    .IsModified = true;
+
+                _context.SaveChanges();
+            }
+
+            var medsFull = _context.PrescriptionMedicines
+                .Where(m => m.PrescriptionID == prescriptionId)
+                .ToList();
+
+            _notificationService.NotifyPrescriptionProcessed(patientNIC, medsFull);
+
 
             bool hasNotGiven = data.Any(x => x.Status != "Given");
 
@@ -199,10 +245,23 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
             _context.ExternalPrescriptions.Add(external);
             _context.SaveChanges();
 
-            // Notify the patient
             _notificationService.NotifyExternalPdfReady(request.NIC);
 
             return File(pdfBytes, "application/pdf", fileName);
+        }
+        private int ParseDurationToDays(string duration)
+        {
+            if (string.IsNullOrEmpty(duration)) return 0;
+
+            var parts = duration.Split(' ');
+            if (parts.Length != 2) return 0;
+
+            int value = int.Parse(parts[0]);
+
+            if (parts[1].StartsWith("week")) return value * 7;
+            if (parts[1].StartsWith("day")) return value;
+
+            return 0;
         }
 
     }
