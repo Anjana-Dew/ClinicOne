@@ -208,6 +208,10 @@
     transform: scale(1.08);
 }
 
+.clinic-schedule {
+   /* max-height: 80vh; */
+    overflow-y: auto; 
+}
 
 .temp-message {
     background: #d3dcf8;
