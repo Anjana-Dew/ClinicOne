@@ -52,13 +52,32 @@ namespace ClinicOne.Services
         {
             var scheduleID = _context.ClinicSchedules
                 .Where(s => s.PatientNIC == patientNIC)
-                .OrderByDescending(s => s.ScheduleID)
+                .OrderByDescending(s => s.AssignedDate)
                 .Select(s => (int?)s.ScheduleID)
                 .FirstOrDefault();
 
-            if (scheduleID == null) return;
+            if (scheduleID == null)
+            {
+
+                SaveWithoutSchedule(patientNIC, message);
+                return;
+            }
 
             SaveWithSchedule(patientNIC, scheduleID.Value, message);
+        }
+
+        private void SaveWithoutSchedule(string patientNIC, string message)
+        {
+            _context.Notifications.Add(new Notification
+            {
+                PatientNIC = patientNIC,
+                ScheduleID = 1, 
+                Message = message,
+                SentDate = DateTime.Now,
+                IsRead = false
+            });
+
+            _context.SaveChanges();
         }
 
         public void SaveDirectWithSchedule(string patientNIC, int scheduleID, string message)

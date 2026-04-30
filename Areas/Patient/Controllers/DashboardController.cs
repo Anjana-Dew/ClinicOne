@@ -46,21 +46,25 @@ namespace ClinicOne.Areas.Patient.Controllers
             var patient = await _context.Patients
                 .FirstOrDefaultAsync(p => p.PatientNIC == nic);
 
-            var physicalVitals = await _context.PatientVitals
-            .Where(v => v.PatientNIC == nic && v.Height != null && v.Weight != null)
+            var vitals = await _context.PatientVitals
+            .Where(v => v.PatientNIC == nic)
             .OrderByDescending(v => v.RecordedDate)
-            .FirstOrDefaultAsync();
+            .ToListAsync();
 
-            var bpVitals = await _context.PatientVitals
-            .Where(v => v.PatientNIC == nic && v.Systolic != null && v.Diastolic != null)
-            .OrderByDescending(v => v.RecordedDate)
-            .FirstOrDefaultAsync();
+            var latestHeight = vitals.FirstOrDefault(v => v.Height != null)?.Height;
+            var latestWeight = vitals.FirstOrDefault(v => v.Weight != null)?.Weight;
+            var latestBp = vitals.FirstOrDefault(v => v.Systolic != null && v.Diastolic != null);
+
+            string bloodPressure = latestBp != null
+            ? $"{latestBp.Systolic}/{latestBp.Diastolic}"
+            : null;
 
             decimal? bmi = null;
-            if (physicalVitals?.Height > 0 && physicalVitals?.Weight > 0)
+
+            if (latestHeight.HasValue && latestWeight.HasValue && latestHeight > 0)
             {
-                decimal heightMeters = physicalVitals.Height.Value / 100m;
-                bmi = physicalVitals.Weight.Value / (heightMeters * heightMeters);
+                var heightM = latestHeight.Value / 100m;
+                bmi = latestWeight.Value / (heightM * heightM);
             }
 
             var session = await _context.ClinicSchedules
@@ -132,13 +136,10 @@ namespace ClinicOne.Areas.Patient.Controllers
                 PhoneNumber = patient?.PhoneNumber ?? "-",
                 Address = patient?.Address ?? "-",
 
-                Height = physicalVitals?.Height,
-                Weight = physicalVitals?.Weight,
-
+                Height = latestHeight,
+                Weight = latestWeight,
                 BMI = bmi.HasValue ? Math.Round(bmi.Value, 2) : null,
-                BloodPressure = (bpVitals?.Systolic != null && bpVitals?.Diastolic != null)
-                ? $"{bpVitals.Systolic}/{bpVitals.Diastolic}"
-                : null,
+                BloodPressure = bloodPressure,
 
                 ReportGroups = latestReportGroup != null
                     ? new List<ReportGroupDto> { latestReportGroup }
@@ -147,12 +148,12 @@ namespace ClinicOne.Areas.Patient.Controllers
                 NextSessionDate = session?.ClinicDate,
                 NextSessionName = session?.ClinicSession?.SessionName ?? "-",
                 SessionStartTime = session?.ClinicSession?.StartTime != null
-    ? session.ClinicSession.StartTime.ToString()
-    : "",
+                ? session.ClinicSession.StartTime.ToString()
+                 : "",
 
                 SessionEndTime = session?.ClinicSession?.EndTime != null
-    ? session.ClinicSession.EndTime.ToString()
-    : "",
+                ? session.ClinicSession.EndTime.ToString()
+                : "",
 
                 ProgressStatus = progress?.ProgressStatus,
                 DoctorNotes = progress?.DoctorNotes,

@@ -196,6 +196,34 @@ namespace ClinicOne.Areas.Patient.Controllers
                 _notificationService.SaveDirect(nic, message);
                 existing.Add(message);
             }
+
+            var reminders = await _context.MedicineReminders
+            .Include(r => r.PrescriptionMedicine)
+            .Where(r => r.PatientNIC == nic && r.IsActive)
+            .ToListAsync();
+
+            foreach (var r in reminders)
+            {
+                if (DateTime.Today > r.EndDate)
+                {
+                    r.IsActive = false;
+                    continue;
+                }
+
+                var marker = $"[ReminderID:{r.ReminderID}]";
+
+                if (existing.Any(m => m.Contains(marker)))
+                    continue;
+
+                var med = r.PrescriptionMedicine?.MedicineName ?? "medicine";
+
+                var message =
+                    $"[Pharmacy|{r.EndDate:yyyy-MM-dd}] {marker} " +
+                    $"Take your medicine: {med} daily until {r.EndDate:dd MMM yyyy}.";
+
+                _notificationService.SaveDirectWithSchedule(nic, 0, message);
+                existing.Add(message);
+            }
         }
 
         private static DateTime? ParseEndDate(string duration)

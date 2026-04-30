@@ -1,5 +1,5 @@
-﻿@{
-    Layout = "_PharmacistLayout";
+﻿﻿@{
+Layout = "_PharmacistLayout";
 }
 
 <link rel="stylesheet" href="~/css/pharmacist/pharmacistDashboardStyles.css" />
@@ -14,7 +14,7 @@
             Enter NIC to retrieve and manage prescriptions quickly
         </p>
 
-        <form onsubmit="event.preventDefault(); searchPatient();">
+        <form id="searchForm">
 
             <div class="input-group">
                 <input id="nicInput" placeholder="Enter Patient NIC" />
@@ -72,7 +72,6 @@
 
         <div class="popup-buttons">
             <button class="btn-primary" onclick="saveData()">Confirm</button>
-            <button id="externalBtn" class="btn-warning" onclick="generateExternal()">External PDF</button>
         </div>
 
     </div>
@@ -100,6 +99,19 @@
         <div class="modal-actions">
             <button class="btn-primary" onclick="confirmSave()">Yes</button>
             <button class="btn-secondary" onclick="closeConfirm()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="externalPrompt" class="modal-overlay">
+    <div class="modal-box">
+        <p>Some medicines are NOT GIVEN.</p>
+        <p>You must generate External Prescription first.</p>
+
+        <div class="modal-actions">
+            <button class="btn-primary" onclick="generateThenConfirm()">Download & Continue</button>
+            <button class="btn-secondary" onclick="closeExternalPrompt()">Cancel</button>
         </div>
     </div>
 </div>
