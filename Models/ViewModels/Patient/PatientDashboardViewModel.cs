@@ -40,6 +40,9 @@ public class PatientDashboardViewModel
 
     public string PrescriptionStatus { get; set; } = "";
 
+
+
+
 }
 
 public class MedicineDto
