@@ -1,10 +1,8 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.ViewModels.Patient;
-using ClinicOne.Models.ViewModels.Pharmacist;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
-using static QuestPDF.Helpers.Colors;
 
 namespace ClinicOne.Areas.Patient.Controllers
 {
@@ -53,33 +51,29 @@ namespace ClinicOne.Areas.Patient.Controllers
                 pdfMap.TryGetValue(p.PrescriptionID, out var pdf);
                 bool hasExternal = !string.IsNullOrEmpty(pdf);
 
-                var allMeds = p.PrescriptionMedicines.ToList();
+                var medicines = p.PrescriptionMedicines.ToList();
 
-                var visibleMeds = allMeds
-                    .Where(m => !(m.Status == "Given" && m.PatientConfirmed))
-                    .ToList();
-
-                bool allGiven = allMeds.Any() &&
-                allMeds.All(m => m.Status == "Given" && m.PatientConfirmed);
-
-                var maxDays = allMeds.Any()
-                    ? allMeds.Max(m => ParseDurationToDays(m.Duration))
+                var maxDays = medicines.Any()
+                    ? medicines.Max(m => ParseDurationToDays(m.Duration))
                     : 0;
 
                 bool isPast = DateTime.Today > p.PrescriptionDate.AddDays(maxDays);
 
-                bool pharmacyActed = allMeds.Any(m =>
+                bool pharmacyActed = medicines.Any(m =>
                     m.Status == "Given" ||
                     m.Status == "Not Given" ||
                     m.Status == "Partially Given");
 
-                bool needsExternal = allMeds.Any(m =>
+                bool needsExternal = medicines.Any(m =>
                     m.Status == "Not Given" || m.Status == "Partially Given");
 
-                bool allConfirmed = allMeds
-                    .Where(m => m.Status == "Not Given" || m.Status == "Partially Given")
-                    .All(m => m.PatientConfirmed);
+                bool allConfirmed = needsExternal &&
+                    medicines
+                        .Where(m => m.Status == "Not Given" || m.Status == "Partially Given")
+                        .All(m => m.PatientConfirmed);
 
+                bool allGiven = pharmacyActed &&
+                                medicines.All(m => m.Status == "Given");
 
                 model.Add(new PatientPrescriptionViewModel
                 {
@@ -93,14 +87,14 @@ namespace ClinicOne.Areas.Patient.Controllers
                     PharmacyPending = !pharmacyActed,
                     AllGiven = allGiven,
 
-                    ShowConfirmButton = hasExternal && allMeds.Any(m => (m.Status == "Not Given" || m.Status == "Partially Given") && !m.PatientConfirmed),
+                    ShowConfirmButton = hasExternal && needsExternal && !allConfirmed,
 
-                    ShowCompleted = hasExternal && (allConfirmed || !needsExternal),
+                    ShowCompleted = allGiven || (needsExternal && allConfirmed && hasExternal),
 
                     IsPast = isPast,
                     IsActive = !isPast,
 
-                    Medicines = visibleMeds.Select(m => new PatientPrescriptionMedicine
+                    Medicines = medicines.Select(m => new PatientPrescriptionMedicine
                     {
                         MedicineName = m.MedicineName,
                         Dosage = m.Dosage,
@@ -109,7 +103,7 @@ namespace ClinicOne.Areas.Patient.Controllers
                         Status = m.Status,
                         Reason = m.Reason,
                         PatientConfirmed = m.PatientConfirmed
-                    }).ToList(),
+                    }).ToList()
                 });
             }
 
@@ -132,17 +126,9 @@ namespace ClinicOne.Areas.Patient.Controllers
                 return Json(new { success = false, message = "Prescription not found." });
 
             foreach (var med in prescription.PrescriptionMedicines
-            .Where(m => m.Status == "Not Given" || m.Status == "Partially Given"))
+                .Where(m => m.Status == "Not Given" || m.Status == "Partially Given"))
             {
                 med.PatientConfirmed = true;
-
-                var reminder = _context.MedicineReminders
-                    .FirstOrDefault(r => r.PrescMedID == med.PrescMedID);
-
-                if (reminder != null)
-                {
-                    reminder.IsActive = true;
-                }
             }
 
             await _context.SaveChangesAsync();

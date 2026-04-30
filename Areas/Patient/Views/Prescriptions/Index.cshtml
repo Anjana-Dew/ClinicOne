@@ -1,4 +1,4 @@
-﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
+﻿﻿@model List<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
 
 @{
     Layout = "_PatientLayout";
@@ -103,12 +103,12 @@
                         </button>
                     }
 
-                    @if (!string.IsNullOrEmpty(p.PDFPath))
-{
-                <a href="@Url.Content("~" + p.PDFPath)" target="_blank" class="btn download">
-                View External Prescription PDF
-                 </a>
-}
+                    @if (p.HasExternalPrescription)
+                    {
+                        <a href="@p.PDFPath" target="_blank" class="btn download">
+                            View External Prescription PDF
+                        </a>
+                    }
 
                     @if (p.ShowCompleted)
                     {
