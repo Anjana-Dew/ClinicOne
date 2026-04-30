@@ -50,11 +50,6 @@ namespace ClinicOne.Areas.Doctor.Controllers
         [HttpPost]
         public IActionResult SavePrescription(CreatePrescriptionViewModel model)
         {
-            //model.Medicines = model.Medicines
-            //    .Where(m => !string.IsNullOrEmpty(m.MedicineName) &&
-            //    !string.IsNullOrEmpty(m.Dosage)&&
-            //    m.TimesPerDay > 0 && (m.DurationValue.HasValue && m.DurationValue > 0 && !string.IsNullOrEmpty(m.DurationUnit)))
-            //    .ToList();
             foreach (var med in model.Medicines)
             {
                 if (!string.IsNullOrEmpty(med.MedicineName))
@@ -80,18 +75,12 @@ namespace ClinicOne.Areas.Doctor.Controllers
                 TempData["Error"] = "Prescription must contain at least a medicine or a test.";
                 return RedirectToAction("Create", new { nic = model.PatientNIC });
             }
-
-            //if (!model.Medicines.Any() && (model.Tests == null || !model.Tests.Any(t => t.PanelID > 0)))
-            //{
-            //    TempData["Error"] = "Prescription must contain at least a medicine or a test.";
-            //    return RedirectToAction("Create", new { nic = model.PatientNIC });
-            //}
-
             var prescription = new Prescription
             {
                 PatientNIC = model.PatientNIC,
                 PrescriptionDate = DateTime.Now,
                 Notes = model.Notes,
+                IsCompleted = false
             };
 
             _context.Prescriptions.Add(prescription);

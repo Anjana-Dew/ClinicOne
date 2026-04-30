@@ -121,6 +121,7 @@ CREATE TABLE Prescription (
     PatientNIC VARCHAR(20) NOT NULL,
     PrescriptionDate DATE NOT NULL,
     Notes NVARCHAR(500),
+    IsCompleted BIT NOT NULL DEFAULT 0
 
     FOREIGN KEY (PatientNIC) REFERENCES Patient(PatientNIC)
 );
