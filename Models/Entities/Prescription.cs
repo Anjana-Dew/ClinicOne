@@ -20,6 +20,7 @@ namespace ClinicOne.Models.Entities
 
         [ForeignKey("PatientNIC")]
         public Patient Patient { get; set; }
+        public bool IsCompleted { get; set; } = false;
 
         public ICollection<PrescriptionMedicine> PrescriptionMedicines { get; set; }
         public ICollection<PrescribedTest> PrescribedTests { get; set; }
