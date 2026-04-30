@@ -172,7 +172,6 @@ function openPopup(data) {
         <select class="status-dropdown">
     <option value="Given" ${status === "Given" || status === "" ? "selected" : ""}>Given</option>
 <option value="Not Given" ${status === "Not Given" ? "selected" : ""}>Not Given</option>
-<option value="Partially Given" ${status === "Partially Given" ? "selected" : ""}>Partially Given</option>
 </select>
     </td>
 </tr>`;

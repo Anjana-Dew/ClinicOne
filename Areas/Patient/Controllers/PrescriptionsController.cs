@@ -9,13 +9,11 @@ namespace ClinicOne.Areas.Patient.Controllers
     [Area("Patient")]
     public class PrescriptionsController : BaseController
     {
-
         private static readonly Regex DurationRegex =
             new(@"(\d+)\s*(week|day)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public PrescriptionsController(ApplicationDbContext context) : base(context)
         {
-
         }
 
         private string? GetPatientNic() =>
@@ -41,8 +39,9 @@ namespace ClinicOne.Areas.Patient.Controllers
                 .ToDictionaryAsync(
                     g => g.Key,
                     g => g.OrderByDescending(x => x.GeneratedDate)
-                           .Select(x => x.PDFPath)
-                           .FirstOrDefault());
+                          .Select(x => x.PDFPath)
+                          .FirstOrDefault()
+                );
 
             var model = new List<PatientPrescriptionViewModel>();
 
@@ -64,10 +63,18 @@ namespace ClinicOne.Areas.Patient.Controllers
                     m.Status == "Not Given" ||
                     m.Status == "Partially Given");
 
-                bool needsExternal = medicines.Any(m =>
-                    m.Status == "Not Given" || m.Status == "Partially Given");
+                var notGivenMeds = medicines
+                    .Where(m =>
+                        string.Equals(m.Status?.Trim(), "Not Given", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(m.Status?.Trim(), "Partially Given", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
-                bool allConfirmed = needsExternal &&
+                bool needsExternal = notGivenMeds.Any();
+
+                bool pendingMeds = medicines.Any(m =>
+                    (m.Status == "Not Given" || m.Status == "Partially Given"));
+
+                bool allConfirmed = !pendingMeds ||
                     medicines
                         .Where(m => m.Status == "Not Given" || m.Status == "Partially Given")
                         .All(m => m.PatientConfirmed);
@@ -87,7 +94,7 @@ namespace ClinicOne.Areas.Patient.Controllers
                     PharmacyPending = !pharmacyActed,
                     AllGiven = allGiven,
 
-                    ShowConfirmButton = hasExternal && needsExternal && !allConfirmed,
+                    ShowConfirmButton = hasExternal && needsExternal,
 
                     ShowCompleted = allGiven || (needsExternal && allConfirmed && hasExternal),
 
@@ -126,7 +133,9 @@ namespace ClinicOne.Areas.Patient.Controllers
                 return Json(new { success = false, message = "Prescription not found." });
 
             foreach (var med in prescription.PrescriptionMedicines
-                .Where(m => m.Status == "Not Given" || m.Status == "Partially Given"))
+                .Where(m =>
+                    m.Status?.Trim() == "Not Given" ||
+                    m.Status?.Trim() == "Partially Given"))
             {
                 med.PatientConfirmed = true;
             }
