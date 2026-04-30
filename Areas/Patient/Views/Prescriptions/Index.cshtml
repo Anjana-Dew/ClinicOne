@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
+@model IEnumerable<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
 
 @{
     var modelList = Model as List<ClinicOne.Models.ViewModels.Patient.PatientPrescriptionViewModel>
@@ -9,7 +9,6 @@
 
     Layout = "_PatientLayout";
 }
-
 @Html.AntiForgeryToken()
 
 <link rel="stylesheet" href="~/css/patient/patientPrescriptions.css" />
