@@ -128,11 +128,7 @@ namespace ClinicOne.Areas.Pharmacist.Controllers
                         ? "Not specified"
                         : item.Reason);
 
-                entity.PatientConfirmed = true;
-
-                _context.Entry(entity).Property(x => x.Status).IsModified = true;
-                _context.Entry(entity).Property(x => x.Reason).IsModified = true;
-                _context.Entry(entity).Property(x => x.PatientConfirmed).IsModified = true;
+                entity.PatientConfirmed = entity.Status == "Given";
             }
 
             _context.SaveChanges();
