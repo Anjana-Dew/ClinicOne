@@ -11,11 +11,13 @@ namespace ClinicOne.Models.Entities
         [Required]
         public int PrescriptionID { get; set; }
 
+        [Required]
         [MaxLength(150)]
-        public string? MedicineName { get; set; }
+        public string MedicineName { get; set; }
 
+        [Required]
         [MaxLength(20)]
-        public string? Status { get; set; }
+        public string Status { get; set; }
 
         [MaxLength(200)]
         public string? Reason { get; set; }
@@ -26,13 +28,15 @@ namespace ClinicOne.Models.Entities
         [MaxLength(50)]
         public string? Duration { get; set; }
 
+        [Required]
         public bool PatientConfirmed { get; set; }
 
         public int TimesPerDay { get; set; }
 
         [ForeignKey("PrescriptionID")]
-        public Prescription? Prescription { get; set; }
+        public Prescription Prescription { get; set; }
 
-        public ICollection<MedicineReminder>? MedicineReminders { get; set; }
+
+        public ICollection<MedicineReminder> MedicineReminders { get; set; }
     }
 }
