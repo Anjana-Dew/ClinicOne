@@ -69,18 +69,21 @@ namespace ClinicOne.Areas.Patient.Controllers
                         string.Equals(m.Status?.Trim(), "Partially Given", StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
-                bool needsExternal = notGivenMeds.Any();
+                var notGivenOrPartial = medicines
+                    .Where(m =>
+                        m.Status != null &&
+                        (m.Status.Trim().Equals("Not Given", StringComparison.OrdinalIgnoreCase) ||
+                         m.Status.Trim().Equals("Partially Given", StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
 
-                bool pendingMeds = medicines.Any(m =>
-                    (m.Status == "Not Given" || m.Status == "Partially Given"));
+                bool needsExternal = notGivenOrPartial.Any();
 
-                bool allConfirmed = !pendingMeds ||
-                    medicines
-                        .Where(m => m.Status == "Not Given" || m.Status == "Partially Given")
-                        .All(m => m.PatientConfirmed);
+                bool allConfirmed = notGivenOrPartial.Any() &&
+                                    notGivenOrPartial.All(m => m.PatientConfirmed);
 
-                bool allGiven = pharmacyActed &&
-                                medicines.All(m => m.Status == "Given");
+                bool allGiven = medicines.All(m =>
+                    m.Status != null &&
+                    m.Status.Trim().Equals("Given", StringComparison.OrdinalIgnoreCase));
 
                 model.Add(new PatientPrescriptionViewModel
                 {
@@ -94,9 +97,9 @@ namespace ClinicOne.Areas.Patient.Controllers
                     PharmacyPending = !pharmacyActed,
                     AllGiven = allGiven,
 
-                    ShowConfirmButton = hasExternal && needsExternal,
+                    ShowConfirmButton = hasExternal && needsExternal && !allConfirmed,
 
-                    ShowCompleted = allGiven || (needsExternal && allConfirmed && hasExternal),
+                    ShowCompleted = allGiven || allConfirmed,
 
                     IsPast = isPast,
                     IsActive = !isPast,
