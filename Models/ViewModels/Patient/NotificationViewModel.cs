@@ -18,7 +18,7 @@ namespace ClinicOne.Models.ViewModels.Patient
 
         public string Message { get; set; }
 
-
+        public List<PharmacistDispenseSummary> DispenseSummaries { get; set; }
         public int? DaysRemaining => ReferenceDate.HasValue
             ? (int)(ReferenceDate.Value.Date - DateTime.Today).TotalDays
             : null;
@@ -39,7 +39,9 @@ namespace ClinicOne.Models.ViewModels.Patient
             }
         }
 
-        public static NotificationViewModel From(Entities.Notification n)
+        public static NotificationViewModel From(
+            Entities.Notification n,
+            List<PharmacistDispenseSummary> summaries = null)
         {
             var (type, refDate, text) = NotificationService.ParseMessage(n.Message);
 
@@ -52,7 +54,8 @@ namespace ClinicOne.Models.ViewModels.Patient
                 RawMessage = n.Message,
                 Type = type,
                 ReferenceDate = refDate,
-                Message = text
+                Message = text,
+                DispenseSummaries = summaries ?? new List<PharmacistDispenseSummary>() 
             };
         }
     }
