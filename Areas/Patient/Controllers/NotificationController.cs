@@ -34,7 +34,7 @@ namespace ClinicOne.Areas.Patient.Controllers
                 .ToListAsync();
 
             var viewModel = notifications
-                .Select(NotificationViewModel.From)
+                .Select(n => NotificationViewModel.From(n))
                 .ToList();
 
             return View(viewModel);
