@@ -1,5 +1,6 @@
 ﻿using ClinicOne.Data;
 using ClinicOne.Models.Entities;
+using ClinicOne.Models.ViewModels.Patient;
 
 namespace ClinicOne.Services
 {
@@ -150,12 +151,16 @@ namespace ClinicOne.Services
 
             return (type, refDate, cleanText);
         }
+
+        public List<PharmacistDispenseSummary> BuildSummaries(List<PrescriptionMedicine> medicines)
+        {
+            return medicines.Select((PrescriptionMedicine m) => new PharmacistDispenseSummary
+            {
+                MedicineName = m.MedicineName,
+                Status = m.Status,
+                Reason = m.Reason
+            }).ToList();
+        }
     }
 
-    public class PharmacistDispenseSummary
-    {
-        public string MedicineName { get; set; }
-        public string Status { get; set; }
-        public string Reason { get; set; }
-    }
 }
