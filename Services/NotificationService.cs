@@ -69,10 +69,19 @@ namespace ClinicOne.Services
 
         private void SaveWithoutSchedule(string patientNIC, string message)
         {
+            var fallbackScheduleId = _context.ClinicSchedules
+                .Where(s => s.PatientNIC == patientNIC)
+                .OrderByDescending(s => s.AssignedDate)
+                .Select(s => (int?)s.ScheduleID)
+                .FirstOrDefault();
+
+            if (fallbackScheduleId == null)
+                return; 
+
             _context.Notifications.Add(new Notification
             {
                 PatientNIC = patientNIC,
-                ScheduleID = 1, 
+                ScheduleID = fallbackScheduleId.Value,
                 Message = message,
                 SentDate = DateTime.Now,
                 IsRead = false
