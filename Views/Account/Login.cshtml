@@ -10,124 +10,468 @@
     <!-- HEADER -->
     <div class="header">
         <img src="~/images/ClinicOneLogoMain.png" alt="ClinicOne Logo">
-        <div class="system-title">Clinic Management System</div>
-    </div>
-
-    <div class="main-content">
-        <!-- TABS -->
-        <div class="tabs">
-            <button class="tab-button active" onclick="openTab(event,'login')">LOGIN</button>
-            <button class="tab-button" onclick="openTab(event,'support')">SUPPORT & CONTACT</button>
-            <button class="tab-button" onclick="openTab(event,'terms')">TERMS & CONDITIONS</button>
+            <div class="system-title">Clinic Management System</div>
         </div>
 
-         <!-- LOGIN -->
-         <div id="login" class="tab-content active">
-            @if (TempData["Success"] != null)
+        <div class="main-content">
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-button active" onclick="openTab(event,'login')">LOGIN</button>
+                <button class="tab-button" onclick="openTab(event,'support')">SUPPORT & CONTACT</button>
+                <button class="tab-button" onclick="openTab(event,'terms')">TERMS & CONDITIONS</button>
+            </div>
+
+            <!-- LOGIN -->
+            <div id="login" class="tab-content active">
+                @if (TempData["Success"] != null)
                 {
                     <div class="alert alert-success">
                         @TempData["Success"]
                     </div>
                 }
 
-            <div class="login-wrapper">
-                <div class="welcome-text">
-                    <h2>Welcome to ClinicOne</h2>
-                    <p>Your digital health companion.</p>
-                </div>
-                <div class="login-description">
-                    <p>The registration process for this system occurs exclusively through your hospital or clinic's registration desk.</p>
-                    <p>To access the portal, please use the initial credentials provided by your clinic administration during your physical registration.</p>
-                </div>
+                <div class="login-wrapper">
+                    <div class="welcome-text">
+                        <h2>Welcome to ClinicOne</h2>
+                        <p>Your digital health companion.</p>
+                    </div>
+                    <div class="login-description">
+                        <p>The registration process for this system occurs exclusively through your hospital or clinic's registration desk.</p>
+                        <p>To access the portal, please use the initial credentials provided by your clinic administration during your physical registration.</p>
+                    </div>
 
-                <div class="card-login">
+                    <div class="card-login">
   
-                    <form asp-action="Login" method="post">
-                        <div class="input-container">
-                             <label>Username</label>
-                             <input asp-for="Username" type="text" class="login-input" />
+                        <form asp-action="Login" method="post">
+                            <div class="input-container">
+                                <label>Username</label>
+                                <input asp-for="Username" type="text" class="login-input" />
+                            </div>
+
+                            <div class="input-container">
+                                <label>Password</label>
+                                <input asp-for="Password" type="password" class="login-input" />
+                            </div>
+
+                            <button type="submit" class="login-btn">Login</button>
+
+                            <div asp-validation-summary="All" class="validation"></div>
+                        </form>
+
+                    </div>
+                    <div class="login-note">
+                        <p>Upon your first successful login, you will be automatically redirected to change your temporary password for security.</p>
+                        <p>Please ensure you change it to a strong, personal password.</p>
+                    </div>
+                    <div class="attention">
+                        <strong>Password Reset Notice:</strong>
+                        <p>If you need to reset or change your password later, please contact your hospital administration directly.</p>
+                    </div>
+                </div>
+
+            </div>
+            <!-- SUPPORT -->
+            <div id="support" class="tab-content">
+                <h2>Support & Technical Contact</h2>
+
+                <!-- TECHNICAL TEAM -->
+                <div class="card">
+                    <h3>Technical Support Team – ClinicOne Developers</h3>
+
+                    <p><strong>Email:</strong> successbuilders.support@gmail.com</p>
+
+                    <p><strong>Lead Developer:</strong> Anjana – +94 71 234 5678</p>
+                    <p><strong>Developer:</strong> Hiruni – +94 77 356 7890</p>
+
+                    <p><strong>Working Hours:</strong> Monday – Friday (8.00 AM – 5.00 PM)</p>
+                </div>
+
+                <!-- SYSTEM OVERVIEW -->
+                <div class="card">
+                    <h3>System Overview</h3>
+                    <p>
+                        ClinicOne is a centralized Electronic Medical Record (EMR) system designed for hospitals and clinics
+                        to manage patients, doctors, pharmacists, appointments, medical records, and clinical workflows securely.
+                    </p>
+                </div>
+
+                <!-- USER MANUALS -->
+                <div class="card">
+                    <h3>User Manuals</h3>
+
+                    <!-- ADMIN MANUAL -->
+                    <div class="accordion-item">
+                        <button class="accordion-btn">1. Admin Portal Manual</button>
+                        <div class="accordion-content">
+                            <p>
+                                The Admin Portal is the core of the system. It is responsible for managing all users, clinical operations,
+                                schedules, and system-level configurations.
+                            </p>
+
+                            <ul>
+                                <li>
+                                    The system has a <strong>Main Admin account</strong> with default credentials:
+                                    <br />
+                                    Username: mainadmin@clinic.com
+                                    <br />
+                                    Password: Admin@123
+                                </li>
+
+                                <li>
+                                    On first login, the Admin must change the temporary password and re-login using the new credentials.
+                                </li>
+
+                                <li>
+                                    Admin can register and manage:
+                                    <ul>
+                                        <li>Patients (NIC used as username)</li>
+                                        <li>Doctors (Gov Registration Number - SLMCxxxxxx)</li>
+                                        <li>Pharmacists (NMRAxxxxxxx)</li>
+                                        <li>Other Admins (Main Admin only)</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    A system-generated default password is assigned to all newly created users.
+                                    First-time login requires mandatory password change.
+                                </li>
+
+                                <li>
+                                    Admin can:
+                                    <ul>
+                                        <li>Search users using NIC / Registration number</li>
+                                        <li>Activate or deactivate user accounts</li>
+                                        <li>Update doctor details (name, specialization only)</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Clinic Scheduling:
+                                    <ul>
+                                        <li>Create clinic sessions (date-based or weekly recurring)</li>
+                                        <li>Set start time, end time, and maximum slots</li>
+                                        <li>Edit or delete sessions if no dependent history exists</li>
+                                    
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Duty Scheduling:
+                                    <ul>
+                                        <li>Assign doctors to duty schedules</li>
+                                        <li>Manage doctor assignments for sessions</li>
+                                        <li>Control access to patient profiles based on duty hours</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Access Log Monitoring:
+                                    <ul>
+                                        <li>Track all doctor actions on patient records</li>
+                                        <li>Filter logs by doctor, patient, or action type</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Password Management:
+                                    <ul>
+                                        <li>Main Admin can reset user passwords</li>
+                                        <li>Users must re-login and change password after reset</li>
+                                    </ul>
+                                </li>
+                            </ul>
                         </div>
+                    </div>
+                    <!-- DOCTOR MANUAL -->
+                    <div class="accordion-item">
+                        <button class="accordion-btn">2. Doctor Portal Manual</button>
+                        <div class="accordion-content">
+                            <p>
+                                The Doctor Portal is designed for patient care, diagnosis, and treatment management.
+                                Access is restricted based on duty schedule.
+                            </p>
 
-                         <div class="input-container">
-                             <label>Password</label>
-                             <input asp-for="Password" type="password" class="login-input" />
-                         </div>
+                            <ul>
+                                <li>
+                                    Doctors can access patient profiles only during assigned duty schedules.
+                                </li>
 
-                          <button type="submit" class="login-btn">Login</button>
+                                <li>
+                                    Patient Search:
+                                    <ul>
+                                        <li>Search patients using NIC</li>
+                                        <li>Access is granted only if doctor is on duty</li>
+                                    </ul>
+                                </li>
 
-                          <div asp-validation-summary="All" class="validation"></div>
-                    </form>
+                                <li>
+                                    Medical Records:
+                                    <ul>
+                                        <li>View patient history, vitals, prescriptions, and reports</li>
+                                        <li>View test reports uploaded by Admin</li>
+                                        <li>Filter medical history by date</li>
+                                    </ul>
+                                </li>
 
-                </div>
-                <div class="login-note">
-                    <p>Upon your first successful login, you will be automatically redirected to change your temporary password for security.</p>
-                    <p>Please ensure you change it to a strong, personal password.</p>
-                </div>
-                <div class="attention">
-                     <strong>Password Reset Notice:</strong>
-                     <p>If you need to reset or change your password later, please contact your hospital administration directly.</p>
+                                <li>
+                                    Medical Actions:
+                                    <ul>
+                                        <li>Prescribe medicines</li>
+                                        <li>Request medical tests</li>
+                                        <li>Schedule next clinic appointment</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Vitals & Updates:
+                                    <ul>
+                                        <li>Update patient contact details (phone only)</li>
+                                        <li>View and analyze vital history</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Progress Tracking:
+                                    <ul>
+                                        <li>System generates automatic progress suggestions based on test values over time</li>
+                                        <li>Doctor can confirm or modify progress status</li>
+                                        <li>Add clinical notes for each assessment</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Analytics:
+                                    <ul>
+                                        <li>View charts for blood pressure and patient progress trends</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                 
+                    <!-- PHARMACIST MANUAL -->
+                    <div class="accordion-item">
+                        <button class="accordion-btn">3. Pharmacist Portal Manual</button>
+                        <div class="accordion-content">
+                            <p>
+                                The Pharmacist Portal is responsible for managing prescriptions issued by doctors,
+                                validating medicine dispensing, and generating printed prescription confirmations.
+                            </p>
+
+                            <ul>
+                                <li>
+                                    Pharmacists can search for patients using their <strong>NIC</strong>.
+                                </li>
+
+                                <li>
+                                    If a valid prescription exists under the entered NIC, it will be displayed with:
+                                    <ul>
+                                        <li>Doctor prescribed medicines</li>
+                                        <li>Dosage instructions</li>
+                                        <li>Prescription date and status</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Pharmacists can update medicine status as:
+                                    <ul>
+                                        <li><strong>Given</strong></li>
+                                        <li><strong>Not Given</strong></li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Once medicines are marked as "Given", the system automatically:
+                                    <ul>
+                                        <li>Generates a confirmation prescription slip</li>
+                                        <li>Allows download/print for patient handover</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Pharmacists are responsible for ensuring correct medicine dispensing
+                                    based on doctor prescriptions and system records.
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    
+                    <!-- PATIENT MANUAL -->
+                    <div class="accordion-item">
+                        <button class="accordion-btn">4. Patient Portal Manual</button>
+                        <div class="accordion-content">
+                            <p>
+                                The Patient Portal allows patients to view their medical information,
+                                manage their profile, and track their healthcare journey.
+                            </p>
+
+                            <ul>
+                                <li>
+                                    Patients log in using their <strong>NIC as username</strong>.
+                                </li>
+
+                                <li>
+                                    On first login, patients must change their system-generated password.
+                                </li>
+
+                                <li>
+                                    Dashboard Overview:
+                                    <ul>
+                                        <li>Health summary (vitals and key indicators)</li>
+                                        <li>Latest prescription details</li>
+                                        <li>Latest medical test reports</li>
+                                        <li>Doctor progress updates</li>
+                                        <li>Upcoming clinic sessions with countdown timer</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Profile Management:
+                                    <ul>
+                                        <li>Update personal details (name, address, phone number)</li>
+                                        <li>View account information</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Clinic Sessions:
+                                    <ul>
+                                        <li>View upcoming, active, and past clinic sessions</li>
+                                        <li>Track appointment countdown for next session</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Medical Reports:
+                                    <ul>
+                                        <li>View complete medical report history</li>
+                                        <li>Filter reports by date or type</li>
+                                        <li>Download reports as PDF</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Prescriptions:
+                                    <ul>
+                                        <li>View all past and latest prescriptions</li>
+                                        <li>Identify external prescriptions (medicines to be purchased outside)</li>
+                                        <li>Download external prescriptions as PDF</li>
+                                        <li>Confirm purchase status of external medicines</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Medicine Reminders:
+                                    <ul>
+                                        <li>Receive reminders for prescribed medications</li>
+                                        <li>Track medication schedules through notifications</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Doctor Notes:
+                                    <ul>
+                                        <li>View doctor comments linked to progress updates</li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    Notifications:
+                                    <ul>
+                                        <li>Clinic appointment updates</li>
+                                        <li>New report uploads</li>
+                                        <li>Prescription alerts</li>
+                                        <li>Medicine reminders</li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
                 </div>
             </div>
+            <!--Terms & Conditions-->
+            <div id="terms" class="tab-content">
+                <h2>Terms and Conditions</h2>
 
-         </div>
-          <!-- SUPPORT -->
-        <div id="support" class="tab-content">
-            <h2>Support & Technical Contact</h2>
+                <div class="card">
 
-            <div class="card">
-                <h3>Technical Support – Team Success Builders</h3>
-                <p>Email: successbuilders.support@gmail.com</p>
-                <p>Phone: +94 71 234 5678 Anjana</p>
-                <p>Phone: +94 77 456 7890 Senuri</p>
-                <p>Phone: +94 77 356 7890 Hiruni</p>
-                <p>Working Hours: Monday – Friday (8.00 AM – 5.00 PM)</p>
-            </div>
-            <div class="card">
-                <h3>User Manuals</h3>
-                <h2>Admin</h2>
-                <p>Register the patients,doctors,phamasists.</p>
-                <p>Make doctor duty shedules</p>
-                <p>Make Clinic shedules and add doctors for the clinic shedules</p>
-                <p>Upload patients medical reports</p>
+                    <h3>1. System Purpose</h3>
+                    <p>
+                        ClinicOne is an Electronic Medical Record (EMR) system designed to help healthcare institutions manage
+                        patients, doctors, pharmacists, prescriptions, reports, and clinical workflows digitally.
+                    </p>
 
-                <h2>Doctor</h2>
-                <p>Register the patient using NIC</p>
-                <p>Doctor can load patient hisory to the portal using NIC like medical prescription history, test reports, vitals</p>
-                <p>Assign the patient to the next medical session</p>
-                <p>Access progress indicator to the recognize medical condition good or bad</p>
+                    <h3>2. No Medical Advice</h3>
+                    <p>
+                        This system does not provide medical advice, diagnosis, or treatment recommendations.
+                        All medical decisions must be made by qualified healthcare professionals.
+                    </p>
 
-                <h2>Phamasist</h2>
-                <p>Mark medicine given or not given to the prescription</p>
-                <p>If not given mark the reason</p>
+                    <h3>3. User Responsibility for Data</h3>
+                    <p>
+                        All data entered into the system is the sole responsibility of the user who entered it.
+                        This includes doctors, pharmacists, and administrators.
+                        The system is not responsible for any incorrect, incomplete, or inaccurate data entered by users.
+                    </p>
 
-                <h2>Patient</h2>
-                <p>Can look full medical history</p>
-                <p>Access notificatins for the future medical sessions</p>
-                <p>Notify medicine reminders</p>
+                    <h3>4. Medical Decisions</h3>
+                    <p>
+                        Any medical decisions, prescriptions, or clinical actions taken through this system are fully
+                        the responsibility of the authorized medical professionals using the system.
+                    </p>
 
-            </div>
+                    <h3>5. Data Privacy & Confidentiality</h3>
+                    <p>
+                        This system stores sensitive personal and medical information securely.
+                        By using this system, users agree that patient data will be stored and processed within the system
+                        for healthcare purposes.
+                    </p>
 
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1580281657527-47c1b0b3c7b7">
+                    <h3>6. Credential Security</h3>
+                    <p>
+                        Users are responsible for maintaining the confidentiality of their login credentials.
+                        If credentials are shared, lost, or misused, the system is not responsible for unauthorized access.
+                    </p>
+
+                    <h3>7. Data Accuracy Disclaimer</h3>
+                    <p>
+                        The system reflects data entered by users in real time. Any inaccuracies caused by human error,
+                        incorrect input, or misuse of the system are not the responsibility of the system developers.
+                    </p>
+
+                    <h3>8. System Availability</h3>
+                    <p>
+                        The system may undergo maintenance, updates, or unexpected downtime.
+                        Continuous availability is not guaranteed at all times.
+                    </p>
+
+                    <h3>9. Access Control</h3>
+                    <p>
+                        Access to patient records and system features is strictly controlled by role-based permissions.
+                        Users must only access data they are authorized to view.
+                    </p>
+
+                    <h3>10. Audit & Monitoring</h3>
+                    <p>
+                        All user actions within the system are logged for auditing and security purposes.
+                        These logs may be reviewed by system administrators when necessary.
+                    </p>
+
+                    <h3>11. Agreement</h3>
+                    <p>
+                        By using ClinicOne, users acknowledge that they have read, understood, and agreed to these terms and conditions.
+                    </p>
+
+                </div>
             </div>
         </div>
-            <!-- TERMS -->
-        <div id="terms" class="tab-content">
-            <h2>ClinicOne Terms and Conditions</h2>
-
-            <div class="card">
-                <p>ClinicOne is a secure EMR system for healthcare institutions.</p>
-                <p>Users must protect login credentials.</p>
-                <p>Unauthorized access is prohibited.</p>
-                <p>System may update policies when required.</p>
-                <p>User must agree to give sensitive personal data to the system.</p>
-            </div>
-        </div>
-
-    </div>
    
-</div>
-<div class="footer">
-    &copy; @DateTime.Now.Year ClinicOne | Success Builders
-</div>
-<script src=~/js/auth/loginScript.js></script>
+    </div>
+    <div class="footer">
+        &copy; @DateTime.Now.Year ClinicOne | Success Builders
+    </div>
+    <script src=~/js/auth/loginScript.js></script>
