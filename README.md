@@ -74,7 +74,8 @@ The system was developed using ASP.NET MVC with C#, Entity Framework, and SQL Se
 - Admin portal development
 - Doctor portal development
 
-### Hiruni Sawbhagya (@hiruni2006)
+### Hiruni Sawbhagya 
+GitHub: https://github.com/hiruni2006
 - Patient portal development
 - Pharmacist portal development
 
@@ -88,9 +89,54 @@ The system was developed using ASP.NET MVC with C#, Entity Framework, and SQL Se
 - SMS and email notification integration
 - Mobile application support
 - Enhanced authentication and security features
-
+ 
 ---
-
+ 
 ## Academic Project
 
 This project was developed as a second-year undergraduate software engineering project for academic and educational purposes.
+---
+## Setup Requirements
+
+### Required Software
+- Visual Studio 2022
+- SQL Server
+- SQL Server Management Studio (SSMS)
+- ASP.NET and Web Development workload
+
+### Required NuGet Packages
+- Entity Framework Core
+- Entity Framework Core SQL Server
+- Entity Framework Core Tools
+
+---
+
+## Installation
+
+1. Clone the repository and open the solution in Visual Studio.
+2. Create the database using the provided SQL script.
+3. Open appsettings.json and update the connection string to match your SQL Server installation.
+
+Example:
+
+json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=YOUR_SERVER_NAME;Database=ClinicOneDB;Trusted_Connection=True;TrustServerCertificate=True;"
+}
+
+
+4. Run the application through Visual Studio.
+
+---
+
+## Default Administrator Account
+
+The system includes a default administrator account for administration purposes.
+
+*Username:* mainadmin@clinic.com
+
+*Password:* Admin@123
+
+*Note:* Users are required to change their password upon first login.
+
+
