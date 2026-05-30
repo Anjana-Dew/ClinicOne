@@ -93,7 +93,7 @@ GitHub: https://github.com/hiruni2006
 ---
  
 ## Academic Project
-
+---
 This project was developed as a second-year undergraduate software engineering project for academic and educational purposes.
 ---
 ## Setup Requirements
